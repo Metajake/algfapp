@@ -1,0 +1,14 @@
+#pages/static/.sass-cache/
+#website/static/.sass-cache/
+*.pyc
+db.sqlite3
+algfapp/settings.py
+.sass-cache/
+*.map
+prepros-6.config
+#temperature/migrations/
+#website/migrations/
+#website/_migrations/
+#pages/migrations/
+#db_backups/
+#media/*
