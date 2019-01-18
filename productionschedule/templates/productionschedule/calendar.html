@@ -1,0 +1,29 @@
+{% load static %}
+<html>
+  <head>
+    <link rel="stylesheet" href="{% static 'productionschedule/reset.css' %}" type="text/css" media="screen,projection"/>
+    <link rel="stylesheet" href="{% static 'productionschedule/jqueryui.css' %}" type="text/css" media="screen,projection"/>
+    <link rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection"/>
+  </head>
+  <body>
+    <h3>ProductionSchedule</h3>
+    <div id="calendar">{% for week in weeks %}
+      <div class="week">{% for rangeEntry in week.range %}
+        <div class="day">
+          <h4 class="align-center">{{rangeEntry.date}}</h4>{% for product in rangeEntry.products %}
+          <div class="cell">
+            <div class="column align-center">
+              <p>{{product.product_code}}</p>
+            </div>
+            <div class="column align-center">
+              <p>{{product.customer}}</p>
+            </div>
+          </div>{% endfor %}
+        </div>{% endfor %}
+      </div>{% endfor %}
+      <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
+      <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
+      <script type="text/javascript" src="{% static 'js/productionschedule.js'%}"></script>
+    </div>
+  </body>
+</html>

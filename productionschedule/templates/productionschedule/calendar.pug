@@ -1,0 +1,28 @@
+| {% load static %}
+
+html
+  head
+    link(rel="stylesheet" href="{% static 'productionschedule/reset.css' %}" type="text/css" media="screen,projection")
+    link(rel="stylesheet" href="{% static 'productionschedule/jqueryui.css' %}" type="text/css" media="screen,projection")
+    link(rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection")
+  body
+    h3 ProductionSchedule
+
+    #calendar
+      | {% for week in weeks %}
+      .week
+        | {% for rangeEntry in week.range %}
+        .day
+          h4.align-center {{rangeEntry.date}}
+          | {% for product in rangeEntry.products %}
+          .cell
+            .column.align-center
+              p {{product.product_code}}
+            .column.align-center
+              p {{product.customer}}
+          | {% endfor %}
+        | {% endfor %}
+      | {% endfor %}
+      script(type="text/javascript" src="{% static 'js/jquery.js'%}")
+      script(type="text/javascript" src="{% static 'js/jqueryui.js'%}")
+      script(type="text/javascript" src="{% static 'js/productionschedule.js'%}")

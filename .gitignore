@@ -6,9 +6,7 @@ algfapp/settings.py
 .sass-cache/
 *.map
 prepros-6.config
-#temperature/migrations/
-#website/migrations/
-#website/_migrations/
+productionschedule/migrations/
 #pages/migrations/
 #db_backups/
 #media/*
