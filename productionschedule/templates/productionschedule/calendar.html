@@ -4,26 +4,53 @@
     <link rel="stylesheet" href="{% static 'productionschedule/reset.css' %}" type="text/css" media="screen,projection"/>
     <link rel="stylesheet" href="{% static 'productionschedule/jqueryui.css' %}" type="text/css" media="screen,projection"/>
     <link rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection"/>
+    <script defer="defer" src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous"></script>
   </head>
   <body>
     <h3>ProductionSchedule</h3>
     <div id="calendar">{% for week in weeks %}
       <div class="week">{% for rangeEntry in week.range %}
         <div class="day">
-          <h4 class="align-center">{{rangeEntry.date}}</h4>{% for product in rangeEntry.products %}
-          <div class="cell">
-            <div class="column align-center">
-              <p>{{product.product_code}}</p>
-            </div>
-            <div class="column align-center">
-              <p>{{product.customer}}</p>
-            </div>
-          </div>{% endfor %}
+          <h4 class="align-center">{{rangeEntry.date}}</h4>
+          <div class="sortable">{% for product in rangeEntry.products %}
+            <div class="cell" id=" {{ product.id }} ">
+              <div class="column">
+                <form class="update-form" method="post">
+                  {% csrf_token %}
+                  {{ formUpdate }}
+                </form>
+                <p>{{product.product_code}}</p>
+              </div>
+              <div class="column">
+                <p>{{product.customer}}</p>
+              </div>{% if product.note %}
+              <div class="note">
+                <p>{{product.note}}</p>
+              </div>{% endif %}
+              <div class="ui-delete"><i class="fas fa-times"></i></div>
+            </div>{% endfor %}
+          </div>
         </div>{% endfor %}
       </div>{% endfor %}
       <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
       <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
       <script type="text/javascript" src="{% static 'js/productionschedule.js'%}"></script>
+      <script>
+        $('.ui-delete').click(function(){
+          console.log("Click Delete Object")
+          idToDelete = parseInt( $(this).parent().attr('id') );
+          $(this).parent().remove();
+          $.ajax({
+            url: "/delete/" + idToDelete,
+            success: function(response){
+              console.log(response)
+            },
+            error: function(data){
+              console.log("Errorrr")
+            }
+          });
+        });
+      </script>
     </div>
   </body>
 </html>

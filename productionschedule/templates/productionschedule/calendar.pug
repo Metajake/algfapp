@@ -5,6 +5,7 @@ html
     link(rel="stylesheet" href="{% static 'productionschedule/reset.css' %}" type="text/css" media="screen,projection")
     link(rel="stylesheet" href="{% static 'productionschedule/jqueryui.css' %}" type="text/css" media="screen,projection")
     link(rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection")
+    script(defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous")
   body
     h3 ProductionSchedule
 
@@ -14,15 +15,40 @@ html
         | {% for rangeEntry in week.range %}
         .day
           h4.align-center {{rangeEntry.date}}
-          | {% for product in rangeEntry.products %}
-          .cell
-            .column.align-center
-              p {{product.product_code}}
-            .column.align-center
-              p {{product.customer}}
-          | {% endfor %}
+          .sortable
+            | {% for product in rangeEntry.products %}
+            .cell(id=" {{ product.id }} ")
+              .column
+                form.update-form(method="post")
+                  | {% csrf_token %}
+                  | {{ formUpdate }}
+                p {{product.product_code}}
+              .column
+                p {{product.customer}}
+              | {% if product.note %}
+              .note
+                p {{product.note}}
+              | {% endif %}
+              .ui-delete
+                i.fas.fa-times
+            | {% endfor %}
         | {% endfor %}
       | {% endfor %}
       script(type="text/javascript" src="{% static 'js/jquery.js'%}")
       script(type="text/javascript" src="{% static 'js/jqueryui.js'%}")
       script(type="text/javascript" src="{% static 'js/productionschedule.js'%}")
+      script.
+        $('.ui-delete').click(function(){
+          console.log("Click Delete Object")
+          idToDelete = parseInt( $(this).parent().attr('id') );
+          $(this).parent().remove();
+          $.ajax({
+            url: "/delete/" + idToDelete,
+            success: function(response){
+              console.log(response)
+            },
+            error: function(data){
+              console.log("Errorrr")
+            }
+          });
+        });

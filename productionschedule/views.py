@@ -5,24 +5,34 @@ from django.utils import timezone
 from datetime import date, timedelta
 
 from .models import Product
+from .forms import ProductForm
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 def calendar(request):
+    if request.method == "GET":
+        context = {
+            'weeks' : constructCalendar(),
+            'formUpdate': ProductForm(),
+        }
+    else:
+        print("Posting")
+        #Post Data to DB
+    return render(request, 'productionschedule/calendar.html', context)
+
+def deleteObject(request, product_id):
+    Product.objects.get(pk=product_id).delete()
+    return HttpResponse("Deleting"+str(product_id))
+
+def constructCalendar():
     today = date.today()
-    products = Product.objects.all()
     weeks = [
         constructWeek(today),
         constructWeek(today + timedelta(days=7)),
         constructWeek(today + timedelta(days=14)),
     ]
-    context = {
-        'products' : products,
-        'weeks' : weeks,
-    }
-    return render(request, 'productionschedule/calendar.html', context)
-
+    return weeks
 
 def constructWeek(day):
     toReturn = {}
