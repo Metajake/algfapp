@@ -11,23 +11,24 @@
     <div id="calendar">{% for week in weeks %}
       <div class="week">{% for rangeEntry in week.range %}
         <div class="day">
-          <h4 class="align-center">{{rangeEntry.date}}</h4>
+          <h4 class="align-center production-date">{{rangeEntry.date}}</h4>
           <div class="sortable">{% for product in rangeEntry.products %}
             <div class="cell" id=" {{ product.id }} ">
-              <div class="column">
+              <div class="column product-code">
                 <form class="update-form" method="post">
                   {% csrf_token %}
                   {{ formUpdate }}
                 </form>
                 <p>{{product.product_code}}</p>
               </div>
-              <div class="column">
+              <div class="column customer">
                 <p>{{product.customer}}</p>
               </div>{% if product.note %}
               <div class="note">
                 <p>{{product.note}}</p>
               </div>{% endif %}
               <div class="ui-delete"><i class="fas fa-times"></i></div>
+              <div class="ui-duplicate"><i class="fas fa-arrow-down"></i></div>
             </div>{% endfor %}
           </div>
         </div>{% endfor %}
@@ -37,7 +38,6 @@
       <script type="text/javascript" src="{% static 'js/productionschedule.js'%}"></script>
       <script>
         $('.ui-delete').click(function(){
-          console.log("Click Delete Object")
           idToDelete = parseInt( $(this).parent().attr('id') );
           $(this).parent().remove();
           $.ajax({

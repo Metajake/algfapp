@@ -23,7 +23,16 @@ def calendar(request):
 
 def deleteObject(request, product_id):
     Product.objects.get(pk=product_id).delete()
-    return HttpResponse("Deleting"+str(product_id))
+    return HttpResponse("Deleting: "+str(product_id))
+
+def saveObject(request, production_date, product_code, company):
+    if product_code == '_':
+        product_code = ''
+    if company == '_':
+        company = ''
+    p = Product(product_code=product_code, customer=company, production_date=production_date)
+    p.save()
+    return HttpResponse("Saving Product")
 
 def constructCalendar():
     today = date.today()

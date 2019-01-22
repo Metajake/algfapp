@@ -18,29 +18,41 @@ h4
       height:100%
     .cell
       position:relative
-      padding:5px 3px
+      padding:0px 3px
       display:flex
       flex-wrap:wrap
       border-bottom:1px solid #444
       & > div
         text-align:center
       &:hover
-        .ui-delete
+        > [class^= 'ui-']
           opacity:1
+      & .column:first-child
+        border-right:1px solid #444
       .column
+        padding:5px 0
         width:50%
       .note
         padding-top:5px
         color:red
         flex-grow:1
         flex-basis:100%
-      .ui-delete
+      & > [class^= 'ui-']
+        cursor: pointer
+        background-color:white
         position:absolute
-        right:0
-        opacity:0
+        opacity:0.2
         transition: opacity .2s ease-in-out
+      .ui-delete
+        right:0
+        top:0
+      .ui-duplicate
+        right:-1px
+        bottom:0
       .update-form
-        display:none
+        // display:none
+        input[type='text']
+          width:95%
         label
           display:none
     h4
