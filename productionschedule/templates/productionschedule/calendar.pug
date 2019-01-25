@@ -7,7 +7,8 @@ html
     link(rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection")
     script(defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous")
   body
-    h3 ProductionSchedule
+    h3.inline ProductionSchedule
+    a(href="../admin/") Admin
 
     #calendar
       | {% for week in weeks %}
@@ -24,6 +25,9 @@ html
                   | {{ formUpdate }}
                 p {{product.product_code}}
               .column.customer
+                form.update-form(method="post")
+                  | {% csrf_token %}
+                  | {{ formUpdate }}
                 p {{product.customer}}
               | {% if product.note %}
               .note
@@ -32,7 +36,9 @@ html
               .ui-delete
                 i.fas.fa-times
               .ui-duplicate
-                i.fas.fa-arrow-down
+                i.fas.fa-plus
+              //- .ui-add-note
+              //-   i.fas.fa-asterisk
             | {% endfor %}
         | {% endfor %}
       | {% endfor %}

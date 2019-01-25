@@ -7,7 +7,7 @@
     <script defer="defer" src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous"></script>
   </head>
   <body>
-    <h3>ProductionSchedule</h3>
+    <h3 class="inline">ProductionSchedule</h3><a href="../admin/">Admin</a>
     <div id="calendar">{% for week in weeks %}
       <div class="week">{% for rangeEntry in week.range %}
         <div class="day">
@@ -22,13 +22,17 @@
                 <p>{{product.product_code}}</p>
               </div>
               <div class="column customer">
+                <form class="update-form" method="post">
+                  {% csrf_token %}
+                  {{ formUpdate }}
+                </form>
                 <p>{{product.customer}}</p>
               </div>{% if product.note %}
               <div class="note">
                 <p>{{product.note}}</p>
               </div>{% endif %}
               <div class="ui-delete"><i class="fas fa-times"></i></div>
-              <div class="ui-duplicate"><i class="fas fa-arrow-down"></i></div>
+              <div class="ui-duplicate"><i class="fas fa-plus"></i></div>
             </div>{% endfor %}
           </div>
         </div>{% endfor %}

@@ -8,3 +8,6 @@ class Product(models.Model):
     note = models.CharField(max_length = 100, blank=True)
     def __str__(self):
         return self.product_code+self.customer
+
+class CalendarDay(models.Model):
+    item_order = models.TextField()

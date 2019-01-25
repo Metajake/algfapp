@@ -3,12 +3,13 @@ from django.http import HttpResponse
 from django.utils import timezone
 
 from datetime import date, timedelta
+import json
 
 from .models import Product
 from .forms import ProductForm
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return render(request, 'productionschedule/index.html')
 
 def calendar(request):
     if request.method == "GET":
@@ -32,7 +33,15 @@ def saveObject(request, production_date, product_code, company):
         company = ''
     p = Product(product_code=product_code, customer=company, production_date=production_date)
     p.save()
-    return HttpResponse("Saving Product")
+    return HttpResponse(p.id)
+
+def updateObject(request, id, production_date, product_code, company):
+    if product_code == '_':
+        product_code = ''
+    if company == '_':
+        company = ''
+    Product.objects.filter(pk=id).update(product_code=product_code, customer=company, production_date=production_date)
+    return HttpResponse(str(id) + " updated")
 
 def constructCalendar():
     today = date.today()
