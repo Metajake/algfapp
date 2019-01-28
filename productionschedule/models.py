@@ -10,4 +10,7 @@ class Product(models.Model):
         return self.product_code+self.customer
 
 class CalendarDay(models.Model):
-    item_order = models.TextField()
+    production_date = models.DateField()
+    item_order = models.TextField(blank=True)
+    def __str__(self):
+        return str(self.production_date)

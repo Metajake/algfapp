@@ -20,24 +20,25 @@ $('.ui-duplicate').click(function(){
 currentEditValue = '';
 
 $(".column p").click(function(){
-  currentEditValue = $(this).text();
-  thisForm = $(this).parent().find('form');
+  var currentEditValue = $(this).text();
+  var thisForm = $(this).parent().find('form');
   $(this).css('display', 'none');
   thisForm.css('display', 'block');
   thisForm.find('input[type="text"]').val(currentEditValue).focus().blur(function(){
-    updateValue = $(this).val();
+    var updateValue = $(this).val();
     flipBackToParagraph(this, updateValue);
-    id = thisForm.closest('.cell').attr('id');
-    productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
-    companyToSave = thisForm.closest('.cell').find('.customer p').text();
-    dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
-    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave);
+    var id = thisForm.closest('.cell').attr('id');
+    var productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
+    var companyToSave = thisForm.closest('.cell').find('.customer p').text();
+    var dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
+    var order = constructDayItemOrder(this);
+    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
   });
 });
 
 
 $(document).keyup(function(e) {
-  if (e.keyCode === 27){
+  if (e.keyCode === 27){ //ESCAPE KEY
       if($('.update-form').find('input').is(':focus')){
           cancelEdit();
       }
@@ -46,18 +47,22 @@ $(document).keyup(function(e) {
 
 $('.update-form').submit(function(e){
   e.preventDefault();
-  updateValue = $(this).find('input[type="text"]').val();
+  var updateValue = $(this).find('input[type="text"]').val();
+  $(this).find('input[type="text"]').off('blur');
   flipBackToParagraph(this, updateValue);
-  id = thisForm.closest('.cell').attr('id');
-  productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
-  companyToSave = thisForm.closest('.cell').find('.customer p').text();
-  dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
-  ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave);
+  var thisForm = $(this).parent().find('form');
+  var id = $(this).parent().find('form').closest('.cell').attr('id');
+  var productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
+  var companyToSave = thisForm.closest('.cell').find('.customer p').text();
+  var dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
+  var order = constructDayItemOrder(this);
+  ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
 })
 
 
 function cancelEdit(){
-  closestForm = $(document.activeElement).closest('.update-form');
+  var closestForm = $(document.activeElement).closest('.update-form');
+  closestForm.find('input[type="text"]').off('blur');
   closestForm.find('input[type="text"]').val('');
   closestForm.css('display','none');
   $(document.activeElement).closest('.column').find('p').css('display', 'block');
@@ -69,27 +74,35 @@ function flipBackToParagraph(element, newValue){
   $(element).closest('.column').find('p').css('display', 'block');
 }
 
+function constructDayItemOrder(dayToOrder){
+  var itemListForDay = $(dayToOrder).closest('.sortable').find('.cell');
+  var idList = [];
+  itemListForDay.each(function(){
+    idList.push($(this).attr('id'));
+  })
+  return idList.toString()
+}
+
 function ajaxSaveNew(code, company, date, newCell){
   if(code==''){code="_"}
   if(company==''){company="_"}
   $.ajax({
     url: "/save/" + date + "/" + code + "/" + company,
     success: function(response){
-      console.log(response)
-      if(newCell){
-        newCell.attr('id', response)
-      }
+      // console.log(response)
+      newCell.attr('id', response)
     },
     error: function(data){
       console.log("Error saving object.")
     }
   });
 }
-function ajaxUpdate(id, code, company, date){
+
+function ajaxUpdate(id, code, company, date, order){
   if(code==''){code="_"}
   if(company==''){company="_"}
   $.ajax({
-    url: "/update/" + id + "/" + date + "/" + code + "/" + company,
+    url: "/update/" + id + "/" + date + "/" + code + "/" + company + "/" + order,
     success: function(response){
       console.log(response)
     },

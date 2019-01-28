@@ -2,10 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils import timezone
 
-from datetime import date, timedelta
-import json
+from datetime import date, timedelta, datetime
 
-from .models import Product
+from .models import Product, CalendarDay
 from .forms import ProductForm
 
 def index(request):
@@ -35,13 +34,15 @@ def saveObject(request, production_date, product_code, company):
     p.save()
     return HttpResponse(p.id)
 
-def updateObject(request, id, production_date, product_code, company):
+def updateObject(request, id, production_date, product_code, company, order):
     if product_code == '_':
         product_code = ''
     if company == '_':
         company = ''
     Product.objects.filter(pk=id).update(product_code=product_code, customer=company, production_date=production_date)
-    return HttpResponse(str(id) + " updated")
+    c = CalendarDay.objects.filter(production_date = datetime.strptime(production_date, "%Y-%m-%d"))
+    c.update(item_order = order)
+    return HttpResponse("updated")
 
 def constructCalendar():
     today = date.today()
@@ -61,7 +62,18 @@ def constructWeek(day):
     for single_date in daterange(toReturn['weekStart'], toReturn['weekEnd']):
         rangeEntry = {}
         rangeEntry['date'] = single_date.strftime("%Y-%m-%d")
-        rangeEntry['products'] = Product.objects.filter(production_date = rangeEntry['date'])
+        rangeEntry['products'] = []
+        c = CalendarDay.objects.filter(production_date = rangeEntry['date'])
+        if c.count() == 0:
+            newC = CalendarDay(production_date = rangeEntry['date'])
+            newC.save()
+        else:
+            itemOrder = c[0].item_order.split(",")
+            for item in itemOrder:
+                newItem = item.strip()
+                if len(newItem) != 0:
+                    rangeEntry['products'].append( Product.objects.filter(pk=int(newItem))[0] )
+        # rangeEntry['products'] = Product.objects.filter(production_date = rangeEntry['date'])
         toReturn['range'].append(rangeEntry)
 
     toReturn['products'] = []
