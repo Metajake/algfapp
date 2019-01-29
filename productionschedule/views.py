@@ -46,6 +46,11 @@ def updateObject(request, id, production_date, product_code, company, order):
     c.update(item_order = order)
     return HttpResponse("updated")
 
+def updateScheduleDay(request, production_date, order):
+    c = CalendarDay.objects.filter(production_date = datetime.strptime(production_date, "%Y-%m-%d"))
+    c.update(item_order = order)
+    return HttpResponse("updated")
+
 def constructCalendar():
     today = date.today()
     weeks = [

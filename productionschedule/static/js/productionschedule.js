@@ -99,8 +99,8 @@ function ajaxSaveNew(code, company, date, newCell){
   $.ajax({
     url: "/save/" + date + "/" + code + "/" + company,
     success: function(response){
-      // console.log(response)
       newCell.attr('id', response)
+      updateAjaxScheduleOrder(date, constructDayItemOrder($(newCell).parent()) )
     },
     error: function(data){
       console.log("Error saving object.")
@@ -125,6 +125,18 @@ function ajaxUpdate(id, code, company, date, order){
 function ajaxDelete(id, date, order){
   $.ajax({
     url: "/delete/" + id + "/" + date + "/" + order,
+    success: function(response){
+      console.log(response)
+    },
+    error: function(data){
+      console.log("Errorrr")
+    }
+  });
+}
+
+function updateAjaxScheduleOrder(date, order){
+  $.ajax({
+    url: "/updateScheduleDay/" + date + "/" + order,
     success: function(response){
       console.log(response)
     },
