@@ -4,14 +4,26 @@ $('.cell').draggable({
   helper: 'clone',
   //delay:350,
   connectToSortable: '.sortable',
+  stop: handleDragStop,
 });
 
+function handleDragStop(){
+  var cellToDrop = this;
+  $('.cell').on('mouseenter', function() {
+    $('.cell').off('mouseenter');
+    $(cellToDrop).insertBefore(this);
+    var order = constructDayItemOrder(this);
+    var dateToSave = $(cellToDrop).parent().parent().find('.production-date').text();
+    updateAjaxScheduleOrder(dateToSave, order)
+  });
+}
+//TURN TO VARSSsssssssssssssss VARSSsssssssssssssssVARSSsssssssssssssssVARSSsssssssssssssss
 $('.ui-duplicate').click(function(){
-  newCell = $(this).closest('.cell').clone(true, true);
+  var newCell = $(this).closest('.cell').clone(true, true);
   newCell.insertAfter($(this).closest('.cell'));
-  productCodeToSave = $(this).parent().find('.product-code p').text();
-  companyToSave = $(this).parent().find('.customer p').text();
-  dateToSave = $(this).parent().parent().parent().find('.production-date').text();
+  var productCodeToSave = $(this).parent().find('.product-code p').text();
+  var companyToSave = $(this).parent().find('.customer p').text();
+  var dateToSave = $(this).parent().parent().parent().find('.production-date').text();
   if(productCodeToSave==''){productCodeToSave="_"}
   if(companyToSave==''){companyToSave="_"}
   ajaxSaveNew(productCodeToSave, companyToSave, dateToSave, newCell)
