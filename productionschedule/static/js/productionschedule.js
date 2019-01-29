@@ -17,6 +17,15 @@ $('.ui-duplicate').click(function(){
   ajaxSaveNew(productCodeToSave, companyToSave, dateToSave, newCell)
 })
 
+$('.ui-delete').click(function(){
+  var idToDelete = parseInt( $(this).parent().attr('id') );
+  var productionDate = $(this).parent().parent().parent().find('.production-date').text();
+  var orderFrom = $(this).parent().parent();
+  $(this).parent().remove();
+  var order = constructDayItemOrder(orderFrom);
+  ajaxDelete(idToDelete, productionDate, order)
+});
+
 currentEditValue = '';
 
 $(".column p").click(function(){
@@ -31,6 +40,7 @@ $(".column p").click(function(){
     var productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
     var companyToSave = thisForm.closest('.cell').find('.customer p').text();
     var dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
+    console.log(this);
     var order = constructDayItemOrder(this);
     ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
   });
@@ -108,6 +118,18 @@ function ajaxUpdate(id, code, company, date, order){
     },
     error: function(data){
       console.log("Error updating object.")
+    }
+  });
+}
+
+function ajaxDelete(id, date, order){
+  $.ajax({
+    url: "/delete/" + id + "/" + date + "/" + order,
+    success: function(response){
+      console.log(response)
+    },
+    error: function(data){
+      console.log("Errorrr")
     }
   });
 }

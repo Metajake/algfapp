@@ -45,17 +45,3 @@ html
       script(type="text/javascript" src="{% static 'js/jquery.js'%}")
       script(type="text/javascript" src="{% static 'js/jqueryui.js'%}")
       script(type="text/javascript" src="{% static 'js/productionschedule.js'%}")
-      script.
-        $('.ui-delete').click(function(){
-          idToDelete = parseInt( $(this).parent().attr('id') );
-          $(this).parent().remove();
-          $.ajax({
-            url: "/delete/" + idToDelete,
-            success: function(response){
-              console.log(response)
-            },
-            error: function(data){
-              console.log("Errorrr")
-            }
-          });
-        });

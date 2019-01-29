@@ -21,8 +21,10 @@ def calendar(request):
         #Post Data to DB
     return render(request, 'productionschedule/calendar.html', context)
 
-def deleteObject(request, product_id):
+def deleteObject(request, product_id, production_date, order):
     Product.objects.get(pk=product_id).delete()
+    c = CalendarDay.objects.filter(production_date = datetime.strptime(production_date, "%Y-%m-%d"))
+    c.update(item_order = order)
     return HttpResponse("Deleting: "+str(product_id))
 
 def saveObject(request, production_date, product_code, company):
