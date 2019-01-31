@@ -4,8 +4,15 @@ $('.cell').draggable({
   helper: 'clone',
   //delay:350,
   connectToSortable: '.sortable',
-  stop: handleDragStop,
+  // stop: handleDragStop,
 });
+
+$('.cell').droppable({
+  drop:handleCellDrop,
+})
+$('.day').droppable({
+  drop: handleDayDrop,
+})
 
 $('.ui-duplicate').click(function(){
   var newCell = $(this).closest('.cell').clone(true, true);
@@ -98,6 +105,35 @@ function handleDragStop(){
   });
 }
 
+function handleCellDrop(event,ui){
+  var cellToDrop = $(ui.draggable);
+  $('.day').droppable("disable");
+  var oldDateToSave = cellToDrop.parent().parent().find('.production-date').text();
+  var oldDay = cellToDrop.parent();
+  var cellToDropOn = $(event.target);
+  if(cellToDropOn){
+    cellToDrop.insertBefore(cellToDropOn)
+  }
+  var dateToSave = cellToDropOn.parent().parent().find('.production-date').text();
+  var order = constructDayItemOrder(cellToDropOn.parent());
+  updateAjaxScheduleOrder(dateToSave, order)
+  var oldDayReordered = constructDayItemOrder(oldDay);
+  updateAjaxScheduleOrder(oldDateToSave, oldDayReordered)
+}
+
+function handleDayDrop(event, ui){
+  var cellToDrop = $(ui.draggable)
+  var targetDay = $(event.target);
+  var targetDayExistingCells = targetDay.find('.cell').not('.clonable');
+  // console.log(targetDayExistingCells);
+  // var itemOrder = [];
+  targetDay.find('.sortable').append(cellToDrop)
+  // if(targetDayExistingCells.length == 0){
+  //   console.log("no cells")
+  // }
+  // console.log(targetDay.find('.cell'));
+}
+
 function cancelEdit(){
   var closestForm = $(document.activeElement).closest('.update-form');
   closestForm.find('input[type="text"]').off('blur');
@@ -113,7 +149,7 @@ function flipBackToParagraph(element, newValue){
 }
 
 function constructDayItemOrder(dayToOrder){
-  var itemListForDay = $(dayToOrder).closest('.sortable').find('.cell');
+  var itemListForDay = $(dayToOrder).closest('.sortable').find('.cell').not('.clonable');
   var idList = [];
   itemListForDay.each(function(){
     idList.push($(this).attr('id'));
