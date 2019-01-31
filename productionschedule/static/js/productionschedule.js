@@ -72,14 +72,18 @@ $('.update-form').submit(function(e){
 
 $('.add-cell').click(function(){
   var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
+  // console.log(cellToClone.hasClass('clonable'))
   var newCell = cellToClone.clone(true, true);
+  if(newCell.hasClass('clonable')){
+    newCell.removeClass('clonable');
+    newCell.find('.note').css('display', 'none')
+  }
   newCell.find('.product-code p').html("&nbsp;");
   newCell.find('.customer p').html("&nbsp;");
   newCell.insertAfter(cellToClone);
   var productCodeToSave = newCell.find('.product-code p').text();
   var companyToSave = newCell.find('.customer p').text();
   var dateToSave = $(this).parent().find('.production-date').text();
-  console.log(companyToSave);
   ajaxSaveNew(productCodeToSave, companyToSave, dateToSave, newCell)
 })
 

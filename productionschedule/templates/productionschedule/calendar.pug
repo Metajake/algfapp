@@ -17,6 +17,25 @@ html
         .day
           h4.align-center.production-date {{rangeEntry.date}}
           .sortable
+            .cell.clonable
+              .column.product-code
+                form.update-form(method="post")
+                  | {% csrf_token %}
+                  | {{ formUpdate }}
+                p &nbsp;
+              .column.customer
+                form.update-form(method="post")
+                  | {% csrf_token %}
+                  | {{ formUpdate }}
+                p &nbsp;
+              .note
+                p &nbsp;
+              .ui-delete
+                i.fas.fa-times
+              .ui-duplicate
+                i.fas.fa-plus
+              //- .ui-add-note
+              //-   i.fas.fa-asterisk
             | {% for product in rangeEntry.products %}
             .cell(id=" {{ product.id }} ")
               .column.product-code
