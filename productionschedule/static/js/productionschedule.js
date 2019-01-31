@@ -7,17 +7,6 @@ $('.cell').draggable({
   stop: handleDragStop,
 });
 
-function handleDragStop(){
-  var cellToDrop = this;
-  $('.cell').on('mouseenter', function() {
-    $('.cell').off('mouseenter');
-    $(cellToDrop).insertBefore(this);
-    var order = constructDayItemOrder(this);
-    var dateToSave = $(cellToDrop).parent().parent().find('.production-date').text();
-    updateAjaxScheduleOrder(dateToSave, order)
-  });
-}
-//TURN TO VARSSsssssssssssssss VARSSsssssssssssssssVARSSsssssssssssssssVARSSsssssssssssssss
 $('.ui-duplicate').click(function(){
   var newCell = $(this).closest('.cell').clone(true, true);
   newCell.insertAfter($(this).closest('.cell'));
@@ -38,10 +27,10 @@ $('.ui-delete').click(function(){
   ajaxDelete(idToDelete, productionDate, order)
 });
 
-currentEditValue = '';
+var currentEditValue = '';
 
 $(".column p").click(function(){
-  var currentEditValue = $(this).text();
+  currentEditValue = $(this).text();
   var thisForm = $(this).parent().find('form');
   $(this).css('display', 'none');
   thisForm.css('display', 'block');
@@ -81,6 +70,29 @@ $('.update-form').submit(function(e){
   ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
 })
 
+$('.add-cell').click(function(){
+  var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
+  var newCell = cellToClone.clone(true, true);
+  newCell.find('.product-code p').html("&nbsp;");
+  newCell.find('.customer p').html("&nbsp;");
+  newCell.insertAfter(cellToClone);
+  var productCodeToSave = newCell.find('.product-code p').text();
+  var companyToSave = newCell.find('.customer p').text();
+  var dateToSave = $(this).parent().find('.production-date').text();
+  console.log(companyToSave);
+  ajaxSaveNew(productCodeToSave, companyToSave, dateToSave, newCell)
+})
+
+function handleDragStop(){
+  var cellToDrop = this;
+  $('.cell').on('mouseenter', function() {
+    $('.cell').off('mouseenter');
+    $(cellToDrop).insertBefore(this);
+    var order = constructDayItemOrder(this);
+    var dateToSave = $(cellToDrop).parent().parent().find('.production-date').text();
+    updateAjaxScheduleOrder(dateToSave, order)
+  });
+}
 
 function cancelEdit(){
   var closestForm = $(document.activeElement).closest('.update-form');
