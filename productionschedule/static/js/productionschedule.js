@@ -35,25 +35,48 @@ $('.ui-delete').click(function(){
   ajaxDelete(idToDelete, productionDate, order)
 });
 
+$('.ui-add-note').click(function(){
+  var thisNote = $(this).parent().find('.note');
+  console.log($(this).parent().find('.note'))
+  if(thisNote.hasClass('visible')){
+    console.log('has note')
+  }else{
+    console.log('does not have note')
+    thisNote.addClass('visible')
+  }
+})
+
+$(".note p").click(noteClickEvent);
+
 var currentEditValue = '';
 
 $(".column p").click(columnClickEvent);
 
-function columnClickEvent(){
-  currentEditValue = $(this).text();
-  var thisForm = $(this).parent().find('form');
-  $(this).css('display', 'none');
-  thisForm.css('display', 'block');
-  thisForm.find('input[type="text"]').val(currentEditValue).focus().blur(function(){
+function columnClickEvent(ui){
+  var editValues = toggleParagraphToForm(ui.target);
+  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus().blur(function(){
     var updateValue = $(this).val();
     flipBackToParagraph(this, updateValue);
-    var id = thisForm.closest('.cell').attr('id');
-    var productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
-    var companyToSave = thisForm.closest('.cell').find('.customer p').text();
-    var dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
+    var id = editValues.thisForm.closest('.cell').attr('id');
+    var productCodeToSave = editValues.thisForm.closest('.cell').find('.product-code p').text();
+    var companyToSave = editValues.thisForm.closest('.cell').find('.customer p').text();
+    var dateToSave = editValues.thisForm.parent().parent().parent().parent().find('.production-date').text();
     var order = constructDayItemOrder(this);
     ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
   });
+}
+
+function noteClickEvent(ui){
+  var editValues = toggleParagraphToForm(ui.target);
+  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus()
+}
+
+function toggleParagraphToForm(paragraphClicked){
+  var paragraphValue = $(paragraphClicked).text();
+  var thisForm = $(paragraphClicked).parent().find('form');
+  $(paragraphClicked).css('display', 'none');
+  thisForm.css('display', 'block');
+  return {paragraphValue: paragraphValue, thisForm: thisForm}
 }
 
 $(document).keyup(function(e) {
@@ -69,8 +92,8 @@ $('.update-form').submit(function(e){
   var updateValue = $(this).find('input[type="text"]').val();
   $(this).find('input[type="text"]').off('blur');
   flipBackToParagraph(this, updateValue);
-  var thisForm = $(this).parent().find('form');
-  var id = $(this).parent().find('form').closest('.cell').attr('id');
+  var thisForm = $(this);
+  var id = thisForm.closest('.cell').attr('id');
   var productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
   var companyToSave = thisForm.closest('.cell').find('.customer p').text();
   var dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
@@ -78,9 +101,24 @@ $('.update-form').submit(function(e){
   ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
 })
 
+$('.update-note').submit(function(e){
+  e.preventDefault();
+  var updateValue = $(this).find('input[type="text"]').val();
+  $(this).find('input[type="text"]').off('blur');
+  flipBackToParagraph(this, updateValue);
+  var thisForm = $(this);
+  var id = thisForm.parent().parent().attr('id');
+  ajaxUpdateNote(id, updateValue);
+})
+
+function flipBackToParagraph(element, newValue){
+  $(element).parent().find('p').text(newValue);
+  $(element).css('display', 'none');
+  $(element).parent().find('p').css('display', 'block');
+}
+
 $('.add-cell').click(function(){
   var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
-  // console.log(cellToClone.hasClass('clonable'))
   var newCell = cellToClone.clone(true, true);
   if(newCell.hasClass('clonable')){
     newCell.removeClass('clonable');
@@ -150,12 +188,6 @@ function cancelEdit(){
   $(document.activeElement).closest('.column').find('p').css('display', 'block');
 }
 
-function flipBackToParagraph(element, newValue){
-  $(element).closest('.column').find('p').text(newValue);
-  $(element).closest('.update-form').css('display', 'none');
-  $(element).closest('.column').find('p').css('display', 'block');
-}
-
 function constructDayItemOrder(dayToOrder){
   var itemListForDay = $(dayToOrder).closest('.sortable').find('.cell').not('.clonable');
   var idList = [];
@@ -218,4 +250,18 @@ function updateAjaxScheduleOrder(date, order){
       console.log("Errorrr")
     }
   });
+}
+
+function ajaxUpdateNote(id, note){
+  console.log(note)
+  if(note == ''){note="_"}
+  $.ajax({
+    url:"/updateNote/" + id + "/" + note,
+    success: function(response){
+      console.log(response);
+    },
+    error: function(data){
+      console.log("Error Updating Note");
+    }
+  })
 }

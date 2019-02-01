@@ -22,8 +22,6 @@ h4
       border-bottom:2px solid black
     .add-cell
       padding:5px 0
-    // .sortable
-      // height:100%
     .cell
       position:relative
       display:flex
@@ -45,11 +43,14 @@ h4
         p
           height:100%
       .note
+        display:none
         padding:5px 0
         border-top:1px solid #999
         color:red
         flex-grow:1
         flex-basis:100%
+        &.visible
+          display:block
       & > [class^= 'ui-']
         cursor: pointer
         background-color:white
@@ -57,17 +58,17 @@ h4
         opacity:0.2
         transition: opacity .2s ease-in-out
         svg
-          width:.5em
+          width:.6em
       .ui-delete
         right:0
         top:0
       .ui-duplicate
-        right:-1px
-        bottom:0
+        right:0px
+        top: 13px
       .ui-add-note
-        bottom:0
+        top:13px
         left:50%
-      .update-form
+      .update-form, .update-note
         display:none
         input[type='text']
           width:95%

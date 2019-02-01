@@ -55,6 +55,13 @@ def updateScheduleDay(request, production_date, order):
     c.update(item_order = order)
     return HttpResponse("updated")
 
+def updateNote(request, id, note):
+    if note == "_":
+        note = ""
+    p = Product.objects.filter(pk = id);
+    p.update(note = note)
+    return HttpResponse("Note Updated")
+
 def constructCalendar():
     today = date.today()
     weeks = [

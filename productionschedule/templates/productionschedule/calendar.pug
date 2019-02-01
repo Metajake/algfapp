@@ -49,15 +49,28 @@ html
                   | {{ formUpdate }}
                 p {{product.customer}}
               | {% if product.note %}
-              .note
+              .note.visible
+                form.update-note(method="post")
+                  | {% csrf_token %}
+                  | {{ formUpdate }}
                 p {{product.note}}
+              | {% else %}
+              .note
+                form.update-note(method="post")
+                  | {% csrf_token %}
+                  | {{ formUpdate }}
+                p &nbsp;
               | {% endif %}
               .ui-delete
                 i.fas.fa-times
               .ui-duplicate
                 i.fas.fa-plus
-              //- .ui-add-note
-              //-   i.fas.fa-asterisk
+              .ui-add-note
+                | {% if product.note %}
+                i.fas.fa-chevron-up
+                | {% else %}
+                i.fas.fa-chevron-down
+                | {% endif %}
             | {% endfor %}
           .add-cell.align-center
             i.fas.fa-plus
