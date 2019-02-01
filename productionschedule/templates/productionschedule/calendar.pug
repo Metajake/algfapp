@@ -54,23 +54,28 @@ html
                   | {% csrf_token %}
                   | {{ formUpdate }}
                 p {{product.note}}
+                .remove-note
+                  i.fas.fa-times
               | {% else %}
               .note
                 form.update-note(method="post")
                   | {% csrf_token %}
                   | {{ formUpdate }}
                 p &nbsp;
+                .remove-note
+                  i.fas.fa-times
               | {% endif %}
               .ui-delete
                 i.fas.fa-times
               .ui-duplicate
                 i.fas.fa-plus
+              | {% if product.note %}
               .ui-add-note
-                | {% if product.note %}
-                i.fas.fa-chevron-up
-                | {% else %}
                 i.fas.fa-chevron-down
-                | {% endif %}
+              | {% else %}
+              .ui-add-note.visible
+                i.fas.fa-chevron-down
+              | {% endif %}
             | {% endfor %}
           .add-cell.align-center
             i.fas.fa-plus

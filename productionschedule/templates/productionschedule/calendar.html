@@ -55,6 +55,7 @@
                   {{ formUpdate }}
                 </form>
                 <p>{{product.note}}</p>
+                <div class="remove-note"><i class="fas fa-times"></i></div>
               </div>{% else %}
               <div class="note">
                 <form class="update-note" method="post">
@@ -62,10 +63,12 @@
                   {{ formUpdate }}
                 </form>
                 <p>&nbsp;</p>
+                <div class="remove-note"><i class="fas fa-times"></i></div>
               </div>{% endif %}
               <div class="ui-delete"><i class="fas fa-times"></i></div>
-              <div class="ui-duplicate"><i class="fas fa-plus"></i></div>
-              <div class="ui-add-note">{% if product.note %}<i class="fas fa-chevron-up"></i>{% else %}<i class="fas fa-chevron-down"></i>{% endif %}</div>
+              <div class="ui-duplicate"><i class="fas fa-plus"></i></div>{% if product.note %}
+              <div class="ui-add-note"><i class="fas fa-chevron-down"></i></div>{% else %}
+              <div class="ui-add-note visible"><i class="fas fa-chevron-down"></i></div>{% endif %}
             </div>{% endfor %}
           </div>
           <div class="add-cell align-center"><i class="fas fa-plus"></i></div>

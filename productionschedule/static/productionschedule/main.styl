@@ -30,8 +30,11 @@ h4
       & > div
         text-align:center
       &:hover
+        cursor:text
         border:1px solid rgba(0,0,255,0.5)
         > [class ^= 'ui-']
+          opacity:1
+        .note .remove-note
           opacity:1
       & .column:first-child
         border-right:1px solid #999
@@ -51,6 +54,16 @@ h4
         flex-basis:100%
         &.visible
           display:block
+        .remove-note
+          position:absolute
+          right:0
+          bottom:0
+          opacity:0.2
+          transition: opacity .2s ease-in-out
+          svg
+            width:.6em
+          &:hover
+            cursor: pointer
       & > [class^= 'ui-']
         cursor: pointer
         background-color:white
@@ -66,11 +79,14 @@ h4
         right:0px
         top: 13px
       .ui-add-note
+        display:none
         top:13px
         left:50%
+        &.visible
+          display:inline
       .update-form, .update-note
         display:none
         input[type='text']
-          width:95%
+          width:91%
         label
           display:none

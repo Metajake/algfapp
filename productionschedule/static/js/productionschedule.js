@@ -35,28 +35,39 @@ $('.ui-delete').click(function(){
   ajaxDelete(idToDelete, productionDate, order)
 });
 
-$('.ui-add-note').click(function(){
+$('.ui-add-note').click(function(ui){
   var thisNote = $(this).parent().find('.note');
-  console.log($(this).parent().find('.note'))
-  if(thisNote.hasClass('visible')){
-    console.log('has note')
-  }else{
-    console.log('does not have note')
-    thisNote.addClass('visible')
-  }
+  thisNote.addClass('visible');
+  $(this).find('svg').css('display','none');
+  toggleParagraphToForm(thisNote.find('p'));
+  thisNote.find('input[type="text"]').focus().blur(function(){
+    var updateValue = $(this).val();
+    if(updateValue==""){updateValue="&nbsp;"}
+    thisNote.find('form').css('display', 'none');
+    thisNote.find('p').html(updateValue);
+    thisNote.find('p').css('display', 'block');
+    var id = thisNote.parent().attr('id');
+    ajaxUpdateNote(id, updateValue);
+  });
 })
 
-$(".note p").click(noteClickEvent);
-
-var currentEditValue = '';
+$('.remove-note').click(function(){
+  var thisNote = $(this).parent();
+  thisNote.removeClass('visible');
+  thisNote.parent().find('.ui-add-note').addClass('visible')
+  var id = thisNote.parent().attr('id');
+  thisNote.parent().find('.ui-add-note').find('svg').css('display','inline-block');
+  ajaxUpdateNote(id, '');
+})
 
 $(".column p").click(columnClickEvent);
+$(".note p").click(noteClickEvent);
 
 function columnClickEvent(ui){
   var editValues = toggleParagraphToForm(ui.target);
   editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus().blur(function(){
     var updateValue = $(this).val();
-    flipBackToParagraph(this, updateValue);
+    flipBackToParagraph(editValues.thisForm, updateValue);
     var id = editValues.thisForm.closest('.cell').attr('id');
     var productCodeToSave = editValues.thisForm.closest('.cell').find('.product-code p').text();
     var companyToSave = editValues.thisForm.closest('.cell').find('.customer p').text();
@@ -82,7 +93,9 @@ function toggleParagraphToForm(paragraphClicked){
 $(document).keyup(function(e) {
   if (e.keyCode === 27){ //ESCAPE KEY
       if($('.update-form').find('input').is(':focus')){
-          cancelEdit();
+        cancelEdit();
+      }else if($('.update-note').find('input').is(':focus')){
+        cancelNoteEdit()
       }
   }
 });
@@ -112,12 +125,14 @@ $('.update-note').submit(function(e){
 })
 
 function flipBackToParagraph(element, newValue){
-  $(element).parent().find('p').text(newValue);
   $(element).css('display', 'none');
+  $(element).parent().find('p').text(newValue);
+  console.log($(element).parent().find('p'));
   $(element).parent().find('p').css('display', 'block');
 }
 
 $('.add-cell').click(function(){
+  console.log("Add")
   var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
   var newCell = cellToClone.clone(true, true);
   if(newCell.hasClass('clonable')){
@@ -188,6 +203,13 @@ function cancelEdit(){
   $(document.activeElement).closest('.column').find('p').css('display', 'block');
 }
 
+function cancelNoteEdit(){
+  var closestForm = $(document.activeElement).closest('.update-note');
+  closestForm.find('input[type="text"]').off('blur').val('');
+  closestForm.css('display','none');
+  closestForm.parent().find('p').css('display', 'block');
+}
+
 function constructDayItemOrder(dayToOrder){
   var itemListForDay = $(dayToOrder).closest('.sortable').find('.cell').not('.clonable');
   var idList = [];
@@ -253,7 +275,6 @@ function updateAjaxScheduleOrder(date, order){
 }
 
 function ajaxUpdateNote(id, note){
-  console.log(note)
   if(note == ''){note="_"}
   $.ajax({
     url:"/updateNote/" + id + "/" + note,
