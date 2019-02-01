@@ -22,6 +22,8 @@ def calendar(request):
     return render(request, 'productionschedule/calendar.html', context)
 
 def deleteObject(request, product_id, production_date, order):
+    if order == "_":
+        order = ""
     Product.objects.get(pk=product_id).delete()
     c = CalendarDay.objects.filter(production_date = datetime.strptime(production_date, "%Y-%m-%d"))
     c.update(item_order = order)
@@ -47,6 +49,8 @@ def updateObject(request, id, production_date, product_code, company, order):
     return HttpResponse("updated")
 
 def updateScheduleDay(request, production_date, order):
+    if order == "_":
+        order = ""
     c = CalendarDay.objects.filter(production_date = datetime.strptime(production_date, "%Y-%m-%d"))
     c.update(item_order = order)
     return HttpResponse("updated")

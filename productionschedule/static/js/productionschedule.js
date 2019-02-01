@@ -1,10 +1,11 @@
 $('.cell').draggable({
   cursor:'move',
-  //snap: '.sortable',
+  // snap: '.day',
   helper: 'clone',
-  //delay:350,
+  delay:350,
   connectToSortable: '.sortable',
-  // stop: handleDragStop,
+  start: handleDragStart,
+  stop: handleDragStop,
 });
 
 $('.cell').droppable({
@@ -36,7 +37,9 @@ $('.ui-delete').click(function(){
 
 var currentEditValue = '';
 
-$(".column p").click(function(){
+$(".column p").click(columnClickEvent);
+
+function columnClickEvent(){
   currentEditValue = $(this).text();
   var thisForm = $(this).parent().find('form');
   $(this).css('display', 'none');
@@ -48,12 +51,10 @@ $(".column p").click(function(){
     var productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
     var companyToSave = thisForm.closest('.cell').find('.customer p').text();
     var dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
-    console.log(this);
     var order = constructDayItemOrder(this);
     ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
   });
-});
-
+}
 
 $(document).keyup(function(e) {
   if (e.keyCode === 27){ //ESCAPE KEY
@@ -95,14 +96,9 @@ $('.add-cell').click(function(){
 })
 
 function handleDragStop(){
-  var cellToDrop = this;
-  $('.cell').on('mouseenter', function() {
-    $('.cell').off('mouseenter');
-    $(cellToDrop).insertBefore(this);
-    var order = constructDayItemOrder(this);
-    var dateToSave = $(cellToDrop).parent().parent().find('.production-date').text();
-    updateAjaxScheduleOrder(dateToSave, order)
-  });
+  setTimeout(function(){
+    $(".column p").click(columnClickEvent);
+  }, 300)
 }
 
 function handleCellDrop(event,ui){
@@ -118,20 +114,32 @@ function handleCellDrop(event,ui){
   var order = constructDayItemOrder(cellToDropOn.parent());
   updateAjaxScheduleOrder(dateToSave, order)
   var oldDayReordered = constructDayItemOrder(oldDay);
-  updateAjaxScheduleOrder(oldDateToSave, oldDayReordered)
+  updateAjaxScheduleOrder(oldDateToSave, oldDayReordered);
+  setTimeout(function(){
+    $('.day').droppable("enable");
+  }, 600)
+}
+
+var dayDropCellToDrop, dayDropOldDateToSave, dayDropOldDay, dayDropOldDayReordered;
+
+function handleDragStart(){
+  $('.column p').off("click");
+  dayDropCellToDrop = $(this);
+  dayDropOldDateToSave = dayDropCellToDrop.parent().parent().find('.production-date').text();
+  dayDropOldDay = dayDropCellToDrop.parent();
+  dayDropOldDayReordered = constructDayItemOrder(dayDropOldDay);
 }
 
 function handleDayDrop(event, ui){
-  var cellToDrop = $(ui.draggable)
   var targetDay = $(event.target);
-  var targetDayExistingCells = targetDay.find('.cell').not('.clonable');
-  // console.log(targetDayExistingCells);
-  // var itemOrder = [];
-  targetDay.find('.sortable').append(cellToDrop)
-  // if(targetDayExistingCells.length == 0){
-  //   console.log("no cells")
-  // }
-  // console.log(targetDay.find('.cell'));
+  targetDay.find('.sortable').append(dayDropCellToDrop)
+  var dayDropDateToSave = targetDay.find('.production-date').text();
+  if(dayDropDateToSave != dayDropOldDateToSave){
+    dayDropOldDayReordered = constructDayItemOrder(dayDropOldDay);
+    updateAjaxScheduleOrder(dayDropOldDateToSave, dayDropOldDayReordered)
+  }
+  var dayDropOrder = constructDayItemOrder(targetDay.find('.sortable'));
+  updateAjaxScheduleOrder(dayDropDateToSave, dayDropOrder)
 }
 
 function cancelEdit(){
@@ -187,6 +195,7 @@ function ajaxUpdate(id, code, company, date, order){
 }
 
 function ajaxDelete(id, date, order){
+  if (order==""){order="_"}
   $.ajax({
     url: "/delete/" + id + "/" + date + "/" + order,
     success: function(response){
@@ -199,6 +208,7 @@ function ajaxDelete(id, date, order){
 }
 
 function updateAjaxScheduleOrder(date, order){
+  if(order == ''){order="_"}
   $.ajax({
     url: "/updateScheduleDay/" + date + "/" + order,
     success: function(response){
