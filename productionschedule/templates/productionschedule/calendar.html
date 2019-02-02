@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{% static 'productionschedule/reset.css' %}" type="text/css" media="screen,projection"/>
     <link rel="stylesheet" href="{% static 'productionschedule/jqueryui.css' %}" type="text/css" media="screen,projection"/>
     <link rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection"/>
-    <script defer="defer" src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/fontawesome.js'%}"></script>
   </head>
   <body>
     <h3 class="inline">ProductionSchedule</h3><a href="../admin/">Admin</a>
@@ -33,6 +33,7 @@
               </div>
               <div class="ui-delete"><i class="fas fa-times"></i></div>
               <div class="ui-duplicate"><i class="fas fa-plus"></i></div>
+              <div class="ui-add-note visible"><i class="fas fa-chevron-down"></i></div>
             </div>{% for product in rangeEntry.products %}
             <div class="cell" id=" {{ product.id }} ">
               <div class="column product-code">

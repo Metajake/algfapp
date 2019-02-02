@@ -5,7 +5,8 @@ html
     link(rel="stylesheet" href="{% static 'productionschedule/reset.css' %}" type="text/css" media="screen,projection")
     link(rel="stylesheet" href="{% static 'productionschedule/jqueryui.css' %}" type="text/css" media="screen,projection")
     link(rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection")
-    script(defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous")
+    script(type="text/javascript" src="{% static 'js/fontawesome.js'%}")
+    //- script(defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous")
   body
     h3.inline ProductionSchedule
     a(href="../admin/") Admin
@@ -34,8 +35,8 @@ html
                 i.fas.fa-times
               .ui-duplicate
                 i.fas.fa-plus
-              //- .ui-add-note
-              //-   i.fas.fa-asterisk
+              .ui-add-note.visible
+                i.fas.fa-chevron-down
             | {% for product in rangeEntry.products %}
             .cell(id=" {{ product.id }} ")
               .column.product-code

@@ -63,33 +63,6 @@ $('.remove-note').click(function(){
 $(".column p").click(columnClickEvent);
 $(".note p").click(noteClickEvent);
 
-function columnClickEvent(ui){
-  var editValues = toggleParagraphToForm(ui.target);
-  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus().blur(function(){
-    var updateValue = $(this).val();
-    flipBackToParagraph(editValues.thisForm, updateValue);
-    var id = editValues.thisForm.closest('.cell').attr('id');
-    var productCodeToSave = editValues.thisForm.closest('.cell').find('.product-code p').text();
-    var companyToSave = editValues.thisForm.closest('.cell').find('.customer p').text();
-    var dateToSave = editValues.thisForm.parent().parent().parent().parent().find('.production-date').text();
-    var order = constructDayItemOrder(this);
-    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
-  });
-}
-
-function noteClickEvent(ui){
-  var editValues = toggleParagraphToForm(ui.target);
-  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus()
-}
-
-function toggleParagraphToForm(paragraphClicked){
-  var paragraphValue = $(paragraphClicked).text();
-  var thisForm = $(paragraphClicked).parent().find('form');
-  $(paragraphClicked).css('display', 'none');
-  thisForm.css('display', 'block');
-  return {paragraphValue: paragraphValue, thisForm: thisForm}
-}
-
 $(document).keyup(function(e) {
   if (e.keyCode === 27){ //ESCAPE KEY
       if($('.update-form').find('input').is(':focus')){
@@ -97,6 +70,21 @@ $(document).keyup(function(e) {
       }else if($('.update-note').find('input').is(':focus')){
         cancelNoteEdit()
       }
+  }
+  switch(e.which) {
+    case 37: handleLeftClick()
+    break;
+
+    case 38: //handleArrowClick("up")
+    break;
+
+    case 39: handleRightClick()
+    break;
+
+    case 40: //handleArrowClick("down")
+    break;
+
+    default: return; // exit this handler for other keys
   }
 });
 
@@ -123,6 +111,80 @@ $('.update-note').submit(function(e){
   var id = thisForm.parent().parent().attr('id');
   ajaxUpdateNote(id, updateValue);
 })
+
+var selectedColumn, selectedColumnDay;
+
+function handleRightClick(){
+  selectedColumn = $('.selected');
+  selectedColumnDay = $('.selected').parent().parent().parent();
+
+  if(selectedColumn.next('.column').length){
+    selectedColumn.next().toggleClass("selected");
+    selectedColumn.toggleClass("selected");
+    selectedColumn = $('.selected');
+  }else{
+    if(selectedColumnDay.next('.day').length){
+      var nextDayHasCells = selectedColumnDay.nextAll('.day').find('.cell').not('.clonable');
+      if(nextDayHasCells.length){
+        var firstCell = nextDayHasCells.first();
+        // var firstCell = selectedColumnDay.next('.day').find('.cell').not('.clonable').first();
+        selectedColumn.toggleClass("selected");
+        selectedColumn = firstCell.find('.column').first();
+        selectedColumn.toggleClass("selected");
+      }
+    }
+  }
+
+}
+
+function handleLeftClick(){
+  selectedColumn = $('.selected');
+  selectedColumnDay = $('.selected').parent().parent().parent();
+
+  if(selectedColumn.prev('.column').length){
+    selectedColumn.prev().toggleClass("selected");
+    selectedColumn.toggleClass("selected");
+    selectedColumn = $('.selected');
+  }else{
+    if(selectedColumnDay.prev('.day').length){
+      var prevDayHasCells = selectedColumnDay.prevAll('.day').has('.cell:not(.clonable)');
+      if(prevDayHasCells.length){
+        var firstCell = prevDayHasCells.first();
+        selectedColumn.toggleClass("selected");
+        selectedColumn = firstCell.find('.cell').not('.clonable').first().find('.column').last();
+        selectedColumn.toggleClass("selected");
+      }
+    }
+  }
+
+}
+
+function columnClickEvent(ui){
+  var editValues = toggleParagraphToForm(ui.target);
+  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus().blur(function(){
+    var updateValue = $(this).val();
+    flipBackToParagraph(editValues.thisForm, updateValue);
+    var id = editValues.thisForm.closest('.cell').attr('id');
+    var productCodeToSave = editValues.thisForm.closest('.cell').find('.product-code p').text();
+    var companyToSave = editValues.thisForm.closest('.cell').find('.customer p').text();
+    var dateToSave = editValues.thisForm.parent().parent().parent().parent().find('.production-date').text();
+    var order = constructDayItemOrder(this);
+    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
+  });
+}
+
+function noteClickEvent(ui){
+  var editValues = toggleParagraphToForm(ui.target);
+  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus()
+}
+
+function toggleParagraphToForm(paragraphClicked){
+  var paragraphValue = $(paragraphClicked).text();
+  var thisForm = $(paragraphClicked).parent().find('form');
+  $(paragraphClicked).css('display', 'none');
+  thisForm.css('display', 'block');
+  return {paragraphValue: paragraphValue, thisForm: thisForm}
+}
 
 function flipBackToParagraph(element, newValue){
   $(element).css('display', 'none');
@@ -285,4 +347,39 @@ function ajaxUpdateNote(id, note){
       console.log("Error Updating Note");
     }
   })
+}
+
+$(document).ready(function(){
+  var map = []
+
+  constructMap(map);
+
+})
+
+function constructMap(map){
+  var hasSelected = false;
+
+  var weeks = $('.week');
+
+  weeks.each(function(weekIndex, weekElement){
+    map[weekIndex] = []
+
+    var days = $(weekElement).find('.day');
+
+    days.each(function(dayIndex, dayElement){
+
+      map[weekIndex][dayIndex] = [];
+
+      var cells = $(dayElement).find('.cell').not('.clonable');
+
+      cells.each(function(rowIndex, rowElement){
+
+        if(!hasSelected){
+          $( $(rowElement).find('.column')[0] ).toggleClass('selected')
+          hasSelected = true;
+        }
+
+      });
+    });
+  });
 }

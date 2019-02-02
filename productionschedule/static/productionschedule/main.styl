@@ -31,7 +31,7 @@ h4
         text-align:center
       &:hover
         cursor:text
-        border:1px solid rgba(0,0,255,0.5)
+        outline:1px solid rgba(0,0,255,0.5)
         > [class ^= 'ui-']
           opacity:1
         .note .remove-note
@@ -43,6 +43,8 @@ h4
       .column
         padding:5px 0
         width:50%
+        &.selected
+          outline:2px solid rgba(0,0,255,0.5);
         p
           height:100%
       .note
