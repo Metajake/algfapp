@@ -64,7 +64,7 @@ $(".column p").click(columnClickEvent);
 $(".note p").click(noteClickEvent);
 
 $(document).keyup(function(e) {
-  if (e.keyCode === 27){ //ESCAPE KEY
+  if (e.keyCode === 27){ //ESCAPE
       if($('.update-form').find('input').is(':focus')){
         cancelEdit();
       }else if($('.update-note').find('input').is(':focus')){
@@ -75,7 +75,7 @@ $(document).keyup(function(e) {
     case 37: handleLeftClick()
     break;
 
-    case 38: //handleArrowClick("up")
+    case 38: handleUpClick()
     break;
 
     case 39: handleRightClick()
@@ -84,7 +84,7 @@ $(document).keyup(function(e) {
     case 40: handleDownClick()
     break;
 
-    default: return; // exit this handler for other keys
+    default: return;
   }
 });
 
@@ -169,20 +169,49 @@ function handleDownClick(){
     $( selectedColumnRow.next('.cell').find('.column')[selectedColumnIndex] ).toggleClass("selected");
     selectedColumn.toggleClass("selected");
     selectedColumn = $('.selected');
-  }else{
-    if(selectedColumnWeek.next('.week').length){
-      var selectedDayIndex = selectedColumnDay.index()
-      var nextWeekSelectedDayHasCells, firstCell;
+  }else if(selectedColumnWeek.next('.week').length){
+    var selectedDayIndex = selectedColumnDay.index()
+    var nextWeekSelectedDayHasCells, firstCell;
 
-      selectedColumnWeek.nextAll('.week').each(function(){
+    selectedColumnWeek.nextAll('.week').each(function(index, element){
+      if($(element).children('.day:eq('+selectedDayIndex+')').has('.cell:not(.clonable)').length ){
+        nextWeekSelectedDayHasCells = $(element).children('.day:eq('+selectedDayIndex+')').has('.cell:not(.clonable)');
+        return false;
+      }
+    });
+    firstCell = nextWeekSelectedDayHasCells.find('.cell:not(.clonable)').first()
+    selectedColumn.toggleClass("selected");
+    selectedColumn = firstCell.find('.column').eq(selectedColumnIndex);
+    selectedColumn.toggleClass('selected');
+  }
+
+}
+
+function handleUpClick(){
+  selectedColumn = $('.selected');
+  selectedColumnDay = $('.selected').parent().parent().parent();
+  selectedColumnRow = $('.selected').parent();
+  selectedColumnWeek = $('.selected').parent().parent().parent().parent();
+  selectedColumnIndex = selectedColumnRow.find('.selected').index();
+
+  if(selectedColumnRow.prev('.cell').length){
+    $( selectedColumnRow.prev('.cell').find('.column')[selectedColumnIndex] ).toggleClass("selected");
+    selectedColumn.toggleClass("selected");
+    selectedColumn = $('.selected');
+  }else{
+    if(selectedColumnWeek.prev('.week').length){
+      var selectedDayIndex = selectedColumnDay.index()
+      var prevWeekSelectedDayHasCells, lastCell;
+
+      selectedColumnWeek.prevAll('.week').each(function(){
         if($(this).children('.day:eq('+selectedDayIndex+')').has('.cell:not(.clonable)').length ){
-          nextWeekSelectedDayHasCells = $(this).children('.day:eq('+selectedDayIndex+')').has('.cell:not(.clonable)');
+          prevWeekSelectedDayHasCells = $(this).children('.day:eq('+selectedDayIndex+')').has('.cell:not(.clonable)');
         }
       });
-      var firstCell = nextWeekSelectedDayHasCells.find('.cell:not(.clonable)').first()
-      selectedColumn.toggleClass("selected");
-      selectedColumn = firstCell.find('.column').eq(selectedColumnIndex);
-      selectedColumn.toggleClass('selected');
+      lastCell = prevWeekSelectedDayHasCells.find('.cell:not(.clonable)').first()
+      // selectedColumn.toggleClass("selected");
+      // selectedColumn = lastCell.find('.column').eq(selectedColumnIndex);
+      // selectedColumn.toggleClass('selected');
     }
   }
 
