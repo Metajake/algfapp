@@ -125,8 +125,7 @@ $('.update-note').submit(function(e){
   var id = thisForm.parent().parent().attr('id');
   isTyping = false;
   ajaxUpdateNote(id, updateValue);
-})
-
+});
 
 var selectedColumn, selectedColumnDay, selectedColumnRow, selectedColumnIndex, selectedColumnWeek;
 
@@ -138,14 +137,12 @@ function handleRightClick(){
     selectedColumn.next().toggleClass("selected");
     selectedColumn.toggleClass("selected");
     selectedColumn = $('.selected');
-  }else if(selectedColumnDay.next('.day').length){
-    var nextDayHasCells = selectedColumnDay.nextAll('.day').find('.cell').not('.clonable');
-    if(nextDayHasCells.length){
-      var firstCell = nextDayHasCells.first();
-      selectedColumn.toggleClass("selected");
-      selectedColumn = firstCell.find('.column').first();
-      selectedColumn.toggleClass("selected");
-    }
+  }else if(selectedColumnDay.nextAll('.day:has(.cell:not(.clonable))').length){
+    var nextDayWithCells = selectedColumnDay.nextAll('.day:has(.cell:not(.clonable))');
+    var firstCell = nextDayWithCells.first().find('.cell:not(.clonable)');
+    selectedColumn.toggleClass("selected");
+    selectedColumn = firstCell.find('.column').first();
+    selectedColumn.toggleClass("selected");
   }
 }
 
