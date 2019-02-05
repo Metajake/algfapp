@@ -69,15 +69,15 @@ $(".column p").click(columnClickEvent);
 $(".note p").click(noteClickEvent);
 
 $(document).keyup(function(e) {
-  if (e.keyCode === 27){ //ESCAPE
+  if (e.which === 27){ //ESCAPE
       if($('.update-form').find('input').is(':focus')){
         cancelEdit();
       }else if($('.update-note').find('input').is(':focus')){
         cancelNoteEdit()
       }
   }
-  if (acceptedKeys.includes(e.keyCode) && !isTyping){
-    handleKeyboardInput()
+  if (acceptedKeys.includes(e.which) && !isTyping){
+    handleKeyboardInput(e)
   }
   switch(e.which) {
     case 37: handleLeftClick()
@@ -215,11 +215,14 @@ function handleUpClick(){
   }
 }
 
-function handleKeyboardInput(){
+function handleKeyboardInput(inputEvent){
+  inputCharacter = String.fromCharCode(inputEvent.which)
+  if(!inputEvent.shiftKey){inputCharacter = inputCharacter.toLowerCase()}
   isTyping = true;
   var cellToEdit = $('.selected');
   var paragraphToEdit = cellToEdit.find('p')[0];
   var editValues = toggleParagraphToForm(paragraphToEdit);
+  editValues.paragraphValue = $.trim(editValues.paragraphValue) + inputCharacter;
   convertParagraphToFocusFormValues(editValues);
 }
 
@@ -275,6 +278,9 @@ $('.add-cell').click(function(){
     newCell.removeClass('clonable');
     newCell.find('.note').css('display', 'none')
   }
+  selectedColumn.toggleClass('selected');
+  selectedColumn = newCell.find('.column').first();
+  selectedColumn.toggleClass('selected');
   newCell.find('.product-code p').html("&nbsp;");
   newCell.find('.customer p').html("&nbsp;");
   newCell.insertAfter(cellToClone);
