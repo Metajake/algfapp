@@ -1,6 +1,8 @@
+var acceptedKeys = [48,49,50,51,52,53,54,55,56,57,81,87,69,82,84,89,85,73,79,80,65,83,68,70,71,72,74,75,76,90,88,67,86,66,78,77];
+var isTyping = false;
+
 $('.cell').draggable({
   cursor:'move',
-  // snap: '.day',
   helper: 'clone',
   delay:350,
   connectToSortable: '.sortable',
@@ -16,7 +18,9 @@ $('.day').droppable({
 })
 
 $('.ui-duplicate').click(function(){
+  selectedColumn.toggleClass('selected');
   var newCell = $(this).closest('.cell').clone(true, true);
+  selectedColumn.toggleClass('selected');
   newCell.insertAfter($(this).closest('.cell'));
   var productCodeToSave = $(this).parent().find('.product-code p').text();
   var companyToSave = $(this).parent().find('.customer p').text();
@@ -47,6 +51,7 @@ $('.ui-add-note').click(function(ui){
     thisNote.find('p').html(updateValue);
     thisNote.find('p').css('display', 'block');
     var id = thisNote.parent().attr('id');
+    isTyping = false;
     ajaxUpdateNote(id, updateValue);
   });
 })
@@ -71,19 +76,18 @@ $(document).keyup(function(e) {
         cancelNoteEdit()
       }
   }
+  if (acceptedKeys.includes(e.keyCode) && !isTyping){
+    handleKeyboardInput()
+  }
   switch(e.which) {
     case 37: handleLeftClick()
     break;
-
     case 38: handleUpClick()
     break;
-
     case 39: handleRightClick()
     break;
-
     case 40: handleDownClick()
     break;
-
     default: return;
   }
 });
@@ -99,6 +103,7 @@ $('.update-form').submit(function(e){
   var companyToSave = thisForm.closest('.cell').find('.customer p').text();
   var dateToSave = thisForm.parent().parent().parent().parent().find('.production-date').text();
   var order = constructDayItemOrder(this);
+  isTyping = false;
   ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
 })
 
@@ -109,8 +114,10 @@ $('.update-note').submit(function(e){
   flipBackToParagraph(this, updateValue);
   var thisForm = $(this);
   var id = thisForm.parent().parent().attr('id');
+  isTyping = false;
   ajaxUpdateNote(id, updateValue);
 })
+
 
 var selectedColumn, selectedColumnDay, selectedColumnRow, selectedColumnIndex, selectedColumnWeek;
 
@@ -131,7 +138,6 @@ function handleRightClick(){
       selectedColumn.toggleClass("selected");
     }
   }
-
 }
 
 function handleLeftClick(){
@@ -151,7 +157,6 @@ function handleLeftClick(){
       selectedColumn.toggleClass("selected");
     }
   }
-
 }
 
 function handleDownClick(){
@@ -210,23 +215,43 @@ function handleUpClick(){
   }
 }
 
+function handleKeyboardInput(){
+  isTyping = true;
+  var cellToEdit = $('.selected');
+  var paragraphToEdit = cellToEdit.find('p')[0];
+  var editValues = toggleParagraphToForm(paragraphToEdit);
+  convertParagraphToFocusFormValues(editValues);
+}
+
 function columnClickEvent(ui){
+  selectedColumn.toggleClass("selected");
+  selectedColumn = $(ui.target).parent();
+  selectedColumn.toggleClass('selected');
+  isTyping = true;
   var editValues = toggleParagraphToForm(ui.target);
-  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus().blur(function(){
-    var updateValue = $(this).val();
-    flipBackToParagraph(editValues.thisForm, updateValue);
-    var id = editValues.thisForm.closest('.cell').attr('id');
-    var productCodeToSave = editValues.thisForm.closest('.cell').find('.product-code p').text();
-    var companyToSave = editValues.thisForm.closest('.cell').find('.customer p').text();
-    var dateToSave = editValues.thisForm.parent().parent().parent().parent().find('.production-date').text();
-    var order = constructDayItemOrder(this);
-    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
-  });
+  convertParagraphToFocusFormValues(editValues);
 }
 
 function noteClickEvent(ui){
+  isTyping = true;
   var editValues = toggleParagraphToForm(ui.target);
-  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus()
+  editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus().blur(function(){
+    isTyping = false;
+  })
+}
+
+function convertParagraphToFocusFormValues(values){
+  values.thisForm.find('input[type="text"]').val(values.paragraphValue).focus().blur(function(){
+    var updateValue = $(this).val();
+    flipBackToParagraph(values.thisForm, updateValue);
+    var id = values.thisForm.closest('.cell').attr('id');
+    var productCodeToSave = values.thisForm.closest('.cell').find('.product-code p').text();
+    var companyToSave = values.thisForm.closest('.cell').find('.customer p').text();
+    var dateToSave = values.thisForm.parent().parent().parent().parent().find('.production-date').text();
+    var order = constructDayItemOrder(this);
+    isTyping = false;
+    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
+  });
 }
 
 function toggleParagraphToForm(paragraphClicked){
@@ -240,12 +265,10 @@ function toggleParagraphToForm(paragraphClicked){
 function flipBackToParagraph(element, newValue){
   $(element).css('display', 'none');
   $(element).parent().find('p').text(newValue);
-  console.log($(element).parent().find('p'));
   $(element).parent().find('p').css('display', 'block');
 }
 
 $('.add-cell').click(function(){
-  console.log("Add")
   var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
   var newCell = cellToClone.clone(true, true);
   if(newCell.hasClass('clonable')){
@@ -314,6 +337,7 @@ function cancelEdit(){
   closestForm.find('input[type="text"]').val('');
   closestForm.css('display','none');
   $(document.activeElement).closest('.column').find('p').css('display', 'block');
+  isTyping = false;
 }
 
 function cancelNoteEdit(){
@@ -321,6 +345,7 @@ function cancelNoteEdit(){
   closestForm.find('input[type="text"]').off('blur').val('');
   closestForm.css('display','none');
   closestForm.parent().find('p').css('display', 'block');
+  isTyping = false;
 }
 
 function constructDayItemOrder(dayToOrder){
@@ -405,6 +430,7 @@ $(document).ready(function(){
 
   constructMap(map);
 
+  selectedColumn = $('.selected')
 })
 
 function constructMap(map){
