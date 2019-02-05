@@ -127,21 +127,26 @@ $('.update-note').submit(function(e){
   ajaxUpdateNote(id, updateValue);
 });
 
-var selectedColumn, selectedColumnDay, selectedColumnRow, selectedColumnIndex, selectedColumnWeek;
+var selectedColumn, selectedColumnDay, selectedColumnRow, selectedColumnRowIndex, selectedColumnIndex, selectedColumnWeek;
 
 function handleRightClick(){
   selectedColumn = $('.selected');
   selectedColumnDay = $('.selected').parent().parent().parent();
-
+  selectedColumnRowIndex = $('.selected').parent().index()
   if(selectedColumn.next('.column').length){
     selectedColumn.next().toggleClass("selected");
     selectedColumn.toggleClass("selected");
     selectedColumn = $('.selected');
   }else if(selectedColumnDay.nextAll('.day:has(.cell:not(.clonable))').length){
     var nextDayWithCells = selectedColumnDay.nextAll('.day:has(.cell:not(.clonable))');
-    var firstCell = nextDayWithCells.first().find('.cell:not(.clonable)');
+    var nextDayCells = nextDayWithCells.first().find('.cell:not(.clonable)');
+    if (nextDayCells.length >= selectedColumnRowIndex){
+      var nextCell = $( nextDayCells[selectedColumnRowIndex-1] ).find('.column').first();
+    }else{
+      var nextCell = nextDayCells.find('.column').first();
+    }
     selectedColumn.toggleClass("selected");
-    selectedColumn = firstCell.find('.column').first();
+    selectedColumn = nextCell;
     selectedColumn.toggleClass("selected");
   }
 }
