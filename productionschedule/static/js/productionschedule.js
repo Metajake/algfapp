@@ -68,6 +68,12 @@ $('.remove-note').click(function(){
 $(".column p").click(columnClickEvent);
 $(".note p").click(noteClickEvent);
 
+$(document).keydown(function(e){
+  if (e.which === 9){
+    e.preventDefault()
+  }
+});
+
 $(document).keyup(function(e) {
   if (e.which === 27){ //ESCAPE
       if($('.update-form').find('input').is(':focus')){
@@ -87,6 +93,9 @@ $(document).keyup(function(e) {
     case 39: handleRightClick()
     break;
     case 40: handleDownClick()
+    break;
+    case 9:
+    e.shiftKey ? handleLeftClick() : handleRightClick();
     break;
     default: return;
   }
