@@ -139,12 +139,12 @@ $('.update-note').submit(function(e){
 
 $('.add-cell').click(function(){
   var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
+  selectedColumn.toggleClass('selected');
   var newCell = cellToClone.clone(true, true);
   if(newCell.hasClass('clonable')){
     newCell.removeClass('clonable');
     newCell.find('.note').css('display', 'none')
   }
-  selectedColumn.toggleClass('selected');
   selectedColumn = newCell.find('.column').first();
   selectedColumn.toggleClass('selected');
   newCell.find('.product-code p').html("&nbsp;");
