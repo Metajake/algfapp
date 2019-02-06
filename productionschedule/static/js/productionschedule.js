@@ -138,12 +138,12 @@ function handleRightClick(){
     selectedColumn.toggleClass("selected");
     selectedColumn = $('.selected');
   }else if(selectedColumnDay.nextAll('.day:has(.cell:not(.clonable))').length){
-    var nextDayWithCells = selectedColumnDay.nextAll('.day:has(.cell:not(.clonable))');
-    var nextDayCells = nextDayWithCells.first().find('.cell:not(.clonable)');
+    var nextDaysWithCells = selectedColumnDay.nextAll('.day:has(.cell:not(.clonable))');
+    var nextDayCells = nextDaysWithCells.first().find('.cell:not(.clonable)');
     if (nextDayCells.length >= selectedColumnRowIndex){
       var nextCell = $( nextDayCells[selectedColumnRowIndex-1] ).find('.column').first();
     }else{
-      var nextCell = nextDayCells.find('.column').first();
+      var nextCell = nextDayCells.last().find('.column').first();
     }
     selectedColumn.toggleClass("selected");
     selectedColumn = nextCell;
@@ -154,19 +154,22 @@ function handleRightClick(){
 function handleLeftClick(){
   selectedColumn = $('.selected');
   selectedColumnDay = $('.selected').parent().parent().parent();
-
+  selectedColumnRowIndex = $('.selected').parent().index()
   if(selectedColumn.prev('.column').length){
     selectedColumn.prev().toggleClass("selected");
     selectedColumn.toggleClass("selected");
     selectedColumn = $('.selected');
-  }else if(selectedColumnDay.prev('.day').length){
-    var prevDayHasCells = selectedColumnDay.prevAll('.day').has('.cell:not(.clonable)');
-    if(prevDayHasCells.length){
-      var firstCell = prevDayHasCells.first();
-      selectedColumn.toggleClass("selected");
-      selectedColumn = firstCell.find('.cell').not('.clonable').first().find('.column').last();
-      selectedColumn.toggleClass("selected");
+  }else if(selectedColumnDay.prevAll('.day:has(.cell:not(.clonable))').length){
+    var prevDaysWithCells = selectedColumnDay.prevAll('.day:has(.cell:not(.clonable))');
+    var prevDayCells = prevDaysWithCells.first().find('.cell:not(.clonable)');
+    if (prevDayCells.length >= selectedColumnRowIndex){
+      var prevCell = $( prevDayCells[selectedColumnRowIndex-1] ).find('.column').last();
+    }else{
+      var prevCell = prevDayCells.last().find('.column').last();
     }
+    selectedColumn.toggleClass("selected");
+    selectedColumn = prevCell;
+    selectedColumn.toggleClass("selected");
   }
 }
 
