@@ -1,0 +1,30 @@
+| {% load static %}
+
+html
+  head
+    link(rel="stylesheet" href="{% static 'productionschedule/reset.css' %}" type="text/css" media="screen,projection")
+    link(rel="stylesheet" href="{% static 'productionschedule/jqueryui.css' %}" type="text/css" media="screen,projection")
+    link(rel="stylesheet" href="{% static 'productionschedule/main.css' %}" type="text/css" media="screen,projection")
+    script(type="text/javascript" src="{% static 'js/fontawesome.js'%}")
+  body
+    .week
+      .day
+        h4.align-center.production-date {{ day.production_date }}
+        .sortable
+          | {% for product in products %}
+          .cell(id=" {{ product.id }} ")
+            .column.product-code
+              form.update-form(method="post")
+                | {% csrf_token %}
+                | {{ formUpdate }}
+              p {{product.product_code}}
+            .column.customer
+              form.update-form(method="post")
+                | {% csrf_token %}
+                | {{ formUpdate }}
+              p {{product.customer}}
+            | {% if product.note %}
+            .note.visible
+              p {{product.note}}
+            | {% endif %}
+          | {% endfor %}
