@@ -17,6 +17,39 @@ $('.day').droppable({
   drop: handleDayDrop,
 })
 
+$(document).keydown(function(e){
+  if (e.which === 9){
+    e.preventDefault()
+  }
+});
+
+$(document).keyup(function(e) {
+  if (e.which === 27){ //ESCAPE
+      if($('.update-form').find('input').is(':focus')){
+        cancelEdit();
+      }else if($('.update-note').find('input').is(':focus')){
+        cancelNoteEdit()
+      }
+  }
+  if (acceptedKeys.includes(e.which) && !isTyping){
+    handleKeyboardInput(e)
+  }
+  switch(e.which) {
+    case 37: handleLeftClick()
+    break;
+    case 38: handleUpClick()
+    break;
+    case 39: handleRightClick()
+    break;
+    case 40: handleDownClick()
+    break;
+    case 9:
+    e.shiftKey ? handleLeftClick() : handleRightClick();
+    break;
+    default: return;
+  }
+});
+
 $('.ui-duplicate').click(function(){
   selectedColumn.toggleClass('selected');
   var newCell = $(this).closest('.cell').clone(true, true);
@@ -68,39 +101,6 @@ $('.remove-note').click(function(){
 $(".column p").click(columnClickEvent);
 $(".note p").click(noteClickEvent);
 
-$(document).keydown(function(e){
-  if (e.which === 9){
-    e.preventDefault()
-  }
-});
-
-$(document).keyup(function(e) {
-  if (e.which === 27){ //ESCAPE
-      if($('.update-form').find('input').is(':focus')){
-        cancelEdit();
-      }else if($('.update-note').find('input').is(':focus')){
-        cancelNoteEdit()
-      }
-  }
-  if (acceptedKeys.includes(e.which) && !isTyping){
-    handleKeyboardInput(e)
-  }
-  switch(e.which) {
-    case 37: handleLeftClick()
-    break;
-    case 38: handleUpClick()
-    break;
-    case 39: handleRightClick()
-    break;
-    case 40: handleDownClick()
-    break;
-    case 9:
-    e.shiftKey ? handleLeftClick() : handleRightClick();
-    break;
-    default: return;
-  }
-});
-
 $('.update-form').submit(function(e){
   e.preventDefault();
   var updateValue = $(this).find('input[type="text"]').val();
@@ -127,12 +127,32 @@ $('.update-note').submit(function(e){
   ajaxUpdateNote(id, updateValue);
 });
 
+$('.add-cell').click(function(){
+  var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
+  var newCell = cellToClone.clone(true, true);
+  if(newCell.hasClass('clonable')){
+    newCell.removeClass('clonable');
+    newCell.find('.note').css('display', 'none')
+  }
+  selectedColumn.toggleClass('selected');
+  selectedColumn = newCell.find('.column').first();
+  selectedColumn.toggleClass('selected');
+  newCell.find('.product-code p').html("&nbsp;");
+  newCell.find('.customer p').html("&nbsp;");
+  newCell.insertAfter(cellToClone);
+  var productCodeToSave = newCell.find('.product-code p').text();
+  var companyToSave = newCell.find('.customer p').text();
+  var dateToSave = $(this).parent().find('.production-date').text();
+  ajaxSaveNew(productCodeToSave, companyToSave, dateToSave, newCell)
+})
+
 var selectedColumn, selectedColumnDay, selectedColumnRow, selectedColumnRowIndex, selectedColumnIndex, selectedColumnWeek;
 
 function handleRightClick(){
   selectedColumn = $('.selected');
   selectedColumnDay = $('.selected').parent().parent().parent();
   selectedColumnRowIndex = $('.selected').parent().index()
+  if(isTyping){selectedColumn.find('.update-form').trigger("submit")}
   if(selectedColumn.next('.column').length){
     selectedColumn.next().toggleClass("selected");
     selectedColumn.toggleClass("selected");
@@ -155,6 +175,7 @@ function handleLeftClick(){
   selectedColumn = $('.selected');
   selectedColumnDay = $('.selected').parent().parent().parent();
   selectedColumnRowIndex = $('.selected').parent().index()
+  if(isTyping){selectedColumn.find('.update-form').trigger("submit")}
   if(selectedColumn.prev('.column').length){
     selectedColumn.prev().toggleClass("selected");
     selectedColumn.toggleClass("selected");
@@ -179,7 +200,7 @@ function handleDownClick(){
   selectedColumnRow = $('.selected').parent();
   selectedColumnWeek = $('.selected').parent().parent().parent().parent();
   selectedColumnIndex = selectedColumnRow.find('.selected').index();
-
+  if(isTyping){selectedColumn.find('.update-form').trigger("submit")}
   if(selectedColumnRow.next('.cell').length){
     $( selectedColumnRow.next('.cell').find('.column')[selectedColumnIndex] ).toggleClass("selected");
     selectedColumn.toggleClass("selected");
@@ -207,7 +228,7 @@ function handleUpClick(){
   selectedColumnRow = $('.selected').parent();
   selectedColumnWeek = $('.selected').parent().parent().parent().parent();
   selectedColumnIndex = selectedColumnRow.find('.selected').index();
-
+  if(isTyping){selectedColumn.find('.update-form').trigger("submit")}
   if(selectedColumnRow.prev('.cell:not(.clonable)').length){
     $( selectedColumnRow.prev('.cell').find('.column')[selectedColumnIndex] ).toggleClass("selected");
     selectedColumn.toggleClass("selected");
@@ -236,7 +257,8 @@ function handleKeyboardInput(inputEvent){
   var cellToEdit = $('.selected');
   var paragraphToEdit = cellToEdit.find('p')[0];
   var editValues = toggleParagraphToForm(paragraphToEdit);
-  editValues.paragraphValue = $.trim(editValues.paragraphValue) + inputCharacter;
+  // editValues.paragraphValue = $.trim(editValues.paragraphValue) + inputCharacter;
+  editValues.paragraphValue = inputCharacter;
   convertParagraphToFocusFormValues(editValues);
 }
 
@@ -285,24 +307,7 @@ function flipBackToParagraph(element, newValue){
   $(element).parent().find('p').css('display', 'block');
 }
 
-$('.add-cell').click(function(){
-  var cellToClone = $(this).parent().find('.sortable').find(".cell").last();
-  var newCell = cellToClone.clone(true, true);
-  if(newCell.hasClass('clonable')){
-    newCell.removeClass('clonable');
-    newCell.find('.note').css('display', 'none')
-  }
-  selectedColumn.toggleClass('selected');
-  selectedColumn = newCell.find('.column').first();
-  selectedColumn.toggleClass('selected');
-  newCell.find('.product-code p').html("&nbsp;");
-  newCell.find('.customer p').html("&nbsp;");
-  newCell.insertAfter(cellToClone);
-  var productCodeToSave = newCell.find('.product-code p').text();
-  var companyToSave = newCell.find('.customer p').text();
-  var dateToSave = $(this).parent().find('.production-date').text();
-  ajaxSaveNew(productCodeToSave, companyToSave, dateToSave, newCell)
-})
+var dayDropCellToDrop, dayDropOldDateToSave, dayDropOldDay, dayDropOldDayReordered;
 
 function handleDragStop(){
   setTimeout(function(){
@@ -328,8 +333,6 @@ function handleCellDrop(event,ui){
     $('.day').droppable("enable");
   }, 600)
 }
-
-var dayDropCellToDrop, dayDropOldDateToSave, dayDropOldDay, dayDropOldDayReordered;
 
 function handleDragStart(){
   $('.column p').off("click");
