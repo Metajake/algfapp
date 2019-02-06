@@ -46,6 +46,9 @@ $(document).keyup(function(e) {
     case 9:
     e.shiftKey ? handleLeftClick() : handleRightClick();
     break;
+    case 13:
+    e.shiftKey ? handleUpClick() : handleDownClick();
+    break;
     default: return;
   }
 });
