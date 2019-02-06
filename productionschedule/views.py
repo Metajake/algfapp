@@ -35,7 +35,7 @@ def today(request):
         'products' : products,
     }
     print(c)
-    return render(request, 'ProductionSchedule/today.html', context)
+    return render(request, 'productionSchedule/today.html', context)
 
 def deleteObject(request, product_id, production_date, order):
     if order == "_":
