@@ -21,6 +21,22 @@ def calendar(request):
         #Post Data to DB
     return render(request, 'productionschedule/calendar.html', context)
 
+def today(request):
+    today = date.today()
+    c = CalendarDay.objects.get(production_date = today)
+    products = []
+    itemOrder = c.item_order.split(",")
+    for item in itemOrder:
+        newItem = item.strip()
+        if len(newItem) != 0:
+            products.append( Product.objects.filter(pk=int(newItem))[0] )
+    context = {
+        'day' : c,
+        'products' : products,
+    }
+    print(c)
+    return render(request, 'ProductionSchedule/today.html', context)
+
 def deleteObject(request, product_id, production_date, order):
     if order == "_":
         order = ""
