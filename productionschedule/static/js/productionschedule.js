@@ -80,12 +80,14 @@ $('.ui-add-note').click(function(ui){
   thisNote.addClass('visible');
   $(this).find('svg').css('display','none');
   toggleParagraphToForm(thisNote.find('p'));
+  isTyping = true;
   thisNote.find('input[type="text"]').focus().blur(function(){
+    var thisForm = thisNote.find('form');
     var updateValue = $(this).val();
-    if(updateValue==""){updateValue="&nbsp;"}
-    thisNote.find('form').css('display', 'none');
-    thisNote.find('p').html(updateValue);
-    thisNote.find('p').css('display', 'block');
+    if(updateValue==""){
+      var htmlValue="&nbsp;"
+    }
+    flipFormToParagraph(thisForm, htmlValue ? htmlValue : updateValue);
     var id = thisNote.parent().attr('id');
     isTyping = false;
     ajaxUpdateNote(id, updateValue);
@@ -101,14 +103,14 @@ $('.remove-note').click(function(){
   ajaxUpdateNote(id, '');
 })
 
-$(".column p").click(columnClickEvent);
-$(".note p").click(noteClickEvent);
+$(".column p").click(handleColumnClick);
+$(".note p").click(handleNoteClick);
 
 $('.update-form').submit(function(e){
   e.preventDefault();
   var updateValue = $(this).find('input[type="text"]').val();
   $(this).find('input[type="text"]').off('blur');
-  flipBackToParagraph(this, updateValue);
+  flipFormToParagraph(this, updateValue);
   var thisForm = $(this);
   var id = thisForm.closest('.cell').attr('id');
   var productCodeToSave = thisForm.closest('.cell').find('.product-code p').text();
@@ -121,10 +123,15 @@ $('.update-form').submit(function(e){
 
 $('.update-note').submit(function(e){
   e.preventDefault();
-  var updateValue = $(this).find('input[type="text"]').val();
-  $(this).find('input[type="text"]').off('blur');
-  flipBackToParagraph(this, updateValue);
   var thisForm = $(this);
+  var updateValue = thisForm.find('input[type="text"]').val();
+  thisForm.find('input[type="text"]').off('blur');
+  console.log(updateValue);
+  if(updateValue == ""){
+    var htmlValue = "&nbsp;"
+  }
+  console.log(this)
+  flipFormToParagraph(this, htmlValue ? htmlValue : updateValue);
   var id = thisForm.parent().parent().attr('id');
   isTyping = false;
   ajaxUpdateNote(id, updateValue);
@@ -260,12 +267,11 @@ function handleKeyboardInput(inputEvent){
   var cellToEdit = $('.selected');
   var paragraphToEdit = cellToEdit.find('p')[0];
   var editValues = toggleParagraphToForm(paragraphToEdit);
-  // editValues.paragraphValue = $.trim(editValues.paragraphValue) + inputCharacter;
   editValues.paragraphValue = inputCharacter;
   convertParagraphToFocusFormValues(editValues);
 }
 
-function columnClickEvent(ui){
+function handleColumnClick(ui){
   selectedColumn.toggleClass("selected");
   selectedColumn = $(ui.target).parent();
   selectedColumn.toggleClass('selected');
@@ -274,40 +280,20 @@ function columnClickEvent(ui){
   convertParagraphToFocusFormValues(editValues);
 }
 
-function noteClickEvent(ui){
+function handleNoteClick(ui){
   isTyping = true;
   var editValues = toggleParagraphToForm(ui.target);
   editValues.thisForm.find('input[type="text"]').val(editValues.paragraphValue).focus().blur(function(){
-    isTyping = false;
-  })
-}
-
-function convertParagraphToFocusFormValues(values){
-  values.thisForm.find('input[type="text"]').val(values.paragraphValue).focus().blur(function(){
+    var thisForm = $(this).parent();
     var updateValue = $(this).val();
-    flipBackToParagraph(values.thisForm, updateValue);
-    var id = values.thisForm.closest('.cell').attr('id');
-    var productCodeToSave = values.thisForm.closest('.cell').find('.product-code p').text();
-    var companyToSave = values.thisForm.closest('.cell').find('.customer p').text();
-    var dateToSave = values.thisForm.parent().parent().parent().parent().find('.production-date').text();
-    var order = constructDayItemOrder(this);
+    if(updateValue == ""){
+      var htmlValue = "&nbsp;"
+    }
+    flipFormToParagraph(thisForm, htmlValue ? htmlValue : updateValue);
+    var id = thisForm.parent().parent().attr('id');
     isTyping = false;
-    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
-  });
-}
-
-function toggleParagraphToForm(paragraphClicked){
-  var paragraphValue = $(paragraphClicked).text();
-  var thisForm = $(paragraphClicked).parent().find('form');
-  $(paragraphClicked).css('display', 'none');
-  thisForm.css('display', 'block');
-  return {paragraphValue: paragraphValue, thisForm: thisForm}
-}
-
-function flipBackToParagraph(element, newValue){
-  $(element).css('display', 'none');
-  $(element).parent().find('p').text(newValue);
-  $(element).parent().find('p').css('display', 'block');
+    ajaxUpdateNote(id, updateValue);
+  })
 }
 
 var dayDropCellToDrop, dayDropOldDateToSave, dayDropOldDay, dayDropOldDayReordered;
@@ -355,6 +341,37 @@ function handleDayDrop(event, ui){
   }
   var dayDropOrder = constructDayItemOrder(targetDay.find('.sortable'));
   updateAjaxScheduleOrder(dayDropDateToSave, dayDropOrder)
+}
+
+function convertParagraphToFocusFormValues(values){
+  values.thisForm.find('input[type="text"]').val(values.paragraphValue).focus().blur(function(){
+    var updateValue = $(this).val();
+    flipFormToParagraph(values.thisForm, updateValue);
+    var id = values.thisForm.closest('.cell').attr('id');
+    var productCodeToSave = values.thisForm.closest('.cell').find('.product-code p').text();
+    var companyToSave = values.thisForm.closest('.cell').find('.customer p').text();
+    var dateToSave = values.thisForm.parent().parent().parent().parent().find('.production-date').text();
+    var order = constructDayItemOrder(this);
+    isTyping = false;
+    ajaxUpdate(id, productCodeToSave, companyToSave, dateToSave, order);
+  });
+}
+
+function toggleParagraphToForm(paragraphClicked){
+  var paragraphValue = $(paragraphClicked).text();
+  var thisForm = $(paragraphClicked).parent().find('form');
+  $(paragraphClicked).css('display', 'none');
+  thisForm.css('display', 'block');
+  return {paragraphValue: paragraphValue, thisForm: thisForm}
+}
+
+function flipFormToParagraph(element, newValue){
+  console.log("Flipping Form To Paragraph")
+  console.log(element);
+  console.log(newValue);
+  $(element).css('display', 'none');
+  $(element).parent().find('p').html(newValue);
+  $(element).parent().find('p').css('display', 'block');
 }
 
 function cancelEdit(){
