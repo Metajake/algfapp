@@ -22,7 +22,7 @@ html
               form.update-form(method="post")
                 | {% csrf_token %}
                 | {{ formUpdate }}
-              p {{product.customer}}
+              h2 {{product.customer}}
             | {% if product.note %}
             .note.visible
               p {{product.note}}

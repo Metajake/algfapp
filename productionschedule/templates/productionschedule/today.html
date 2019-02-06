@@ -24,7 +24,7 @@
                 {% csrf_token %}
                 {{ formUpdate }}
               </form>
-              <p>{{product.customer}}</p>
+              <h2>{{product.customer}}</h2>
             </div>{% if product.note %}
             <div class="note visible">
               <p>{{product.note}}</p>
