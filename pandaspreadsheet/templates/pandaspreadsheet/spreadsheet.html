@@ -2,12 +2,12 @@
 <html>
   <head>
     <link rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css" media="screen,projection"/>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" type="text/css" media="screen,projection"/>
     <link rel="stylesheet" href="{% static 'pandaspreadsheet/spreadsheet.css' %}" type="text/css" media="screen,projection"/>
   </head>
   <body>
     <div id="re-data">{% for week, columns in reData.items %}
-      <div class="week">
-        <h3>{{ week }}</h3>{% for day, rows in columns.items %}
+      <div class="week">{% for day, rows in columns.items %}
         <div class="day">
           <h4>{{ day }}</h4>{% for row in rows %}
           <div class="cell">
