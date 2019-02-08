@@ -9,9 +9,9 @@
     <div id="re-data">{% for week, columns in reData.items %}
       <div class="week">{% for day, rows in columns.items %}
         <div class="day">
-          <h4>{{ day }}</h4>{% for row in rows %}
+          <h4>{{ day }}</h4>{% for cell in rows %}
           <div class="cell">
-            <p>{{ row }}</p>
+            <p>{{ cell | safe }}</p>
           </div>{% endfor %}
         </div>{% endfor %}
       </div>{% endfor %}

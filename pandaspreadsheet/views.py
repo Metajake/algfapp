@@ -1,10 +1,7 @@
-import os
+import os, datetime, math
 from django.conf import settings
 from django.shortcuts import render
-import pandas
-import xlrd
-import datetime
-
+import pandas, xlrd, numpy
 
 def spreadsheet(request):
     prodsched = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM.XLS'), sheetname = 0)
@@ -31,7 +28,6 @@ def spreadsheet(request):
     weekRanges[1] = [weekMarkers[1] + 2, weekMarkers[2] - 2]
     weekRanges[2] = [weekMarkers[2] + 2, prodsched.shape[0]]
 
-    print(weekRanges)
     reData = {
         'week 1': {},
         'week 2': {},
@@ -42,9 +38,13 @@ def spreadsheet(request):
         for colIndex, column in enumerate(prodsched.columns):
             reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)] = []
             for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
-                reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)].append(prodsched[ prodsched.columns[colIndex] ][rowIndex])
+                cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
+                if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
+                    print("Is nan")
+                    cellValue = "&nbsp;"
+                reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)].append( cellValue )
 
-    print(reData)
+    # print(reData)
 
     # Convert Spreadsheet into Dictionary
     for column in prodsched.columns:

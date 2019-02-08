@@ -13,9 +13,9 @@ html
         | {% for day, rows in columns.items %}
         .day
           h4 {{ day }}
-          | {% for row in rows %}
+          | {% for cell in rows %}
           .cell
-            p {{ row }}
+            p {{ cell | safe }}
           | {% endfor %}
         | {% endfor %}
       | {% endfor %}
