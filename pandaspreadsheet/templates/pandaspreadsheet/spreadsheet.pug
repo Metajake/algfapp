@@ -1,0 +1,22 @@
+| {% load static %}
+
+html
+  head
+    link(rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css" media="screen,projection")
+    link(rel="stylesheet" href="{% static 'pandaspreadsheet/spreadsheet.css' %}" type="text/css" media="screen,projection")
+  body
+    #re-data
+      | {% for week, columns in reData.items %}
+      .week
+        h3 {{ week }}
+        | {% for day, rows in columns.items %}
+        .day
+          h4 {{ day }}
+          | {% for row in rows %}
+          .cell
+            p {{ row }}
+          | {% endfor %}
+        | {% endfor %}
+      | {% endfor %}
+      
+      
