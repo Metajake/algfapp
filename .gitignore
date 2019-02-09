@@ -7,6 +7,6 @@ algfapp/settings.py
 *.map
 prepros-6.config
 productionschedule/migrations/
-#pages/migrations/
 #db_backups/
 #media/*
+files/.~lock.PRODUCTION FORM.xls#
