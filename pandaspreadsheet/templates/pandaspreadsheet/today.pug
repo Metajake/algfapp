@@ -1,0 +1,13 @@
+| {% load static %}
+
+doctype html
+html
+  include includes/head.pug
+  body
+    h1 today
+    h3 {{ scheduleDay.date }}
+    #product-table.grid-container
+      | {% for product in scheduleDay.products %}
+      #product.grid-item
+      p {{product|safe}}
+      | {% endfor %}

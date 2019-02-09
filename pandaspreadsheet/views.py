@@ -3,30 +3,49 @@ from django.conf import settings
 from django.shortcuts import render
 import pandas, xlrd, numpy
 
-def spreadsheet(request):
+def calendar(request):
     productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
-
-    #print(prodsched.columns[0]) #returns '2019-02-08 05:50:49.919000'
-    #print(prodsched[ prodsched.columns[0] ]) #returns all rows in '2019-02-08 05:50:49.919000'
-    #print(prodsched[ prodsched.columns[1] ][20]) #Returns 19th Row in 2nd column
-
-    # Iterates through everyone row in First Column
-    # for row in prodsched[ prodsched.columns[0] ]:
-    #     print (row)
 
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
 
     context = {
+        'lastModified': productionSpreadsheet.columns[0],
         'calendar' : calendar,
     }
     return render(request, 'pandaspreadsheet/spreadsheet.html', context)
 
+def today(request):
+    productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
+    weekRanges = constructWeekRanges(productionSpreadsheet)
+    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
+
+    todaysDate = datetime.datetime.today().day
+
+    for index, week in enumerate(calendar):
+        for index, day in enumerate(calendar[week]):
+            dateString = calendar[week][day]['date'].strip()
+            dateNumber = dateString[-2:].strip()
+            if dateNumber == str(todaysDate):
+                print("Match! "+str(dateNumber))
+                scheduleDay = calendar[week][day]
+
+    context = {
+        "scheduleDay" : scheduleDay,
+    }
+    return render(request, 'pandaspreadsheet/today.html', context)
+
 def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
+    #print(prodsched.columns[0]) #returns '2019-02-08 05:50:49.919000'
+    #print(prodsched[ prodsched.columns[0] ]) #returns all rows in '2019-02-08 05:50:49.919000'
+    #print(prodsched[ prodsched.columns[1] ][20]) #Returns 19th Row in 2nd column
+    # Iterates through everyone row in First Column
+    # for row in prodsched[ prodsched.columns[0] ]:
+    #     print (row)
     calendar = {
-        'week 1': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
-        'week 2': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
-        'week 3': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
+        'week 1': {'day 1':{'products':[], 'date': ""}, 'day 2':{'products':[], 'date': ""}, 'day 3':{'products':[], 'date': ""}, 'day 4':{'products':[], 'date': ""}, 'day 5':{'products':[], 'date': ""}, 'day 6':{'products':[], 'date': ""}, 'day 7':{'products':[], 'date': ""}, },
+        'week 2': {'day 1':{'products':[], 'date': ""}, 'day 2':{'products':[], 'date': ""}, 'day 3':{'products':[], 'date': ""}, 'day 4':{'products':[], 'date': ""}, 'day 5':{'products':[], 'date': ""}, 'day 6':{'products':[], 'date': ""}, 'day 7':{'products':[], 'date': ""}, },
+        'week 3': {'day 1':{'products':[], 'date': ""}, 'day 2':{'products':[], 'date': ""}, 'day 3':{'products':[], 'date': ""}, 'day 4':{'products':[], 'date': ""}, 'day 5':{'products':[], 'date': ""}, 'day 6':{'products':[], 'date': ""}, 'day 7':{'products':[], 'date': ""}, },
     }
 
     for weekIndex in range(1,4):
@@ -37,12 +56,12 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
             elif colIndex % 2 == 0:
                 for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
-                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'].append( [replaceNaN(cellValue)] )
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'].append( [replaceNaN(cellValue)] )
             else:
-                calendar['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = spreadsheet[ spreadsheet.columns[colIndex] ][weekRanges[weekIndex-1][0]-2]
+                calendar['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = str(spreadsheet[ spreadsheet.columns[colIndex] ][weekRanges[weekIndex-1][0]-2])
                 for rowEnumerationIndex, rowIndex in enumerate( range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]) ):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
-                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'][rowEnumerationIndex].append( replaceNaN(cellValue) )
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'][rowEnumerationIndex].append( replaceNaN(cellValue) )
                 dayCount += 1
 
     return calendar

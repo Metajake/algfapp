@@ -1,24 +1,22 @@
 | {% load static %}
-
+doctype html
 html
-  head
-    link(rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css" media="screen,projection")
-    link(rel="stylesheet" href="{% static 'css/global.css' %}" type="text/css" media="screen,projection")
-    link(rel="stylesheet" href="{% static 'pandaspreadsheet/spreadsheet.css' %}" type="text/css" media="screen,projection")
+  include includes/head.pug
   body
-    #re-data
+    #calendar
+      h3.last-modified Last Modified: {{ lastModified }}
       | {% for week, weekdata in calendar.items %}
       h3 {{ week }}
       .week
         | {% for day, dailyinfo in weekdata.items %}
         .day(class="column{{forloop.counter}}")
           h4 {{ dailyinfo.date }}
-          | {% for item in dailyinfo.items %}
+          | {% for product in dailyinfo.products %}
           .cell
             .column
-              p {{ item.0|safe }}
+              p {{ product.0|safe }}
             .column
-              p {{ item.1|safe }}
+              p {{ product.1|safe }}
           | {% endfor %}
           
         | {% endfor %}

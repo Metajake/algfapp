@@ -1,0 +1,16 @@
+{% load static %}<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="{% static 'pandaspreadsheet/main.css' %}" type="text/css" media="screen,projection">
+  </head>
+  <body>
+    <h1>today</h1>
+    <h3>{{ scheduleDay.date }}</h3>
+    <div class="grid-container" id="product-table">{% for product in scheduleDay.products %}
+      <div class="grid-item" id="product"></div>
+      <p>{{product|safe}}</p>{% endfor %}
+    </div>
+  </body>
+</html>
