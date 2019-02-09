@@ -6,11 +6,16 @@
     <link rel="stylesheet" href="{% static 'pandaspreadsheet/main.css' %}" type="text/css" media="screen,projection">
   </head>
   <body>
-    <h1>today</h1>
-    <h3>{{ scheduleDay.date }}</h3>
+    <div id="masthead">
+      <h3 class="align-center">{{ scheduleDay.date }}</h3>
+    </div>
     <div class="grid-container" id="product-table">{% for product in scheduleDay.products %}
-      <div class="grid-item" id="product"></div>
-      <p>{{product|safe}}</p>{% endfor %}
+      <div class="product-number align-center">
+        <h2>{{product.0|safe}}</h2>
+      </div>
+      <div class="product-name align-center">
+        <h2>{{product.1|safe}}</h2>
+      </div>{% endfor %}
     </div>
   </body>
 </html>

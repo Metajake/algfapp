@@ -4,10 +4,12 @@ doctype html
 html
   include includes/head.pug
   body
-    h1 today
-    h3 {{ scheduleDay.date }}
+    #masthead
+      h3.align-center {{ scheduleDay.date }}
     #product-table.grid-container
       | {% for product in scheduleDay.products %}
-      #product.grid-item
-      p {{product|safe}}
+      .product-number.align-center
+        h2 {{product.0|safe}}
+      .product-name.align-center
+        h2 {{product.1|safe}}
       | {% endfor %}

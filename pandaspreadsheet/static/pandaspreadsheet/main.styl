@@ -1,6 +1,12 @@
 *
   box-sizing:border-box
 
+body
+  padding: 20px
+
+#masthead
+  margin-bottom:40px
+
 #calendar
   .week
     display:flex
@@ -23,8 +29,16 @@
     p
       white-space:nowrap
 
-#product-table
+#product-table.grid-container
   width:100%
-  
-.grid-container
   display: grid
+  grid-template-columns: 50% 50%
+  & [class ^= 'product-']
+    padding:10px 0
+    border-bottom:1px solid #ccc
+  // .product-number
+  //   grid-column-start: 1
+  //   grid-column-end: 2
+  // .product-name
+  //   grid-column-start: 2
+  //   grid-column-end: 3
