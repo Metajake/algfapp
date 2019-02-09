@@ -4,7 +4,7 @@ from django.shortcuts import render
 import pandas, xlrd, numpy
 
 def spreadsheet(request):
-    prodsched = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM.XLS'), sheetname = 0)
+    prodsched = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
 
     data = {}
 
@@ -29,20 +29,38 @@ def spreadsheet(request):
     weekRanges[2] = [weekMarkers[2] + 2, prodsched.shape[0]]
 
     reData = {
-        'week 1': {},
-        'week 2': {},
-        'week 3': {},
+        'week 1': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
+        'week 2': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
+        'week 3': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
     }
 
     for weekIndex in range(1,4):
+        dayCount = 1
         for colIndex, column in enumerate(prodsched.columns):
-            reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)] = []
-            for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
-                cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
-                if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
-                    print("Is nan")
-                    cellValue = "&nbsp;"
-                reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)].append( cellValue )
+            if dayCount >= 8:
+                break
+            elif colIndex % 2 == 0:
+                for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
+                    cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
+                    if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
+                        cellValue = "&nbsp;"
+                    reData['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'].append( [cellValue] )
+            else:
+                reData['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = prodsched[ prodsched.columns[colIndex] ][weekRanges[weekIndex-1][0]-2]
+                for rowEnumerationIndex, rowIndex in enumerate( range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]) ):
+                    cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
+                    if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
+                        cellValue = "&nbsp;"
+                    reData['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'][rowEnumerationIndex].append( cellValue )
+                dayCount += 1
+
+            # reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)] = []
+            # for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
+            #     cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
+            #     if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
+            #         print("Is nan")
+            #         cellValue = "&nbsp;"
+            #     reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)].append( cellValue )
 
     # print(reData)
 

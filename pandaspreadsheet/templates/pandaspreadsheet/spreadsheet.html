@@ -6,12 +6,18 @@
     <link rel="stylesheet" href="{% static 'pandaspreadsheet/spreadsheet.css' %}" type="text/css" media="screen,projection"/>
   </head>
   <body>
-    <div id="re-data">{% for week, columns in reData.items %}
-      <div class="week">{% for day, rows in columns.items %}
-        <div class="day">
-          <h4>{{ day }}</h4>{% for cell in rows %}
+    <div id="re-data">{% for week, weekdata in reData.items %}
+      <h3>{{ week }}</h3>
+      <div class="week">{% for day, dailyinfo in weekdata.items %}
+        <div class="day column{{forloop.counter}}">
+          <h4>{{ dailyinfo.date }}</h4>{% for item in dailyinfo.items %}
           <div class="cell">
-            <p>{{ cell | safe }}</p>
+            <div class="column">
+              <p>{{ item.0|safe }}</p>
+            </div>
+            <div class="column">
+              <p>{{ item.1|safe }}</p>
+            </div>
           </div>{% endfor %}
         </div>{% endfor %}
       </div>{% endfor %}

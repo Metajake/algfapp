@@ -7,16 +7,20 @@ html
     link(rel="stylesheet" href="{% static 'pandaspreadsheet/spreadsheet.css' %}" type="text/css" media="screen,projection")
   body
     #re-data
-      | {% for week, columns in reData.items %}
-      //- h3 {{ week }}
+      | {% for week, weekdata in reData.items %}
+      h3 {{ week }}
       .week
-        | {% for day, rows in columns.items %}
-        .day
-          h4 {{ day }}
-          | {% for cell in rows %}
+        | {% for day, dailyinfo in weekdata.items %}
+        .day(class="column{{forloop.counter}}")
+          h4 {{ dailyinfo.date }}
+          | {% for item in dailyinfo.items %}
           .cell
-            p {{ cell | safe }}
+            .column
+              p {{ item.0|safe }}
+            .column
+              p {{ item.1|safe }}
           | {% endfor %}
+          
         | {% endfor %}
       | {% endfor %}
       
