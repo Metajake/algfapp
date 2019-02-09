@@ -4,9 +4,7 @@ from django.shortcuts import render
 import pandas, xlrd, numpy
 
 def spreadsheet(request):
-    prodsched = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
-
-    data = {}
+    productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
 
     #print(prodsched.columns[0]) #returns '2019-02-08 05:50:49.919000'
     #print(prodsched[ prodsched.columns[0] ]) #returns all rows in '2019-02-08 05:50:49.919000'
@@ -16,19 +14,16 @@ def spreadsheet(request):
     # for row in prodsched[ prodsched.columns[0] ]:
     #     print (row)
 
-    # FIND DATE RANGES
-    weekRanges = [[],[],[]]
-    weekMarkers = []
-    for index, row in enumerate(prodsched[ prodsched.columns[1] ]):
-        # print(str(row).lower())
-        if "monday" in str(row).lower():
-            weekMarkers.append(index)
+    weekRanges = constructWeekRanges(productionSpreadsheet)
+    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
 
-    weekRanges[0] = [weekMarkers[0] + 2, weekMarkers[1] - 1]
-    weekRanges[1] = [weekMarkers[1] + 2, weekMarkers[2] - 2]
-    weekRanges[2] = [weekMarkers[2] + 2, prodsched.shape[0]]
+    context = {
+        'calendar' : calendar,
+    }
+    return render(request, 'pandaspreadsheet/spreadsheet.html', context)
 
-    reData = {
+def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
+    calendar = {
         'week 1': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
         'week 2': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
         'week 3': {'day 1':{'items':[], 'date': ""}, 'day 2':{'items':[], 'date': ""}, 'day 3':{'items':[], 'date': ""}, 'day 4':{'items':[], 'date': ""}, 'day 5':{'items':[], 'date': ""}, 'day 6':{'items':[], 'date': ""}, 'day 7':{'items':[], 'date': ""}, },
@@ -36,48 +31,47 @@ def spreadsheet(request):
 
     for weekIndex in range(1,4):
         dayCount = 1
-        for colIndex, column in enumerate(prodsched.columns):
+        for colIndex, column in enumerate(spreadsheet.columns):
             if dayCount >= 8:
                 break
             elif colIndex % 2 == 0:
                 for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
-                    cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
-                    if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
-                        cellValue = "&nbsp;"
-                    reData['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'].append( [cellValue] )
+                    cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'].append( [replaceNaN(cellValue)] )
             else:
-                reData['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = prodsched[ prodsched.columns[colIndex] ][weekRanges[weekIndex-1][0]-2]
+                calendar['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = spreadsheet[ spreadsheet.columns[colIndex] ][weekRanges[weekIndex-1][0]-2]
                 for rowEnumerationIndex, rowIndex in enumerate( range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]) ):
-                    cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
-                    if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
-                        cellValue = "&nbsp;"
-                    reData['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'][rowEnumerationIndex].append( cellValue )
+                    cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['items'][rowEnumerationIndex].append( replaceNaN(cellValue) )
                 dayCount += 1
 
-            # reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)] = []
-            # for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
-            #     cellValue = prodsched[ prodsched.columns[colIndex] ][rowIndex]
-            #     if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ):
-            #         print("Is nan")
-            #         cellValue = "&nbsp;"
-            #     reData['week '+ str(weekIndex)]['column '+ str(colIndex+1)].append( cellValue )
+    return calendar
 
-    # print(reData)
-
+def getDictionaryFromSpreadsheet(spreadsheet):
     # Convert Spreadsheet into Dictionary
-    for column in prodsched.columns:
+    data = {}
+    for column in spreadsheet.columns:
         if isinstance(column, datetime.datetime):
             columnName = column.strftime("%m/%d/%y")
         else:
             columnName = column
         data[columnName] = []
-        for row in prodsched[ column ]:
+        for row in spreadsheet[ column ]:
             data[columnName].append(row)
 
-    # print (data)
+    return data
 
-    context = {
-        'data' : data,
-        'reData' : reData,
-    }
-    return render(request, 'pandaspreadsheet/spreadsheet.html', context)
+def constructWeekRanges(spreadsheet):
+    weekRanges = [[],[],[]]
+    weekMarkers = []
+    for index, row in enumerate(spreadsheet[ spreadsheet.columns[1] ]):
+        if "monday" in str(row).lower():
+            weekMarkers.append(index)
+
+    weekRanges[0] = [weekMarkers[0] + 2, weekMarkers[1] - 1]
+    weekRanges[1] = [weekMarkers[1] + 2, weekMarkers[2] - 2]
+    weekRanges[2] = [weekMarkers[2] + 2, spreadsheet.shape[0]]
+    return weekRanges
+
+def replaceNaN(cellValue):
+    return "&nbsp;" if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ) else cellValue

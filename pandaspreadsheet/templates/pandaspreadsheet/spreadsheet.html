@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{% static 'pandaspreadsheet/spreadsheet.css' %}" type="text/css" media="screen,projection"/>
   </head>
   <body>
-    <div id="re-data">{% for week, weekdata in reData.items %}
+    <div id="re-data">{% for week, weekdata in calendar.items %}
       <h3>{{ week }}</h3>
       <div class="week">{% for day, dailyinfo in weekdata.items %}
         <div class="day column{{forloop.counter}}">

@@ -7,7 +7,7 @@ html
     link(rel="stylesheet" href="{% static 'pandaspreadsheet/spreadsheet.css' %}" type="text/css" media="screen,projection")
   body
     #re-data
-      | {% for week, weekdata in reData.items %}
+      | {% for week, weekdata in calendar.items %}
       h3 {{ week }}
       .week
         | {% for day, dailyinfo in weekdata.items %}
