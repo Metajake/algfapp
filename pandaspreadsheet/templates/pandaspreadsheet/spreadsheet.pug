@@ -5,6 +5,7 @@ html
   body
     #calendar
       h3.last-modified Last Modified: {{ lastModified }}
+      a(href="{% url 'today' %}") Today's Schedule &gt;
       | {% for week, weekdata in calendar.items %}
       h3 {{ week }}
       .week

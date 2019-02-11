@@ -6,6 +6,7 @@ html
   body
     #masthead
       h3.align-center {{ scheduleDay.date }}
+      a(href="{% url 'schedule'%}") &lt; Weekly Schedule
     #product-table.grid-container
       | {% for product in scheduleDay.products %}
       .product-number.align-center

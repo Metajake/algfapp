@@ -7,7 +7,7 @@
   </head>
   <body>
     <div id="calendar">
-      <h3 class="last-modified">Last Modified: {{ lastModified }}</h3>{% for week, weekdata in calendar.items %}
+      <h3 class="last-modified">Last Modified: {{ lastModified }}</h3><a href="{% url 'today' %}">Today's Schedule &gt;</a>{% for week, weekdata in calendar.items %}
       <h3>{{ week }}</h3>
       <div class="week">{% for day, dailyinfo in weekdata.items %}
         <div class="day column{{forloop.counter}}">

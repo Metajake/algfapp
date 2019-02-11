@@ -7,7 +7,7 @@
   </head>
   <body>
     <div id="masthead">
-      <h3 class="align-center">{{ scheduleDay.date }}</h3>
+      <h3 class="align-center">{{ scheduleDay.date }}</h3><a href="{% url 'schedule'%}">&lt; Weekly Schedule</a>
     </div>
     <div class="grid-container" id="product-table">{% for product in scheduleDay.products %}
       <div class="product-number align-center">
