@@ -4,11 +4,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import pandas, xlrd, numpy
 
+productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM2.XLS', sheet_name = 0)
+
 def test (request):
     return HttpResponse("Test Page")
 
 def schedule(request):
-    productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
+    # productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     context = {
@@ -18,7 +20,7 @@ def schedule(request):
     return render(request, 'pandaspreadsheet/spreadsheet.html', context)
 
 def today(request):
-    productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
+    # productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     scheduleDay = getTodaysScheduleFromSpreadsheet(calendar)
