@@ -1,7 +1,11 @@
 import os, datetime, math
 from django.conf import settings
 from django.shortcuts import render
+from django.http import HttpResponse
 import pandas, xlrd, numpy
+
+def test (request):
+    return HttpResponse("Test Page")
 
 def schedule(request):
     productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
