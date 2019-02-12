@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import pandas, xlrd, numpy
 
-productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM2.XLS', sheet_name = 0)
+productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.XLS', sheet_name = 0)
 
 def test (request):
     return HttpResponse("Test Page")
