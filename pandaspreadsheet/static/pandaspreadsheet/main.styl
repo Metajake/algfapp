@@ -31,27 +31,26 @@ body
         font-weight:bold
         & + .column
           width:0
-
     p
       white-space:nowrap
+
+#todays-products
+  width:70%
+  .item.note
+    grid-column-start:1
+    grid-column-end:3
+    color:red
+    & + .item
+      display:none
 
 #product-list
   width:25%
   .note
     display:none
 
-#todays-products
-  width:100%
-  // grid-template-columns: 50% 50%
-    // padding:5px 0
-  .item:nth-child(odd)
-    grid-column-start: 1
-    grid-column-end: 2
-  .item:nth-child(even)
-    grid-column-start: 2
-    grid-column-end: 3
-  .item.note
-    grid-column-start:1
-    grid-column-end:3
-    & + .item
-      display:none
+.kettle-list
+  width:70%
+  border:1px solid #ccc
+  height:250px
+  & > div
+    text-align:center

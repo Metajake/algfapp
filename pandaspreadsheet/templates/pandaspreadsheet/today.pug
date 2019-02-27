@@ -9,7 +9,7 @@ html
       a(href="{% url 'schedule'%}") &lt; Weekly Schedule
       a.pull-right(href="{% url 'list'%}"): h3 Kettles &gt; 
       
-    #todays-products.grid.headline-list
+    #todays-products.grid-50-50.headline-list.pull-center
       | {% for product in scheduleDay.products %}
       .item.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
         h3 {{product.itemNumber|safe}}

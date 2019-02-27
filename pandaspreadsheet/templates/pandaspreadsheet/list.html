@@ -7,10 +7,38 @@
   </head>
   <body>
     <div id="masthead"><a href="{% url 'today'%}">&lt; Today's Schedule</a></div>
-    <div id="product-list">{% for product in scheduleDay.products %}
+    <div class="pull-left" id="product-list">{% for product in scheduleDay.products %}
       <div class="product-number align-center {%for tag in product.tags %}{{tag}} {%endfor%}">
         <h3>{{product.itemNumber|safe}}</h3>
       </div>{% endfor %}
+    </div>
+    <div class="kettle-list pull-right flex-row">
+      <div class="kettle-1">
+        <h4>Kettle 1</h4>
+      </div>
+      <div class="kettle-2">
+        <h4>Kettle 2</h4>
+      </div>
+      <div class="kettle-3">
+        <h4>Kettle 3</h4>
+      </div>
+      <div class="kettle-4">
+        <h4>Kettle 4</h4>
+      </div>
+    </div>
+    <div class="kettle-list pull-right flex-row">
+      <div class="kettle-6">
+        <h4>Kettle 6</h4>
+      </div>
+      <div class="kettle-7">
+        <h4>Kettle 7</h4>
+      </div>
+      <div class="tucs-1">
+        <h4>TUCS Kettle 1</h4>
+      </div>
+      <div class="tucs-2">
+        <h4>TUCS Kettle 2</h4>
+      </div>
     </div>
   </body>
 </html>

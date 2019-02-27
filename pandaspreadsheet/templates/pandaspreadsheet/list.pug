@@ -6,8 +6,27 @@ html
   body
     #masthead
       a(href="{% url 'today'%}") &lt; Today's Schedule
-    #product-list
+    #product-list.pull-left
       | {% for product in scheduleDay.products %}
       .product-number.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
         h3 {{product.itemNumber|safe}}
       | {% endfor %}
+    .kettle-list.pull-right.flex-row
+      .kettle-1
+        h4 Kettle 1
+      .kettle-2
+        h4 Kettle 2
+      .kettle-3
+        h4 Kettle 3
+      .kettle-4
+        h4 Kettle 4
+    .kettle-list.pull-right.flex-row
+      .kettle-6
+        h4 Kettle 6
+      .kettle-7
+        h4 Kettle 7
+      .tucs-1
+        h4 TUCS Kettle 1
+      .tucs-2
+        h4 TUCS Kettle 2
+      
