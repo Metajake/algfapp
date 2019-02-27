@@ -25,27 +25,33 @@ body
       border-bottom:1px solid #ccc
       border-right:1px solid #ccc
       width: 50%
+      &.note
+        width:100%
+        color:red
+        font-weight:bold
+        & + .column
+          width:0
 
     p
       white-space:nowrap
 
-.w50
-  width:50%
-.w25
+#product-list
   width:25%
+  .note
+    display:none
 
-#product-table.grid-container
-  h2
-    margin:5px 0
+#todays-products
   width:100%
-  display: grid
-  grid-template-columns: 50% 50%
-  & [class ^= 'product-']
-    border-bottom:1px solid #ccc
+  // grid-template-columns: 50% 50%
     // padding:5px 0
-  // .product-number
-  //   grid-column-start: 1
-  //   grid-column-end: 2
-  // .product-name
-  //   grid-column-start: 2
-  //   grid-column-end: 3
+  .item:nth-child(odd)
+    grid-column-start: 1
+    grid-column-end: 2
+  .item:nth-child(even)
+    grid-column-start: 2
+    grid-column-end: 3
+  .item.note
+    grid-column-start:1
+    grid-column-end:3
+    & + .item
+      display:none

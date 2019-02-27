@@ -9,10 +9,10 @@ html
       a(href="{% url 'schedule'%}") &lt; Weekly Schedule
       a.pull-right(href="{% url 'list'%}"): h3 Kettles &gt; 
       
-    #product-table.headline-list.grid-container
+    #todays-products.grid.headline-list
       | {% for product in scheduleDay.products %}
-      .item.product-number.align-center
-        h3 {{product.0|safe}}
-      .item.product-name.align-center
-        h3 {{product.1|safe}}
+      .item.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
+        h3 {{product.itemNumber|safe}}
+      .item.align-center
+        h3 {{product.customer|safe}}
       | {% endfor %}

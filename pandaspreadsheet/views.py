@@ -10,10 +10,8 @@ def test (request):
     return HttpResponse("Test Page")
 
 def schedule(request):
-    # productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    calendar = applyViewTags(calendar)
     context = {
         'lastModified': productionSpreadsheet.columns[0],
         'calendar' : calendar,
@@ -21,7 +19,6 @@ def schedule(request):
     return render(request, 'pandaspreadsheet/spreadsheet.html', context)
 
 def today(request):
-    # productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     scheduleDay = getTodaysScheduleFromSpreadsheet(calendar)
@@ -55,17 +52,30 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
             elif colIndex % 2 == 0:
                 for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
-                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'].append( [replaceNaN(cellValue)] )
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'].append( {'itemNumber': str(replaceNaN(cellValue)) } )
             else:
                 calendar['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = str(spreadsheet[ spreadsheet.columns[colIndex] ][weekRanges[weekIndex-1][0]-2])
                 for rowEnumerationIndex, rowIndex in enumerate( range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]) ):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
-                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'][rowEnumerationIndex].append( replaceNaN(cellValue) )
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'][rowEnumerationIndex]['customer'] = replaceNaN(cellValue)
                 dayCount += 1
+    calendar = applyViewTags(calendar)
     return calendar
 
 
 def applyViewTags(calendar):
+    for index,week in enumerate(calendar):
+        for indexx,day in enumerate(calendar[week]):
+            for indexxx, product in enumerate(calendar[week][day]['products']):
+                product['tags'] = []
+                if product['itemNumber'].startswith('*') and 'note' not in product['tags']:
+                    product['tags'].append('note')
+                    # try:
+                    #     calendar[week][day]['products'][indexxx +1]
+                    #     if calendar[week][day]['products'][indexxx+1]['customer'] == '&nbsp;':
+                    #         calendar[week][day]['products'][indexxx+1]['tags'].append('note')
+                    # except IndexError:
+                    #     print("List Index Out of Range")
     return calendar
 
 def getDictionaryFromSpreadsheet(spreadsheet):
@@ -100,14 +110,13 @@ def getTodaysScheduleFromSpreadsheet(calendar):
             dateString = calendar[week][day]['date'].strip()
             dateNumber = dateString[-2:].strip()
             if dateNumber == str(todaysDate):
-                print("Match! "+str(dateNumber))
                 scheduleDay = calendar[week][day]
     return scheduleDay
 
 def removeEmptyCellsFromScheduleDay(scheduleDay):
     emptyProductsToRemove = []
     for index, product in enumerate(scheduleDay['products']):
-        if(product[0] == '&nbsp;'):
+        if(product['itemNumber'] == '&nbsp;'):
             emptyProductsToRemove.append(index)
     for i in reversed(emptyProductsToRemove):
         del scheduleDay['products'][i]

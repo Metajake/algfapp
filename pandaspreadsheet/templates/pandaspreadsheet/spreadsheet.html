@@ -14,11 +14,11 @@
         <div class="day column{{forloop.counter}}">
           <h4>{{ dailyinfo.date }}</h4>{% for product in dailyinfo.products %}
           <div class="cell">
-            <div class="column">
-              <p>{{ product.0|safe }}</p>
+            <div class="column {%for tag in product.tags %}{{tag}} {%endfor%}">
+              <p>{{ product.itemNumber|safe }}</p>
             </div>
             <div class="column">
-              <p>{{ product.1|safe }}</p>
+              <p>{{ product.customer|safe }}</p>
             </div>
           </div>{% endfor %}
         </div>{% endfor %}

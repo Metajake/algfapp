@@ -7,9 +7,9 @@
   </head>
   <body>
     <div id="masthead"><a href="{% url 'today'%}">&lt; Today's Schedule</a></div>
-    <div class="w25">{% for product in scheduleDay.products %}
-      <div class="product-number align-center">
-        <h3>{{product.0|safe}}</h3>
+    <div id="product-list">{% for product in scheduleDay.products %}
+      <div class="product-number align-center {%for tag in product.tags %}{{tag}} {%endfor%}">
+        <h3>{{product.itemNumber|safe}}</h3>
       </div>{% endfor %}
     </div>
   </body>

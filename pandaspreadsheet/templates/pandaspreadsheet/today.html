@@ -10,12 +10,12 @@
       <h3 class="align-center">{{ scheduleDay.date }}</h3><a href="{% url 'schedule'%}">&lt; Weekly Schedule</a><a class="pull-right" href="{% url 'list'%}">
         <h3>Kettles &gt; </h3></a>
     </div>
-    <div class="headline-list grid-container" id="product-table">{% for product in scheduleDay.products %}
-      <div class="item product-number align-center">
-        <h3>{{product.0|safe}}</h3>
+    <div class="grid headline-list" id="todays-products">{% for product in scheduleDay.products %}
+      <div class="item align-center {%for tag in product.tags %}{{tag}} {%endfor%}">
+        <h3>{{product.itemNumber|safe}}</h3>
       </div>
-      <div class="item product-name align-center">
-        <h3>{{product.1|safe}}</h3>
+      <div class="item align-center">
+        <h3>{{product.customer|safe}}</h3>
       </div>{% endfor %}
     </div>
   </body>

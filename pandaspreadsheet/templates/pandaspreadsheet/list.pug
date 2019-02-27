@@ -6,8 +6,8 @@ html
   body
     #masthead
       a(href="{% url 'today'%}") &lt; Today's Schedule
-    .w25
+    #product-list
       | {% for product in scheduleDay.products %}
-      .product-number.align-center
-        h3 {{product.0|safe}}
+      .product-number.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
+        h3 {{product.itemNumber|safe}}
       | {% endfor %}
