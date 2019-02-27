@@ -13,6 +13,7 @@ def schedule(request):
     # productionSpreadsheet = pandas.read_excel(os.path.join(settings.PROJECT_ROOT, '../files/PRODUCTION FORM2.XLS'), sheet_name = 0)
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
+    calendar = applyViewTags(calendar)
     context = {
         'lastModified': productionSpreadsheet.columns[0],
         'calendar' : calendar,
@@ -29,6 +30,16 @@ def today(request):
         "scheduleDay" : scheduleDay,
     }
     return render(request, 'pandaspreadsheet/today.html', context)
+
+def list(request):
+    weekRanges = constructWeekRanges(productionSpreadsheet)
+    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
+    scheduleDay = getTodaysScheduleFromSpreadsheet(calendar)
+    scheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    context = {
+        "scheduleDay" : scheduleDay,
+    }
+    return render(request, 'pandaspreadsheet/list.html', context)
 
 def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
     calendar = {
@@ -51,6 +62,10 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
                     calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'][rowEnumerationIndex].append( replaceNaN(cellValue) )
                 dayCount += 1
+    return calendar
+
+
+def applyViewTags(calendar):
     return calendar
 
 def getDictionaryFromSpreadsheet(spreadsheet):

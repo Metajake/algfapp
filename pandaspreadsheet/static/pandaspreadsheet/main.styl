@@ -29,6 +29,11 @@ body
     p
       white-space:nowrap
 
+.w50
+  width:50%
+.w25
+  width:25%
+
 #product-table.grid-container
   h2
     margin:5px 0
@@ -36,9 +41,8 @@ body
   display: grid
   grid-template-columns: 50% 50%
   & [class ^= 'product-']
-    text-align:center
-    padding:5px 0
     border-bottom:1px solid #ccc
+    // padding:5px 0
   // .product-number
   //   grid-column-start: 1
   //   grid-column-end: 2

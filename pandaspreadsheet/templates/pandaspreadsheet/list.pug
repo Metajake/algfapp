@@ -1,0 +1,13 @@
+| {% load static %}
+
+doctype html
+html
+  include includes/head.pug
+  body
+    #masthead
+      a(href="{% url 'today'%}") &lt; Today's Schedule
+    .w25
+      | {% for product in scheduleDay.products %}
+      .product-number.align-center
+        h3 {{product.0|safe}}
+      | {% endfor %}
