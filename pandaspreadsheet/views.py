@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import pandas, xlrd, numpy
 
+from .models import Kettle, Product
+
 productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.XLS', sheet_name = 0)
 
 def test (request):
@@ -37,8 +39,11 @@ def list(request):
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
     cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
     expandedScheduleDay = expandProductMultiples(cleanScheduleDay)
+
+    kettles = Kettle.objects.all()
     context = {
         "scheduleDay" : expandedScheduleDay,
+        "kettles" : kettles,
     }
     return render(request, 'pandaspreadsheet/list.html', context)
 
@@ -75,9 +80,6 @@ def expandProductMultiples(scheduleDay):
             multiples.append(product)
             quantity = int(product['itemNumber'][-1])
             itemNumber = product['itemNumber'][0:-2].strip()
-            # for i in range(0,quantity):
-            #     scheduleDay['products'][index]['it']
-                # print(scheduleDay['products'][index])
     for i in reversed(multiplesToExpand):
         del scheduleDay['products'][i]
 
@@ -86,7 +88,6 @@ def expandProductMultiples(scheduleDay):
         itemNumber = product['itemNumber'][0:-2].strip()
         for i in range(0,quantity):
             scheduleDay['products'].append({'itemNumber':itemNumber, 'customer': product['customer'], 'tags': product['tags']})
-    # print(multiples)
     return scheduleDay
 
 def applyViewTags(schedule):
@@ -94,15 +95,10 @@ def applyViewTags(schedule):
         for indexx,day in enumerate(schedule[week]):
             for indexxx, product in enumerate(schedule[week][day]['products']):
                 product['tags'] = []
-                if product['itemNumber'].startswith('*') and 'note' not in product['tags']:
-                    product['tags'].append('note')
-                    #ROWS THAT COME AFTER NOTES THAT DON'T START WITH ASTERISKS, TURN THEM INTO NOTES
-                    # try:
-                    #     calendar[week][day]['products'][indexxx +1]
-                    #     if calendar[week][day]['products'][indexxx+1]['customer'] == '&nbsp;':
-                    #         calendar[week][day]['products'][indexxx+1]['tags'].append('note')
-                    # except IndexError:
-                    #     print("List Index Out of Range")
+                if product['itemNumber'].startswith('*'):
+                    product['tags'].append( 'note' )
+                elif product['itemNumber'] != '&nbsp;' and 'customer' in product and product['customer'] == '&nbsp;':
+                    product['tags'].append( 'note' )
     return schedule
 
 def getDictionaryFromSpreadsheet(spreadsheet):

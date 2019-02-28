@@ -14,7 +14,8 @@
     </div>
     <div class="kettle-list pull-right flex-row">
       <div class="kettle-1 droppable">
-        <h4>Kettle 1</h4>
+        <h4>{{kettles.0.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
       <div class="kettle-2 droppable">
         <h4>Kettle 2</h4>

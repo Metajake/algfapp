@@ -13,7 +13,10 @@ html
       | {% endfor %}
     .kettle-list.pull-right.flex-row
       .kettle-1.droppable
-        h4 Kettle 1
+        h4 {{kettles.0.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
       .kettle-2.droppable
         h4 Kettle 2
       .kettle-3.droppable
