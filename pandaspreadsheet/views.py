@@ -12,30 +12,33 @@ def test (request):
 def schedule(request):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
+    taggedCalendar = applyViewTags(calendar)
     context = {
         'lastModified': productionSpreadsheet.columns[0],
-        'calendar' : calendar,
+        'calendar' : taggedCalendar,
     }
     return render(request, 'pandaspreadsheet/spreadsheet.html', context)
 
 def today(request):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    scheduleDay = getTodaysScheduleFromSpreadsheet(calendar)
-    scheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    taggedCalendar = applyViewTags(calendar)
+    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
+    cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
     context = {
-        "scheduleDay" : scheduleDay,
+        "scheduleDay" : cleanScheduleDay,
     }
     return render(request, 'pandaspreadsheet/today.html', context)
 
 def list(request):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    scheduleDay = getTodaysScheduleFromSpreadsheet(calendar)
-    scheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
-    scheduleDay = expandProductMultiples(scheduleDay)
+    taggedCalendar = applyViewTags(calendar)
+    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
+    cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    expandedScheduleDay = expandProductMultiples(cleanScheduleDay)
     context = {
-        "scheduleDay" : scheduleDay,
+        "scheduleDay" : expandedScheduleDay,
     }
     return render(request, 'pandaspreadsheet/list.html', context)
 
@@ -60,12 +63,12 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
                     calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'][rowEnumerationIndex]['customer'] = replaceNaN(cellValue)
                 dayCount += 1
-    calendar = applyViewTags(calendar)
     return calendar
 
 def expandProductMultiples(scheduleDay):
     multiplesToExpand = []
     multiples = []
+    print(scheduleDay['products'])
     for index, product in enumerate(scheduleDay['products']):
         if re.search(r'x[1-9]', product['itemNumber']) and 'note' not in product['tags']:
             multiplesToExpand.append(index)
@@ -86,10 +89,10 @@ def expandProductMultiples(scheduleDay):
     # print(multiples)
     return scheduleDay
 
-def applyViewTags(calendar):
-    for index,week in enumerate(calendar):
-        for indexx,day in enumerate(calendar[week]):
-            for indexxx, product in enumerate(calendar[week][day]['products']):
+def applyViewTags(schedule):
+    for index,week in enumerate(schedule):
+        for indexx,day in enumerate(schedule[week]):
+            for indexxx, product in enumerate(schedule[week][day]['products']):
                 product['tags'] = []
                 if product['itemNumber'].startswith('*') and 'note' not in product['tags']:
                     product['tags'].append('note')
@@ -100,7 +103,7 @@ def applyViewTags(calendar):
                     #         calendar[week][day]['products'][indexxx+1]['tags'].append('note')
                     # except IndexError:
                     #     print("List Index Out of Range")
-    return calendar
+    return schedule
 
 def getDictionaryFromSpreadsheet(spreadsheet):
     data = {}
