@@ -12,23 +12,24 @@ html
         h3 {{product.itemNumber|safe}}
       | {% endfor %}
     .kettle-list.pull-right.flex-row
-      .kettle-1
+      .kettle-1.droppable
         h4 Kettle 1
-      .kettle-2
+      .kettle-2.droppable
         h4 Kettle 2
-      .kettle-3
+      .kettle-3.droppable
         h4 Kettle 3
-      .kettle-4
+      .kettle-4.droppable
         h4 Kettle 4
     .kettle-list.pull-right.flex-row
-      .kettle-6
+      .kettle-6.droppable
         h4 Kettle 6
-      .kettle-7
+      .kettle-7.droppable
         h4 Kettle 7
-      .tucs-1
+      .tucs-1.droppable
         h4 TUCS Kettle 1
-      .tucs-2
+      .tucs-2.droppable
         h4 TUCS Kettle 2
     script(src="{% static 'js/jquery.js' %}")
     script(src="{% static 'js/jqueryui.js' %}")
+    script(src="{% static 'js/kettles.js' %}")
       
