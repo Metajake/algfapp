@@ -1,4 +1,4 @@
-import os, datetime, math
+import os, datetime, math, re
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -33,6 +33,7 @@ def list(request):
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     scheduleDay = getTodaysScheduleFromSpreadsheet(calendar)
     scheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    scheduleDay = expandProductMultiples(scheduleDay)
     context = {
         "scheduleDay" : scheduleDay,
     }
@@ -62,6 +63,28 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
     calendar = applyViewTags(calendar)
     return calendar
 
+def expandProductMultiples(scheduleDay):
+    multiplesToExpand = []
+    multiples = []
+    for index, product in enumerate(scheduleDay['products']):
+        if re.search(r'x[1-9]', product['itemNumber']) and 'note' not in product['tags']:
+            multiplesToExpand.append(index)
+            multiples.append(product)
+            quantity = int(product['itemNumber'][-1])
+            itemNumber = product['itemNumber'][0:-2].strip()
+            # for i in range(0,quantity):
+            #     scheduleDay['products'][index]['it']
+                # print(scheduleDay['products'][index])
+    for i in reversed(multiplesToExpand):
+        del scheduleDay['products'][i]
+
+    for indexx, product in enumerate(multiples):
+        quantity = int(product['itemNumber'][-1])
+        itemNumber = product['itemNumber'][0:-2].strip()
+        for i in range(0,quantity):
+            scheduleDay['products'].append({'itemNumber':itemNumber, 'customer': product['customer'], 'tags': product['tags']})
+    # print(multiples)
+    return scheduleDay
 
 def applyViewTags(calendar):
     for index,week in enumerate(calendar):
@@ -70,6 +93,7 @@ def applyViewTags(calendar):
                 product['tags'] = []
                 if product['itemNumber'].startswith('*') and 'note' not in product['tags']:
                     product['tags'].append('note')
+                    #ROWS THAT COME AFTER NOTES THAT DON'T START WITH ASTERISKS, TURN THEM INTO NOTES
                     # try:
                     #     calendar[week][day]['products'][indexxx +1]
                     #     if calendar[week][day]['products'][indexxx+1]['customer'] == '&nbsp;':
