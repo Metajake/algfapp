@@ -4,54 +4,57 @@ doctype html
 html
   include includes/head.pug
   body
-    #masthead
+    include includes/masthead.pug
+    nav
       a(href="{% url 'today'%}") &lt; Today's Schedule
-      | {{dateIsKettled}}
     #product-list.pull-left
       | {% for product in productList %}
       .product-number.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
-        h3 {{product.itemNumber|safe}}
+        h3(id="product-{{product.pk}}") {{product.item_number|safe}}
+        | {% if product.kettle %}
+        p kettle
+        | {% endif %}
       | {% endfor %}
     .kettle-list.pull-right.flex-row
-      .kettle-1.droppable
+      div(id="kettle-{{kettles.0.pk}}").droppable
         h4 {{kettles.0.name}}
         | {% for product in kettles.0.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
-      .kettle-2.droppable
+      div(id="kettle-{{kettles.1.pk}}").droppable
         h4 {{kettles.1.name}}
-        | {% for product in kettles.0.products.all %}
+        | {% for product in kettles.1.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
-      .kettle-3.droppable
+      div(id="kettle-{{kettles.2.pk}}").droppable
         h4 {{kettles.2.name}}
-        | {% for product in kettles.0.products.all %}
+        | {% for product in kettles.2.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
-      .kettle-4.droppable
+      div(id="kettle-{{kettles.3.pk}}").droppable
         h4 {{kettles.3.name}}
-        | {% for product in kettles.0.products.all %}
+        | {% for product in kettles.3.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
     .kettle-list.pull-right.flex-row
-      .kettle-6.droppable
+      div(id="kettle-{{kettles.4.pk}}").droppable
         h4 {{kettles.4.name}}
-        | {% for product in kettles.0.products.all %}
+        | {% for product in kettles.4.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
-      .kettle-7.droppable
+      div(id="kettle-{{kettles.5.pk}}").droppable
         h4 {{kettles.5.name}}
-        | {% for product in kettles.0.products.all %}
+        | {% for product in kettles.5.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
-      .tucs-1.droppable
+      div(id="kettle-{{kettles.6.pk}}").droppable
         h4 {{kettles.6.name}}
-        | {% for product in kettles.0.products.all %}
+        | {% for product in kettles.6.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
-      .tucs-2.droppable
+      div(id="kettle-{{kettles.7.pk}}").droppable
         h4 {{kettles.7.name}}
-        | {% for product in kettles.0.products.all %}
+        | {% for product in kettles.7.products.all %}
         h3.product-number {{ product.item_number }}
         | {% endfor %}
     script(src="{% static 'js/jquery.js' %}")

@@ -34,6 +34,7 @@ def today(request):
 
 def list(request, date):
     selectedKettleDate = datetime.datetime(year=datetime.date.today().year, month=datetime.date.today().month, day=int(date[-2:]))
+
     dateIsKettled = checkIfDateKettled(selectedKettleDate)
 
     if dateIsKettled == False:
@@ -45,18 +46,23 @@ def list(request, date):
         taggedCalendar = applyViewTags(calendar)
         scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
         cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
-        productList = expandProductMultiples(cleanScheduleDay)
+        productScheduleDay = expandProductMultiples(cleanScheduleDay)
 
-        #turn products into CalendarDay.products (with no kettle assignement)
+        for product in productScheduleDay['products']:
+            p = Product(item_number=product['itemNumber'], customer=product['customer'], production_date=selectedKettleDate)
+            p.save()
 
+        productScheduleDay = Product.objects.filter(production_date=selectedKettleDate)
     else:
-        cd = CalendarDay.objects.get(date = selectedKettleDate)
-        productList = cd.products.all()
-        print(productList)
+        productScheduleDay = Product.objects.filter(production_date=selectedKettleDate)
+        # print(productScheduleDay)
+        # cd = CalendarDay.objects.get(date = selectedKettleDate)
+        # productScheduleDay = cd.products.all()
+        # print(productScheduleDay)
 
     kettles = Kettle.objects.all()
     context = {
-        "productList" : productList,
+        "productList" : productScheduleDay,
         "kettles" : kettles,
         "dateIsKettled": dateIsKettled,
     }
@@ -159,6 +165,8 @@ def getTodaysScheduleFromSpreadsheet(calendar):
         for index, day in enumerate(calendar[week]):
             dateString = calendar[week][day]['date'].strip()
             dateNumber = dateString[-2:].strip()
+            if dateNumber.startswith('0'):
+                dateNumber = dateNumber[1:]
             if dateNumber == str(todaysDate):
                 scheduleDay = calendar[week][day]
     return scheduleDay

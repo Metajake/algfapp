@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="{% static 'pandaspreadsheet/main.css' %}" type="text/css" media="screen,projection">
   </head>
   <body>
+    <div id="masthead"><a href="/admin">Admin</a></div>
+    <nav><a class="pull-right" href="{% url 'today' %}">
+        <h3>Today's Schedule &gt;</h3></a></nav>
     <div id="calendar">
-      <h3 class="last-modified">Last Modified: {{ lastModified }}</h3><a class="pull-right" href="{% url 'today' %}">
-        <h3>Today's Schedule &gt;</h3></a>{% for week, weekdata in calendar.items %}
+      <h3 class="last-modified">Last Modified: {{ lastModified }}</h3>{% for week, weekdata in calendar.items %}
       <h3>{{ week }}</h3>
       <div class="week">{% for day, dailyinfo in weekdata.items %}
         <div class="day column{{forloop.counter}}">

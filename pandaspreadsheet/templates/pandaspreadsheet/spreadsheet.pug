@@ -3,9 +3,11 @@ doctype html
 html
   include includes/head.pug
   body
+    include includes/masthead.pug
+    nav
+      a.pull-right(href="{% url 'today' %}"): h3 Today's Schedule &gt;
     #calendar
       h3.last-modified Last Modified: {{ lastModified }}
-      a.pull-right(href="{% url 'today' %}"): h3 Today's Schedule &gt;
       | {% for week, weekdata in calendar.items %}
       h3 {{ week }}
       .week
