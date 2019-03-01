@@ -6,8 +6,9 @@ html
   body
     #masthead
       a(href="{% url 'today'%}") &lt; Today's Schedule
+      | {{dateIsKettled}}
     #product-list.pull-left
-      | {% for product in scheduleDay.products %}
+      | {% for product in productList %}
       .product-number.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
         h3 {{product.itemNumber|safe}}
       | {% endfor %}
@@ -18,20 +19,41 @@ html
         h3.product-number {{ product.item_number }}
         | {% endfor %}
       .kettle-2.droppable
-        h4 Kettle 2
+        h4 {{kettles.1.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
       .kettle-3.droppable
-        h4 Kettle 3
+        h4 {{kettles.2.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
       .kettle-4.droppable
-        h4 Kettle 4
+        h4 {{kettles.3.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
     .kettle-list.pull-right.flex-row
       .kettle-6.droppable
-        h4 Kettle 6
+        h4 {{kettles.4.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
       .kettle-7.droppable
-        h4 Kettle 7
+        h4 {{kettles.5.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
       .tucs-1.droppable
-        h4 TUCS Kettle 1
+        h4 {{kettles.6.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
       .tucs-2.droppable
-        h4 TUCS Kettle 2
+        h4 {{kettles.7.name}}
+        | {% for product in kettles.0.products.all %}
+        h3.product-number {{ product.item_number }}
+        | {% endfor %}
     script(src="{% static 'js/jquery.js' %}")
     script(src="{% static 'js/jqueryui.js' %}")
     script(src="{% static 'js/kettles.js' %}")

@@ -7,7 +7,12 @@ html
     #masthead
       h3.align-center {{ scheduleDay.date }}
       a(href="{% url 'schedule'%}") &lt; Weekly Schedule
-      a.pull-right(href="{% url 'list'%}"): h3 Kettles &gt; 
+      a.pull-right.align-right(href="{% url 'list' date=scheduleDay.date %}")
+        h3 IMPORT to Kettles &gt;
+        p.
+          (Before Importing, make sure that all changes have been made to this schudule by the <strong>SCHEDULE MANAGER</strong> <br/>
+          After importing, changes made to this schedule, by the <strong>SCHEDULE MANAGER</strong><br/>
+          will have to be <em>MANUALLY UPDATED</em> by the <strong>PRODUCTION MANAGER</strong>).
       
     #todays-products.grid-50-50.headline-list.pull-center
       | {% for product in scheduleDay.products %}

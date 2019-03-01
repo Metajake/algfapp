@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import pandas, xlrd, numpy
 
-from .models import Kettle, Product
+from .models import Kettle, Product, CalendarDay
 
 productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.XLS', sheet_name = 0)
 
@@ -32,18 +32,33 @@ def today(request):
     }
     return render(request, 'pandaspreadsheet/today.html', context)
 
-def list(request):
-    weekRanges = constructWeekRanges(productionSpreadsheet)
-    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    taggedCalendar = applyViewTags(calendar)
-    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
-    cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
-    expandedScheduleDay = expandProductMultiples(cleanScheduleDay)
+def list(request, date):
+    selectedKettleDate = datetime.datetime(year=datetime.date.today().year, month=datetime.date.today().month, day=int(date[-2:]))
+    dateIsKettled = checkIfDateKettled(selectedKettleDate)
+
+    if dateIsKettled == False:
+        cd = CalendarDay(date = selectedKettleDate)
+        cd.save()
+
+        weekRanges = constructWeekRanges(productionSpreadsheet)
+        calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
+        taggedCalendar = applyViewTags(calendar)
+        scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
+        cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+        productList = expandProductMultiples(cleanScheduleDay)
+
+        #turn products into CalendarDay.products (with no kettle assignement)
+
+    else:
+        cd = CalendarDay.objects.get(date = selectedKettleDate)
+        productList = cd.products.all()
+        print(productList)
 
     kettles = Kettle.objects.all()
     context = {
-        "scheduleDay" : expandedScheduleDay,
+        "productList" : productList,
         "kettles" : kettles,
+        "dateIsKettled": dateIsKettled,
     }
     return render(request, 'pandaspreadsheet/list.html', context)
 
@@ -70,10 +85,22 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
                 dayCount += 1
     return calendar
 
+def checkIfDateKettled(selectedKettleDate):
+    toReturn = False
+    calendarDays = CalendarDay.objects.all()
+    if len(calendarDays):
+        for calendarDay in calendarDays:
+            if str(calendarDay) == str(selectedKettleDate.date()):
+                toReturn = True
+            else:
+                toReturn = False
+    else:
+        toReturn = False
+    return toReturn
+
 def expandProductMultiples(scheduleDay):
     multiplesToExpand = []
     multiples = []
-    print(scheduleDay['products'])
     for index, product in enumerate(scheduleDay['products']):
         if re.search(r'x[1-9]', product['itemNumber']) and 'note' not in product['tags']:
             multiplesToExpand.append(index)

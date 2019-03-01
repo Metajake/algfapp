@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="{% static 'pandaspreadsheet/main.css' %}" type="text/css" media="screen,projection">
   </head>
   <body>
-    <div id="masthead"><a href="{% url 'today'%}">&lt; Today's Schedule</a></div>
-    <div class="pull-left" id="product-list">{% for product in scheduleDay.products %}
+    <div id="masthead"><a href="{% url 'today'%}">&lt; Today's Schedule</a>{{dateIsKettled}}</div>
+    <div class="pull-left" id="product-list">{% for product in productList %}
       <div class="product-number align-center {%for tag in product.tags %}{{tag}} {%endfor%}">
         <h3>{{product.itemNumber|safe}}</h3>
       </div>{% endfor %}
@@ -18,27 +18,34 @@
         <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
       <div class="kettle-2 droppable">
-        <h4>Kettle 2</h4>
+        <h4>{{kettles.1.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
       <div class="kettle-3 droppable">
-        <h4>Kettle 3</h4>
+        <h4>{{kettles.2.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
       <div class="kettle-4 droppable">
-        <h4>Kettle 4</h4>
+        <h4>{{kettles.3.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
     </div>
     <div class="kettle-list pull-right flex-row">
       <div class="kettle-6 droppable">
-        <h4>Kettle 6</h4>
+        <h4>{{kettles.4.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
       <div class="kettle-7 droppable">
-        <h4>Kettle 7</h4>
+        <h4>{{kettles.5.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
       <div class="tucs-1 droppable">
-        <h4>TUCS Kettle 1</h4>
+        <h4>{{kettles.6.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
       <div class="tucs-2 droppable">
-        <h4>TUCS Kettle 2</h4>
+        <h4>{{kettles.7.name}}</h4>{% for product in kettles.0.products.all %}
+        <h3 class="product-number">{{ product.item_number }}</h3>{% endfor %}
       </div>
     </div>
     <script src="{% static 'js/jquery.js' %}"></script>

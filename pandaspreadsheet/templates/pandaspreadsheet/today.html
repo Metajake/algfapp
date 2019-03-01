@@ -7,8 +7,14 @@
   </head>
   <body>
     <div id="masthead">
-      <h3 class="align-center">{{ scheduleDay.date }}</h3><a href="{% url 'schedule'%}">&lt; Weekly Schedule</a><a class="pull-right" href="{% url 'list'%}">
-        <h3>Kettles &gt; </h3></a>
+      <h3 class="align-center">{{ scheduleDay.date }}</h3><a href="{% url 'schedule'%}">&lt; Weekly Schedule</a><a class="pull-right align-right" href="{% url 'list' date=scheduleDay.date %}">
+        <h3>IMPORT to Kettles &gt;</h3>
+        <p>
+          (Before Importing, make sure that all changes have been made to this schudule by the <strong>SCHEDULE MANAGER</strong> <br/>
+          After importing, changes made to this schedule, by the <strong>SCHEDULE MANAGER</strong><br/>
+          will have to be <em>MANUALLY UPDATED</em> by the <strong>PRODUCTION MANAGER</strong>).
+          
+        </p></a>
     </div>
     <div class="grid-50-50 headline-list pull-center" id="todays-products">{% for product in scheduleDay.products %}
       <div class="item align-center {%for tag in product.tags %}{{tag}} {%endfor%}">

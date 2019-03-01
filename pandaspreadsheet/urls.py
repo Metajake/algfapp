@@ -6,5 +6,5 @@ urlpatterns = [
     path('', views.schedule, name='schedule'),
     path('test/', views.test, name='test'),
     path('today/', views.today, name='today'),
-    path('list/', views.list, name='list'),
+    path('list/<str:date>', views.list, name='list'),
 ]

@@ -14,3 +14,10 @@ class Kettle(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+class CalendarDay(models.Model):
+    products = models.ManyToManyField(Product, blank=True)
+    date = models.DateField(blank=True)
+
+    def __str__(self):
+        return str(self.date)
