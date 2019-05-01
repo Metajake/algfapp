@@ -8,7 +8,7 @@
     <script type="text/javascript" src="{% static 'js/fontawesome.js'%}"></script>
   </head>
   <body>
-    <h3 class="inline">ProductionSchedule</h3><a href="../admin/">Admin</a>
+    <h3 class="inline">ProductionSchedule</h3><a href="admin/">Admin</a>
     <div id="calendar">{% for week in weeks %}
       <div class="week">{% for rangeEntry in week.range %}
         <div class="day">
