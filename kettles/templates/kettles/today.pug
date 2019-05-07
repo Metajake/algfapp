@@ -11,11 +11,27 @@ html
     div(style="width:25%;float:left;")
       p Today's Products:
       | {% for product in todays_products.products %}
-      h6 {{product.itemNumber}}
+      h6.product {{product.itemNumber}}
       | {% endfor %}
     div(style="width:74%;float:right;")
       p Today's Kettles:
-        | {% for k in todays_production_day.kettles.all %}
-        p.kettle {{k.kettle_number}}
+        | {% for k in todays_production_day.kettles.all|dictsort:"kettle_number" %}
+        .kettle
+          p {{k.kettle_number}}
+          ul
+            | {% for product in k.products %}
+            li {{product}}
+            | {% endfor %}
         | {% endfor %}
-    
+        
+    script(type="text/javascript" src="{% static 'js/jquery.js'%}")
+    script(type="text/javascript" src="{% static 'js/jqueryui.js'%}")
+    script.
+      $('.product').draggable({
+        cursor:'move',
+        helper: 'clone',
+        delay:350,
+        connectToSortable: '.sortable',
+        start: handleDragStart,
+        stop: handleDragStop,
+      });

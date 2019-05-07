@@ -10,13 +10,30 @@
     <p>Today's Production Date: {{todays_production_day}}</p>
     <div style="width:25%;float:left;">
       <p>Today's Products:</p>{% for product in todays_products.products %}
-      <h6>{{product.itemNumber}}</h6>{% endfor %}
+      <h6 class="product">{{product.itemNumber}}</h6>{% endfor %}
     </div>
     <div style="width:74%;float:right;">
       <p>
-        Today's Kettles:{% for k in todays_production_day.kettles.all %}
-        <p class="kettle">{{k.kettle_number}}</p>{% endfor %}
+        Today's Kettles:{% for k in todays_production_day.kettles.all|dictsort:"kettle_number" %}
+        <div class="kettle">
+          <p>{{k.kettle_number}}</p>
+          <ul>{% for product in k.products %}
+            <li>{{product}}</li>{% endfor %}
+          </ul>
+        </div>{% endfor %}
       </p>
     </div>
+    <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
+    <script>
+      $('.product').draggable({
+        cursor:'move',
+        helper: 'clone',
+        delay:350,
+        connectToSortable: '.sortable',
+        start: handleDragStart,
+        stop: handleDragStop,
+      });
+    </script>
   </body>
 </html>

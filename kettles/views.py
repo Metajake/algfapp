@@ -25,15 +25,14 @@ def today(request):
     today = date.today()
 
     todaysProducts = createTodaysProductList()
-    print(todaysProducts)
+    # print(todaysProducts)
 
-    for product in todaysProducts['products']:
-        # print(product['itemNumber'])
-        try:
-            p = Product.objects.get(item_number = product['itemNumber'])
-            print(p)
-        except Product.DoesNotExist:
-            print("Product Does Not Exist")
+    # for product in todaysProducts['products']:
+    #     try:
+    #         p = Product.objects.get(item_number = product['itemNumber'])
+    #         print(p)
+    #     except Product.DoesNotExist:
+    #         print("Product Does Not Exist")
 
     try:
         todaysProductionDay = ProductionDay.objects.get(date=today)
@@ -70,4 +69,5 @@ def createTodaysProductList():
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyViewTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
-    return removeEmptyCellsFromScheduleDay(scheduleDay)
+    strippedScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    return strippedScheduleDay
