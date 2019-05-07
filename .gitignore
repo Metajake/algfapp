@@ -8,6 +8,7 @@ algfapp/settings.py
 prepros-6.config
 productionschedule/migrations/
 pandaspreadsheet/migrations/
+kettles/migrations/
 #db_backups/
 #media/*
 files/.~lock.PRODUCTION FORM.xls#

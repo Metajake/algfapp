@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import ProductionDay, Kettle, Product
+
+admin.site.register(ProductionDay)
+admin.site.register(Kettle)
+admin.site.register(Product)
