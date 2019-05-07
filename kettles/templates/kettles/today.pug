@@ -1,0 +1,21 @@
+| {% load static %}
+doctype html
+html
+  head
+    title Today
+    link(rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection")
+  body
+    h1 Today
+    p Today: {{todays_date}}
+    p Today's Production Date: {{todays_production_day}}
+    div(style="width:25%;float:left;")
+      p Today's Products:
+      | {% for product in todays_products.products %}
+      h6 {{product.itemNumber}}
+      | {% endfor %}
+    div(style="width:74%;float:right;")
+      p Today's Kettles:
+        | {% for k in todays_production_day.kettles.all %}
+        p.kettle {{k.kettle_number}}
+        | {% endfor %}
+    

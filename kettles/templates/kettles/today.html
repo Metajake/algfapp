@@ -1,0 +1,22 @@
+{% load static %}<!DOCTYPE html>
+<html>
+  <head>
+    <title>Today</title>
+    <link rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection">
+  </head>
+  <body>
+    <h1>Today</h1>
+    <p>Today: {{todays_date}}</p>
+    <p>Today's Production Date: {{todays_production_day}}</p>
+    <div style="width:25%;float:left;">
+      <p>Today's Products:</p>{% for product in todays_products.products %}
+      <h6>{{product.itemNumber}}</h6>{% endfor %}
+    </div>
+    <div style="width:74%;float:right;">
+      <p>
+        Today's Kettles:{% for k in todays_production_day.kettles.all %}
+        <p class="kettle">{{k.kettle_number}}</p>{% endfor %}
+      </p>
+    </div>
+  </body>
+</html>
