@@ -1,5 +1,3 @@
-#pages/static/.sass-cache/
-#website/static/.sass-cache/
 *.pyc
 db.sqlite3
 algfapp/settings.py
