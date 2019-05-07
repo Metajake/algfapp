@@ -11,4 +11,4 @@ kettles/migrations/
 #media/*
 files/.~lock.PRODUCTION FORM.xls#
 files/.~lock.PRODUCTION FORM2.xls#
-static/
+/static/
