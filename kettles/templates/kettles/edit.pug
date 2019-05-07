@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    title Products
+  body
+    p {{message}}
+    
+    input#product-submit(type="button" value="Send")
+      
+    script.
+      console.log( "{{ message }}" );
+      
+      var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/kettles/');
+      
+      document.querySelector('#product-submit').onclick = function(e) {
+        console.log("Front End Sending Message")
+        chatSocket.send(JSON.stringify({
+            'message': 'front end message'
+        }));
+      };

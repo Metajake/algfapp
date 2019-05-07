@@ -7,4 +7,5 @@ urlpatterns = [
     path('prod/', include('productionschedule.urls')),
     path('', include('pandaspreadsheet.urls')),
     url(r'^channel/', include('channel.urls')),
+    path('kettles/', include('kettles.urls')),
 ]
