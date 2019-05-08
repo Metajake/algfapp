@@ -41,7 +41,7 @@ def today(request):
         todaysProductionDay.save()
         kettle_numbers = ['K1', 'K2', 'K3', 'K4', 'L5', 'T6', 'K7', 'K8', 'T9']
         for i in kettle_numbers:
-            k = Kettle(kettle_number = i, production_date = todaysProductionDay, products=[''])
+            k = Kettle(kettle_number = i, production_date = todaysProductionDay)
             k.save()
     context = {
         'todays_date' : today,
@@ -69,4 +69,5 @@ def createTodaysProductList():
     taggedCalendar = applyViewTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
     strippedScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    print(strippedScheduleDay)
     return strippedScheduleDay

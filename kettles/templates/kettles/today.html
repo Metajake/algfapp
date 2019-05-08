@@ -10,16 +10,16 @@
     <p>Today's Production Date: {{todays_production_day}}</p>
     <div style="width:25%;float:left;">
       <p>Today's Products:</p>{% for product in todays_products.products %}
-      <h6 class="product">{{product.itemNumber}}</h6>{% endfor %}
+      <h5 class="product">{{product.itemNumber}}</h5>{% endfor %}
     </div>
     <div style="width:74%;float:right;">
       <p>
         Today's Kettles:{% for k in todays_production_day.kettles.all|dictsort:"kettle_number" %}
-        <div class="kettle">
-          <p>{{k.kettle_number}}</p>
+        <p class="kettle-number">{{k.kettle_number}}</p>
+        <div class="kettle">{% if k.products %}
           <ul>{% for product in k.products %}
             <li>{{product}}</li>{% endfor %}
-          </ul>
+          </ul>{% endif %}
         </div>{% endfor %}
       </p>
     </div>
@@ -29,11 +29,30 @@
       $('.product').draggable({
         cursor:'move',
         helper: 'clone',
+        classes: {
+          "ui-draggable": "dragging-product"
+        },
         //- delay:350,
         //- connectToSortable: '.sortable',
         //- start: handleDragStart,
-        //- stop: handleDragStop,
+        //- stop: handleProductDrop,
       });
+      
+      $('.kettle').droppable({
+        drop:handleCellDrop,
+      })
+      
+      function handleProductDrop(event, ui){
+        var droppedProduct = $(event.target)
+        //- droppedProduct.addClass('assigned')
+      }
+      
+      function handleCellDrop(event, ui){
+        var productToDrop = $(ui.draggable);
+        productToDrop.addClass('assigned')
+        var kettleToDropOn = $(event.target).find('.kettle-number').text();
+        //- console.log(kettleToDropOn)
+      }
     </script>
   </body>
 </html>

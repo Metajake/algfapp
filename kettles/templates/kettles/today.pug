@@ -11,17 +11,19 @@ html
     div(style="width:25%;float:left;")
       p Today's Products:
       | {% for product in todays_products.products %}
-      h6.product {{product.itemNumber}}
+      h5.product {{product.itemNumber}}
       | {% endfor %}
     div(style="width:74%;float:right;")
       p Today's Kettles:
         | {% for k in todays_production_day.kettles.all|dictsort:"kettle_number" %}
+        p.kettle-number {{k.kettle_number}}
         .kettle
-          p {{k.kettle_number}}
+          | {% if k.products %}
           ul
             | {% for product in k.products %}
             li {{product}}
             | {% endfor %}
+          | {% endif %}
         | {% endfor %}
         
     script(type="text/javascript" src="{% static 'js/jquery.js'%}")
@@ -30,8 +32,27 @@ html
       $('.product').draggable({
         cursor:'move',
         helper: 'clone',
+        classes: {
+          "ui-draggable": "dragging-product"
+        },
         //- delay:350,
         //- connectToSortable: '.sortable',
         //- start: handleDragStart,
-        //- stop: handleDragStop,
+        //- stop: handleProductDrop,
       });
+      
+      $('.kettle').droppable({
+        drop:handleCellDrop,
+      })
+      
+      function handleProductDrop(event, ui){
+        var droppedProduct = $(event.target)
+        //- droppedProduct.addClass('assigned')
+      }
+      
+      function handleCellDrop(event, ui){
+        var productToDrop = $(ui.draggable);
+        productToDrop.addClass('assigned')
+        var kettleToDropOn = $(event.target).find('.kettle-number').text();
+        //- console.log(kettleToDropOn)
+      }
