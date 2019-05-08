@@ -10,7 +10,7 @@ class ProductionDay(models.Model):
 class Kettle(models.Model):
     kettle_number = models.CharField(max_length=20)
     production_date = models.ForeignKey(ProductionDay, related_name="kettles", on_delete=models.CASCADE)
-    products = ArrayField(models.CharField(max_length = 20, blank=True), blank=True) 
+    products = ArrayField(models.CharField(max_length = 20, blank=True)) 
 
     def __str__(self):
         return self.kettle_number

@@ -37,12 +37,11 @@ def today(request):
     try:
         todaysProductionDay = ProductionDay.objects.get(date=today)
     except ProductionDay.DoesNotExist:
-        # raise Http404("Production day does not exist")
         todaysProductionDay = ProductionDay(date=today)
         todaysProductionDay.save()
         kettle_numbers = ['K1', 'K2', 'K3', 'K4', 'L5', 'T6', 'K7', 'K8', 'T9']
         for i in kettle_numbers:
-            k = Kettle(kettle_number = i, production_date = todaysProductionDay)
+            k = Kettle(kettle_number = i, production_date = todaysProductionDay, products=[''])
             k.save()
     context = {
         'todays_date' : today,
