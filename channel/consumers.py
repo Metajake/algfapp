@@ -80,16 +80,15 @@ class KettleConsumer(AsyncWebsocketConsumer):
         if message == 'addToKettle':
             self.kettleUpdate = await database_sync_to_async(self.addToKettle)()
             # Send message to room group
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'update_kettle',
-                    'message': 'updating_kettle',
-                    'kettle' : self.text_data_json['kettle'],
-                    'date' : self.text_data_json['date'],
-                }
-            )
-
+            # await self.channel_layer.group_send(
+            #     self.room_group_name,
+            #     {
+            #         'type': 'update_kettle',
+            #         'message': 'updating_kettle',
+            #         'kettle' : self.text_data_json['kettle'],
+            #         'date' : self.text_data_json['date'],
+            #     }
+            # )
         elif message == 'removeFromKettle':
             self.productUpdate = await database_sync_to_async(self.removeFromKettle)()
 

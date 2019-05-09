@@ -60,8 +60,8 @@ function handleProductListDrop(event, ui){
 }
 
 chatSocket.onmessage = function(e) {
-    //- console.log("GOT MESSAqge");
-    location.reload();
+    console.log("GOT MESSAqge");
+    // location.reload();
     // var data = JSON.parse(e.data);
     // var message = data['message'];
     // var kettle = data['kettle'];
