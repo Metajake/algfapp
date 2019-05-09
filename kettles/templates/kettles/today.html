@@ -5,53 +5,82 @@
     <link rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection">
   </head>
   <body>
-    <h1>Today</h1>
-    <p>Today: {{todays_date}}</p>
-    <p>Today's Production Date: {{todays_production_day}}</p>
-    <div style="width:25%;float:left;">
-      <p>Today's Products:</p>{% for product in todays_products.products %}
-      <h5 class="product">{{product.itemNumber}}</h5>{% endfor %}
+    <h1>{{todays_date}}</h1>
+    <div class="product-list">{% for product in todays_production_day.days_products.all %}
+      <h5 class="product {%for tag in product.tags %}{{tag}} {%endfor%}">{{product.item_number}}</h5>{% endfor %}
     </div>
-    <div style="width:74%;float:right;">
-      <p>
-        Today's Kettles:{% for k in todays_production_day.kettles.all|dictsort:"kettle_number" %}
-        <p class="kettle-number">{{k.kettle_number}}</p>
-        <div class="kettle">{% if k.products %}
-          <ul>{% for product in k.products %}
-            <li>{{product}}</li>{% endfor %}
-          </ul>{% endif %}
-        </div>{% endfor %}
-      </p>
+    <div class="kettle-list">{% for k in todays_production_day.kettles.all|dictsort:"kettle_number" %}
+      <div class="kettle">
+        <p class="kettle-number">{{k.kettle_number}}</p>{% if k.days_products %}
+        {% for product in k.days_products.all%}
+        {% if product != ''%}
+        <h4 class="product {%for tag in product.tags %}{{tag}} {%endfor%}">{{product.item_number}}</h4>{% endif %}
+        {% endfor %}
+        {% endif %}
+      </div>{% endfor %}
     </div>
     <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
     <script>
-      $('.product').draggable({
+      var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/kettles/');
+      chatSocket.onopen = function(event) {
+        console.log("WebSocket is open now.");
+      };
+      
+      $('.product-list .product').not('.assigned').draggable({
         cursor:'move',
         helper: 'clone',
         classes: {
           "ui-draggable": "dragging-product"
         },
-        //- delay:350,
+        //- connectToSortable: '.sortable',
+        //- start: handleDragStart,
+        //- stop: handleProductDrop,
+      });
+      
+      $('.kettle .product').draggable({
+        cursor:'move',
+        helper: 'clone',
         //- connectToSortable: '.sortable',
         //- start: handleDragStart,
         //- stop: handleProductDrop,
       });
       
       $('.kettle').droppable({
-        drop:handleCellDrop,
+        drop:handleKettleDrop,
       })
       
-      function handleProductDrop(event, ui){
-        var droppedProduct = $(event.target)
-        //- droppedProduct.addClass('assigned')
+      $('.product-list').droppable({
+        drop:handleProductListDrop,
+      })
+      
+      
+      function handleKettleDrop(event, ui){
+        var productToDrop = $(ui.draggable);
+        var productNumber = productToDrop.text()
+        
+        var kettleToDropOn = $(event.target).find('.kettle-number').text();
+        console.log(kettleToDropOn)
+        
+        chatSocket.send(JSON.stringify({
+            'message': 'updatekettle',
+            'product': productNumber,
+            'kettle' : kettleToDropOn,
+            'date' : '{{todays_production_day.date}}'
+        }));
       }
       
-      function handleCellDrop(event, ui){
-        var productToDrop = $(ui.draggable);
-        productToDrop.addClass('assigned')
-        var kettleToDropOn = $(event.target).find('.kettle-number').text();
-        //- console.log(kettleToDropOn)
+      function handleProductListDrop(event, ui){
+        var draggedProduct = $(ui.draggable)
+        var kettleToRemove = draggedProduct.parent().find('.kettle-number').text();
+        console.log()
+        
+        chatSocket.send(JSON.stringify({
+            'message': 'updateproduct',
+            'product': draggedProduct.text(),
+            'kettle' : kettleToRemove,
+            'date' : '{{todays_production_day.date}}'
+        }));
       }
     </script>
   </body>

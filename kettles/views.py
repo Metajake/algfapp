@@ -5,7 +5,7 @@ from datetime import date, timedelta
 import pandas, xlrd, numpy
 from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN
 
-from products.models import Product
+from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
 
 # productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.XLS', sheet_name = 0)
@@ -24,29 +24,35 @@ def this_week(request):
 def today(request):
     today = date.today()
 
-    todaysProducts = createTodaysProductList()
-    # print(todaysProducts)
-
-    # for product in todaysProducts['products']:
-    #     try:
-    #         p = Product.objects.get(item_number = product['itemNumber'])
-    #         print(p)
-    #     except Product.DoesNotExist:
-    #         print("Product Does Not Exist")
-
     try:
         todaysProductionDay = ProductionDay.objects.get(date=today)
     except ProductionDay.DoesNotExist:
         todaysProductionDay = ProductionDay(date=today)
         todaysProductionDay.save()
-        kettle_numbers = ['K1', 'K2', 'K3', 'K4', 'L5', 'T6', 'K7', 'K8', 'T9']
-        for i in kettle_numbers:
-            k = Kettle(kettle_number = i, production_date = todaysProductionDay)
+
+    kettle_numbers = ['K1', 'K2', 'K3', 'K4', 'L5', 'T6', 'K7', 'K8', 'T9']
+    for i in kettle_numbers:
+        try:
+            k = Kettle.objects.get(kettle_number = i, production_date = todaysProductionDay)
+        except Kettle.DoesNotExist:
+            k = Kettle(kettle_number = i, production_date = todaysProductionDay, products=[''])
             k.save()
+
+    todaysProducts = createTodaysProductList()
+    for product in todaysProducts['products']:
+        print(product['itemNumber'])
+        try:
+            #Look Up Product Gluten, USDA, Name from BaseProduct Model
+            p = Product.objects.get(item_number = product['itemNumber'], production_date = todaysProductionDay)
+        except Product.DoesNotExist:
+            #Look Up Product Gluten, USDA, Name from BaseProduct Model
+            p = Product(item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''])
+            p.save()
+
     context = {
         'todays_date' : today,
         'todays_production_day' : todaysProductionDay,
-        'todays_products' : todaysProducts,
+        # 'todays_products' : todaysProducts,
     }
     return render(request, 'kettles/today.html', context)
 
@@ -57,7 +63,7 @@ def edit(request):
     return render(request, 'kettles/edit.html', context)
 
 def list(request):
-    products = Product.objects.all()
+    products = BaseProduct.objects.all()
     context = {
         'products' : products
     }
@@ -69,5 +75,4 @@ def createTodaysProductList():
     taggedCalendar = applyViewTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
     strippedScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
-    print(strippedScheduleDay)
     return strippedScheduleDay

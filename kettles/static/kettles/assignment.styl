@@ -3,15 +3,36 @@
   width:300px
   height:201px
 
-.product
-  width:50%
-  height:25px
-  border:1px gray solid
-  text-align:center
+.product-list
+  width:25%
+  float:left
+  border:4px dashed #ffbbbb
+  .product
+    margin:4px auto
+    width:250px
+    height:25px
+    border:1px gray solid
+    text-align:center
+  .assigned
+    border:1px #bbb solid
+    color:gray
+  .dragging-product
+    width:250px
 
-.assigned
-  border:1px #bbb solid
-  color:gray
-
-.dragging-product
-  width:200px
+.kettle-list
+  width:70%
+  float:right
+  padding-left:20px
+  .kettle
+    float:left
+    margin: 0 10px 10px 0
+    p
+      margin-top:0
+      text-align:center
+      font-weight:bold
+    .product
+      text-align:center
+      border:1px gray solid
+      height:25px
+      margin:4px auto
+      width:250px
