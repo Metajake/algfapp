@@ -4,8 +4,13 @@
     <title>Kettles</title>
   </head>
   <body>
-    <ul>{% for day in production_days %}
-      <li><a href="{{ day.date }}">{{ day.date }}</a></li>{% endfor %}
+    <p>{{production_day}}</p>
+    <ul>{% for kettle in production_day.kettles.all %}
+      <li>{{kettle}}
+        <ul>{% for product in kettle.days_products.all %}
+          <li>{{ product.item_number }}</li>{% endfor %}
+        </ul>
+      </li>{% endfor %}
     </ul>
     <script>
       console.log( "Listing.." );
@@ -18,7 +23,7 @@
       
       chatSocket.onmessage = function(e) {
           console.log("GOT MESSAqge");
-          //- location.reload();
+          location.reload();
           //- var data = JSON.parse(e.data);
           //- var message = data['message'];
           //- console.log( message );

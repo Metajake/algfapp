@@ -3,12 +3,11 @@ from django.http import Http404
 
 from datetime import date, timedelta
 import pandas, xlrd, numpy
+from dateutil import parser
 from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN
 
 from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
-
-# productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.XLS', sheet_name = 0)
 
 def this_week(request):
     firstDayOfWeek = date.today() - timedelta(days=3)
@@ -52,22 +51,29 @@ def today(request):
     context = {
         'todays_date' : today,
         'todays_production_day' : todaysProductionDay,
-        # 'todays_products' : todaysProducts,
     }
     return render(request, 'kettles/today.html', context)
 
-def edit(request):
-    context = {
-        'message' : "yoyo"
-    }
-    return render(request, 'kettles/edit.html', context)
-
 def list(request):
-    products = BaseProduct.objects.all()
+    productionDays = ProductionDay.objects.all()
     context = {
-        'products' : products
+        'production_days' : productionDays,
     }
     return render(request, 'kettles/list.html', context)
+
+def list_day(request, list_date):
+    formattedDate = parser.parse(list_date).strftime('%Y-%m-%d')
+    productionDay = ProductionDay.objects.get(date=formattedDate)
+    context = {
+        'production_day' : productionDay,
+    }
+    return render(request, 'kettles/day.html', context)
+
+def testchannels(request):
+    context = {
+    'message' : "yoyo",
+    }
+    return render(request, 'kettles/edit.html', context)
 
 def createTodaysProductList():
     weekRanges = constructWeekRanges(productionSpreadsheet)

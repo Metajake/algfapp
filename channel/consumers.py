@@ -1,3 +1,5 @@
+from django.core import serializers
+
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -75,9 +77,20 @@ class KettleConsumer(AsyncWebsocketConsumer):
         self.text_data_json = json.loads(text_data)
         message = self.text_data_json['message']
 
-        if message == 'updatekettle':
+        if message == 'addToKettle':
             self.kettleUpdate = await database_sync_to_async(self.addToKettle)()
-        elif message == 'updateproduct':
+            # Send message to room group
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'update_kettle',
+                    'message': 'updating_kettle',
+                    'kettle' : self.text_data_json['kettle'],
+                    'date' : self.text_data_json['date'],
+                }
+            )
+
+        elif message == 'removeFromKettle':
             self.productUpdate = await database_sync_to_async(self.removeFromKettle)()
 
         # Send message to room group
@@ -101,7 +114,8 @@ class KettleConsumer(AsyncWebsocketConsumer):
             production_date = pd
         )
         p.kettle = k
-        p.tags.append('assigned')
+        if 'assigned' not in p.tags:
+            p.tags.append('assigned')
         p.save(update_fields=['kettle', 'tags'])
 
     def removeFromKettle(self):
@@ -124,4 +138,24 @@ class KettleConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message
+        }))
+
+    # Receive message from room group
+    async def update_kettle(self, event):
+        message = event['message']
+        kettle = event['kettle']
+        dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
+
+        pd = ProductionDay.objects.get(date = dateFormatted)
+        kettleObject = Kettle.objects.get(
+            kettle_number = kettle,
+            production_date = pd
+        )
+        kettle_data = serializers.serialize("json", kettleObject.days_products.all())
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message,
+            'kettle' : kettle,
+            'html' : kettle_data,
         }))

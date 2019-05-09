@@ -3,9 +3,10 @@ html
   head
     title Kettles
   body
-    | {% for product in products %}
-    p {{ product.product_name }}
-    | {% endfor %}
+    ul
+      | {% for day in production_days %}
+      li: a(href='{{ day.date }}') {{ day.date }}
+      | {% endfor %}
       
     script.
       console.log( "Listing.." );

@@ -6,83 +6,26 @@ html
     link(rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection")
   body
     h1 {{todays_date}}
+    p#todays-production-day(style="display:none;") {{todays_production_day}}
     .product-list
       | {% for product in todays_production_day.days_products.all %}
       h5.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
       | {% endfor %}
     .kettle-list
-        | {% for k in todays_production_day.kettles.all|dictsort:"kettle_number" %}
-        .kettle
+        | {% for k in todays_production_day.kettles.all %}
+        .kettle(id="{{k.kettle_number}}")
           p.kettle-number {{k.kettle_number}}
-          | {% if k.days_products %}
-          | {% for product in k.days_products.all%}
-          | {% if product != ''%}
-          h4.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
-          | {% endif %}
-          | {% endfor %}
-          | {% endif %}
+          .kettle-product-list
+            | {% if k.days_products %}
+            | {% for product in k.days_products.all%}
+            | {% if product != ''%}
+            h4.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
+            | {% endif %}
+            | {% endfor %}
+            | {% endif %}
         | {% endfor %}
         
     script(type="text/javascript" src="{% static 'js/jquery.js'%}")
     script(type="text/javascript" src="{% static 'js/jqueryui.js'%}")
-    script.
-      var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/kettles/');
-      chatSocket.onopen = function(event) {
-        console.log("WebSocket is open now.");
-      };
+    script(type="text/javascript" src="{% static 'kettles/edit.js'%}")
       
-      $('.product-list .product').not('.assigned').draggable({
-        cursor:'move',
-        helper: 'clone',
-        classes: {
-          "ui-draggable": "dragging-product"
-        },
-        //- connectToSortable: '.sortable',
-        //- start: handleDragStart,
-        //- stop: handleProductDrop,
-      });
-      
-      $('.kettle .product').draggable({
-        cursor:'move',
-        helper: 'clone',
-        //- connectToSortable: '.sortable',
-        //- start: handleDragStart,
-        //- stop: handleProductDrop,
-      });
-      
-      $('.kettle').droppable({
-        drop:handleKettleDrop,
-      })
-      
-      $('.product-list').droppable({
-        drop:handleProductListDrop,
-      })
-      
-      
-      function handleKettleDrop(event, ui){
-        var productToDrop = $(ui.draggable);
-        var productNumber = productToDrop.text()
-        
-        var kettleToDropOn = $(event.target).find('.kettle-number').text();
-        console.log(kettleToDropOn)
-        
-        chatSocket.send(JSON.stringify({
-            'message': 'updatekettle',
-            'product': productNumber,
-            'kettle' : kettleToDropOn,
-            'date' : '{{todays_production_day.date}}'
-        }));
-      }
-
-      function handleProductListDrop(event, ui){
-        var draggedProduct = $(ui.draggable)
-        var kettleToRemove = draggedProduct.parent().find('.kettle-number').text();
-        console.log()
-        
-        chatSocket.send(JSON.stringify({
-            'message': 'updateproduct',
-            'product': draggedProduct.text(),
-            'kettle' : kettleToRemove,
-            'date' : '{{todays_production_day.date}}'
-        }));
-      }

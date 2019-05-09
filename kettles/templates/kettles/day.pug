@@ -1,28 +1,31 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Kettles</title>
-  </head>
-  <body>
-    <ul>{% for day in production_days %}
-      <li><a href="{{ day.date }}">{{ day.date }}</a></li>{% endfor %}
-    </ul>
-    <script>
+doctype html
+html
+  head
+    title Kettles
+  body
+    p {{production_day}}
+    ul
+      | {% for kettle in production_day.kettles.all %}
+      li {{kettle}}
+        ul
+          | {% for product in kettle.days_products.all %}
+          li {{ product.item_number }}
+          | {% endfor %}
+      | {% endfor %}
+
+    script.
       console.log( "Listing.." );
       
       var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/kettles/');
-      
+
       chatSocket.onopen = function(event) {
         console.log("WebSocket is open now.");
       };
       
       chatSocket.onmessage = function(e) {
           console.log("GOT MESSAqge");
-          //- location.reload();
+          location.reload();
           //- var data = JSON.parse(e.data);
           //- var message = data['message'];
           //- console.log( message );
       };
-    </script>
-  </body>
-</html>
