@@ -6,11 +6,11 @@
   </head>
   <body>
     <h1>{{todays_date}}</h1>
-    <p id="todays-production-day" style="display:none;">{{todays_production_day}}</p>
-    <div class="product-list">{% for product in todays_production_day.days_products.all %}
+    <p id="todays-production-day" style="display:none;">{{production_day}}</p>
+    <div class="product-list">{% for product in production_day.days_products.all %}
       <h5 class="product {%for tag in product.tags %}{{tag}} {%endfor%}">{{product.item_number}}</h5>{% endfor %}
     </div>
-    <div class="kettle-list">{% for kettle in todays_production_day.kettles.all %}
+    <div class="kettle-list">{% for kettle in production_day.kettles.all %}
       <div class="kettle" id="{{kettle.kettle_number}}">
         <p class="kettle-number">{{kettle.kettle_number}}</p>
         <div class="kettle-product-list">

@@ -4,14 +4,8 @@ html
     title Kettles
   body
     p {{production_day}}
-    ul
-      | {% for kettle in production_day.kettles.all %}
-      li {{kettle}}
-        ul
-          | {% for product in kettle.days_products.all %}
-          li {{ product.item_number }}
-          | {% endfor %}
-      | {% endfor %}
+    ul#production-list
+      include update_list_day.pug
 
     include includes/footer.pug
     script(type="text/javascript" src="{% static 'kettles/list_day.js'%}")  

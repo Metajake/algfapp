@@ -50,7 +50,7 @@ def today(request):
 
     context = {
         'todays_date' : today,
-        'todays_production_day' : todaysProductionDay,
+        'production_day' : todaysProductionDay,
     }
     return render(request, 'kettles/today.html', context)
 
@@ -77,6 +77,10 @@ def update_kettle(request):
 def update_production_list(request):
     pd = ProductionDay.objects.get(date=request.GET['date'])
     return render_to_response('kettles/update_production_list.html', {'production_day': pd})
+
+def update_list_day(request, list_date):
+    pd = ProductionDay.objects.get(date=request.GET['date'])
+    return render_to_response('kettles/update_list_day.html', {'production_day': pd})
 
 def testchannels(request):
     context = {

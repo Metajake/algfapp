@@ -1,0 +1,6 @@
+{% for kettle in production_day.kettles.all %}
+<li>{{kettle}}
+  <ul>{% for product in kettle.days_products.all %}
+    <li>{{ product.item_number }}</li>{% endfor %}
+  </ul>
+</li>{% endfor %}

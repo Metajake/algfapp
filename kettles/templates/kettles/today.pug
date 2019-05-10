@@ -6,13 +6,11 @@ html
     link(rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection")
   body
     h1 {{todays_date}}
-    p#todays-production-day(style="display:none;") {{todays_production_day}}
+    p#todays-production-day(style="display:none;") {{production_day}}
     .product-list
-      | {% for product in todays_production_day.days_products.all %}
-      h5.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
-      | {% endfor %}
+      include update_production_list.pug
     .kettle-list
-        | {% for kettle in todays_production_day.kettles.all %}
+        | {% for kettle in production_day.kettles.all %}
         .kettle(id="{{kettle.kettle_number}}")
           p.kettle-number {{kettle.kettle_number}}
           .kettle-product-list
