@@ -12,20 +12,13 @@ html
       h5.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
       | {% endfor %}
     .kettle-list
-        | {% for k in todays_production_day.kettles.all %}
-        .kettle(id="{{k.kettle_number}}")
-          p.kettle-number {{k.kettle_number}}
+        | {% for kettle in todays_production_day.kettles.all %}
+        .kettle(id="{{kettle.kettle_number}}")
+          p.kettle-number {{kettle.kettle_number}}
           .kettle-product-list
-            | {% if k.days_products %}
-            | {% for product in k.days_products.all%}
-            | {% if product != ''%}
-            h4.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
-            | {% endif %}
-            | {% endfor %}
-            | {% endif %}
+            include update_kettle.pug
         | {% endfor %}
         
-    script(type="text/javascript" src="{% static 'js/jquery.js'%}")
-    script(type="text/javascript" src="{% static 'js/jqueryui.js'%}")
+    include includes/footer.pug
     script(type="text/javascript" src="{% static 'kettles/edit.js'%}")
       

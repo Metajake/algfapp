@@ -1,0 +1,2 @@
+{% for product in production_day.days_products.all %}
+<h5 class="product {%for tag in product.tags %}{{tag}} {%endfor%}">{{product.item_number}}</h5>{% endfor %}

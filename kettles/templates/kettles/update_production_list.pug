@@ -1,0 +1,3 @@
+| {% for product in production_day.days_products.all %}
+h5.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
+| {% endfor %}

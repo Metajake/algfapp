@@ -1,0 +1,7 @@
+| {% if kettle.days_products %}
+| {% for product in kettle.days_products.all%}
+| {% if product != ''%}
+h4.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
+| {% endif %}
+| {% endfor %}
+| {% endif %}

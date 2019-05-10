@@ -76,30 +76,39 @@ class KettleConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         self.text_data_json = json.loads(text_data)
         message = self.text_data_json['message']
-
         if message == 'addToKettle':
             self.kettleUpdate = await database_sync_to_async(self.addToKettle)()
-            # Send message to room group
-            # await self.channel_layer.group_send(
-            #     self.room_group_name,
-            #     {
-            #         'type': 'update_kettle',
-            #         'message': 'updating_kettle',
-            #         'kettle' : self.text_data_json['kettle'],
-            #         'date' : self.text_data_json['date'],
-            #     }
-            # )
+
         elif message == 'removeFromKettle':
             self.productUpdate = await database_sync_to_async(self.removeFromKettle)()
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'update_production_list',
+                    'message': 'updating_production_list',
+                    'date' : self.text_data_json['date'],
+                }
+            )
 
-        # Send message to room group
+        # Send "Kettle Update" message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'chat_message',
-                'message': message
+                'type': 'update_kettle',
+                'message': 'updating_kettle',
+                'kettle' : self.text_data_json['kettle'],
+                'date' : self.text_data_json['date'],
             }
         )
+
+        # Send "CHAT" message to room group
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'chat_message',
+        #         'message': message
+        #     }
+        # )
 
     def addToKettle(self):
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
@@ -132,6 +141,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group
     async def chat_message(self, event):
+        print("Django CHANNELS SEND CHAT MESSAGE")
         message = event['message']
 
         # Send message to WebSocket
@@ -143,18 +153,22 @@ class KettleConsumer(AsyncWebsocketConsumer):
     async def update_kettle(self, event):
         message = event['message']
         kettle = event['kettle']
-        dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
-
-        pd = ProductionDay.objects.get(date = dateFormatted)
-        kettleObject = Kettle.objects.get(
-            kettle_number = kettle,
-            production_date = pd
-        )
-        kettle_data = serializers.serialize("json", kettleObject.days_products.all())
+        dateFormatted = parser.parse(event['date']).strftime('%Y-%m-%d')
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
             'kettle' : kettle,
-            'html' : kettle_data,
+            'date': dateFormatted,
+        }))
+
+    # Receive message from room group
+    async def update_production_list(self, event):
+        message = event['message']
+        dateFormatted = parser.parse(event['date']).strftime('%Y-%m-%d')
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message,
+            'date': dateFormatted,
         }))

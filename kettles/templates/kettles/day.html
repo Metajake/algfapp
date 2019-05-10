@@ -11,23 +11,9 @@
           <li>{{ product.item_number }}</li>{% endfor %}
         </ul>
       </li>{% endfor %}
-    </ul>
-    <script>
-      console.log( "Listing.." );
-      
-      var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/kettles/');
-      
-      chatSocket.onopen = function(event) {
-        console.log("WebSocket is open now.");
-      };
-      
-      chatSocket.onmessage = function(e) {
-          console.log("GOT MESSAqge");
-          location.reload();
-          //- var data = JSON.parse(e.data);
-          //- var message = data['message'];
-          //- console.log( message );
-      };
-    </script>
+    </ul>{% load static %}
+    <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
+    <script type="text/javascript" src="{% static 'kettles/list_day.js'%}"> </script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.http import Http404
 
 from datetime import date, timedelta
@@ -68,6 +68,15 @@ def list_day(request, list_date):
         'production_day' : productionDay,
     }
     return render(request, 'kettles/day.html', context)
+
+def update_kettle(request):
+    pd = ProductionDay.objects.get(date=request.GET['date'])
+    kettle = Kettle.objects.get(production_date=pd, kettle_number=request.GET['kettle'])
+    return render_to_response('kettles/update_kettle.html', {'kettle': kettle})
+
+def update_production_list(request):
+    pd = ProductionDay.objects.get(date=request.GET['date'])
+    return render_to_response('kettles/update_production_list.html', {'production_day': pd})
 
 def testchannels(request):
     context = {

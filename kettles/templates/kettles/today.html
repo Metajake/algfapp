@@ -10,19 +10,19 @@
     <div class="product-list">{% for product in todays_production_day.days_products.all %}
       <h5 class="product {%for tag in product.tags %}{{tag}} {%endfor%}">{{product.item_number}}</h5>{% endfor %}
     </div>
-    <div class="kettle-list">{% for k in todays_production_day.kettles.all %}
-      <div class="kettle" id="{{k.kettle_number}}">
-        <p class="kettle-number">{{k.kettle_number}}</p>
+    <div class="kettle-list">{% for kettle in todays_production_day.kettles.all %}
+      <div class="kettle" id="{{kettle.kettle_number}}">
+        <p class="kettle-number">{{kettle.kettle_number}}</p>
         <div class="kettle-product-list">
-          {% if k.days_products %}
-          {% for product in k.days_products.all%}
+          {% if kettle.days_products %}
+          {% for product in kettle.days_products.all%}
           {% if product != ''%}
           <h4 class="product {%for tag in product.tags %}{{tag}} {%endfor%}">{{product.item_number}}</h4>{% endif %}
           {% endfor %}
           {% endif %}
         </div>
       </div>{% endfor %}
-    </div>
+    </div>{% load static %}
     <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
     <script type="text/javascript" src="{% static 'kettles/edit.js'%}"></script>
