@@ -5,6 +5,7 @@ html
     title Today
     link(rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection")
   body
+    small(style="color:red;") {{ notification }}
     h1 {{todays_date}}
     p#todays-production-day(style="display:none;") {{production_day}}
     .product-list

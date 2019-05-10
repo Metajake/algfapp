@@ -4,7 +4,7 @@
     <title>Today</title>
     <link rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection">
   </head>
-  <body>
+  <body><small style="color:red;">{{ notification }}</small>
     <h1>{{todays_date}}</h1>
     <p id="todays-production-day" style="display:none;">{{production_day}}</p>
     <div class="product-list">{% for product in production_day.days_products.all %}

@@ -160,6 +160,7 @@ def constructWeekRanges(spreadsheet):
     return weekRanges
 
 def getTodaysScheduleFromSpreadsheet(calendar):
+    scheduleDay = None
     todaysDate = datetime.datetime.today().day
     for index, week in enumerate(calendar):
         for index, day in enumerate(calendar[week]):
@@ -169,7 +170,10 @@ def getTodaysScheduleFromSpreadsheet(calendar):
                 dateNumber = dateNumber[1:]
             if dateNumber == str(todaysDate):
                 scheduleDay = calendar[week][day]
-    return scheduleDay
+    if scheduleDay is None:
+        return {"products":[],"date":"error"}
+    else:
+        return scheduleDay
 
 def removeEmptyCellsFromScheduleDay(scheduleDay):
     emptyProductsToRemove = []

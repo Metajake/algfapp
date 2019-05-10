@@ -38,6 +38,11 @@ def today(request):
             k.save()
 
     todaysProducts = createTodaysProductList()
+    if todaysProducts['date'] == "error":
+        notification = "There is a conflict between the app and the Production Schedule, having to do with the DATE.\n"
+    else:
+        notification = ""
+
     for product in todaysProducts['products']:
         print(product['itemNumber'])
         try:
@@ -51,6 +56,7 @@ def today(request):
     context = {
         'todays_date' : today,
         'production_day' : todaysProductionDay,
+        'notification' : notification,
     }
     return render(request, 'kettles/today.html', context)
 
