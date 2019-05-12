@@ -1,21 +1,24 @@
 | {% load static %}
+
 doctype html
 html
   head
     title Today
+    link(rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css" media="screen,projection")
     link(rel="stylesheet" href="{% static 'kettles/assignment.css' %}" type="text/css" media="screen,projection")
   body
     small(style="color:red;") {{ notification }}
     h1 {{todays_date}}
     p#todays-production-day(style="display:none;") {{production_day}}
     .product-list
-      include update_production_list.pug
+      ul
+        include update_production_list.html
     .kettle-list
         | {% for kettle in production_day.kettles.all %}
         .kettle(id="{{kettle.kettle_number}}")
           p.kettle-number {{kettle.kettle_number}}
           .kettle-product-list
-            include update_kettle.pug
+            include update_kettle.html
         | {% endfor %}
         
     include includes/footer.pug

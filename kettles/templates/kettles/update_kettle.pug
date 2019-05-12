@@ -1,7 +1,11 @@
+| {% load custom_tags %}
 | {% if kettle.days_products %}
-| {% for product in kettle.days_products.all%}
-| {% if product != ''%}
-h4.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
-| {% endif %}
-| {% endfor %}
+ul(id="sortable_{{kettle}}").products-in-kettle
+  | {% for product in kettle.days_products.all|sort_by:'kettle_order'%}
+  li.product(id='{{product.item_number}}')
+    h4(id='{{product.item_number}}' class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
+    //- | {% if product.update_time %}
+    //- p {{product.update_time|date:"U"}}
+    //- | {% endif%}
+  | {% endfor %}
 | {% endif %}

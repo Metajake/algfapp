@@ -23,6 +23,7 @@ def this_week(request):
 def today(request):
     today = date.today()
 
+    #Create a New Production Day, if it does not already exist
     try:
         todaysProductionDay = ProductionDay.objects.get(date=today)
     except ProductionDay.DoesNotExist:
@@ -34,7 +35,7 @@ def today(request):
         try:
             k = Kettle.objects.get(kettle_number = i, production_date = todaysProductionDay)
         except Kettle.DoesNotExist:
-            k = Kettle(kettle_number = i, production_date = todaysProductionDay, products=[''])
+            k = Kettle(kettle_number = i, production_date = todaysProductionDay)
             k.save()
 
     todaysProducts = createTodaysProductList()
@@ -44,7 +45,6 @@ def today(request):
         notification = ""
 
     for product in todaysProducts['products']:
-        print(product['itemNumber'])
         try:
             #Look Up Product Gluten, USDA, Name from BaseProduct Model
             p = Product.objects.get(item_number = product['itemNumber'], production_date = todaysProductionDay)
@@ -52,10 +52,10 @@ def today(request):
             #Look Up Product Gluten, USDA, Name from BaseProduct Model
             p = Product(item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''])
             p.save()
-
     context = {
         'todays_date' : today,
         'production_day' : todaysProductionDay,
+        'todays_products': todaysProductionDay.days_products.all().order_by('creation_date'),
         'notification' : notification,
     }
     return render(request, 'kettles/today.html', context)
@@ -82,7 +82,11 @@ def update_kettle(request):
 
 def update_production_list(request):
     pd = ProductionDay.objects.get(date=request.GET['date'])
-    return render_to_response('kettles/update_production_list.html', {'production_day': pd})
+    context = {
+        "production_day" : pd,
+        "todays_products" : pd.days_products.all().order_by('creation_date'),
+    }
+    return render_to_response('kettles/update_production_list.html', context)
 
 def update_list_day(request, list_date):
     pd = ProductionDay.objects.get(date=request.GET['date'])

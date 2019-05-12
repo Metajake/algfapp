@@ -1,3 +1,4 @@
-| {% for product in production_day.days_products.all %}
-h5.product(class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}}
+| {% for product in todays_products %}
+li.product(id='{{product.item_number}}' class="{%for tag in product.tags %}{{tag}} {%endfor%}")
+  h5(id='{{product.item_number}}') {{product.item_number}}
 | {% endfor %}

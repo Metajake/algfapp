@@ -1,7 +1,8 @@
 
+{% load custom_tags %}
 {% if kettle.days_products %}
-{% for product in kettle.days_products.all%}
-{% if product != ''%}
-<h4 class="product {%for tag in product.tags %}{{tag}} {%endfor%}">{{product.item_number}}</h4>{% endif %}
-{% endfor %}
-{% endif %}
+<ul class="products-in-kettle" id="sortable_{{kettle}}">{% for product in kettle.days_products.all|sort_by:'kettle_order'%}
+  <li class="product" id="{{product.item_number}}">
+    <h4 class="{%for tag in product.tags %}{{tag}} {%endfor%}" id="{{product.item_number}}">{{product.item_number}}</h4>
+  </li>{% endfor %}
+</ul>{% endif %}

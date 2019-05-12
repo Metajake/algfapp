@@ -78,6 +78,16 @@ class KettleConsumer(AsyncWebsocketConsumer):
         message = self.text_data_json['message']
         if message == 'addToKettle':
             self.kettleUpdate = await database_sync_to_async(self.addToKettle)()
+            # Send "Kettle Update" message to room group
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'update_kettle',
+                    'message': 'updating_kettle',
+                    'kettle' : self.text_data_json['kettle'],
+                    'date' : self.text_data_json['date'],
+                }
+            )
 
         elif message == 'removeFromKettle':
             self.productUpdate = await database_sync_to_async(self.removeFromKettle)()
@@ -89,26 +99,29 @@ class KettleConsumer(AsyncWebsocketConsumer):
                     'date' : self.text_data_json['date'],
                 }
             )
+            # Send "Kettle Update" message to room group
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'update_kettle',
+                    'message': 'updating_kettle',
+                    'kettle' : self.text_data_json['kettle'],
+                    'date' : self.text_data_json['date'],
+                }
+            )
 
-        # Send "Kettle Update" message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'update_kettle',
-                'message': 'updating_kettle',
-                'kettle' : self.text_data_json['kettle'],
-                'date' : self.text_data_json['date'],
-            }
-        )
-
-        # Send "CHAT" message to room group
-        # await self.channel_layer.group_send(
-        #     self.room_group_name,
-        #     {
-        #         'type': 'chat_message',
-        #         'message': message
-        #     }
-        # )
+        elif message == 'sortKettle':
+            self.kettleReceive = await database_sync_to_async(self.sortKettle)()
+            # Send "Kettle Update" message to room group
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'update_kettle',
+                    'message': 'updating_kettle',
+                    'kettle' : self.text_data_json['kettle'],
+                    'date' : self.text_data_json['date'],
+                }
+            )
 
     def addToKettle(self):
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
@@ -124,7 +137,8 @@ class KettleConsumer(AsyncWebsocketConsumer):
         p.kettle = k
         if 'assigned' not in p.tags:
             p.tags.append('assigned')
-        p.save(update_fields=['kettle', 'tags'])
+        p.update_time = datetime.now()
+        p.save(update_fields=['kettle', 'tags', 'update_time', 'kettle_order'])
 
     def removeFromKettle(self):
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
@@ -139,15 +153,18 @@ class KettleConsumer(AsyncWebsocketConsumer):
         p.update_time = datetime.now()
         p.save(update_fields=['kettle', 'tags', 'update_time'])
 
-    # Receive message from room group
-    async def chat_message(self, event):
-        print("Django CHANNELS SEND CHAT MESSAGE")
-        message = event['message']
+    def sortKettle(self):
+        dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
+        pd = ProductionDay.objects.get(date = dateFormatted)
 
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        for product in self.text_data_json['products']:
+            p = Product.objects.get(
+                item_number = product['product_number'],
+                production_date = pd,
+            )
+            p.kettle_order = product['kettle_order']
+            p.update_time = datetime.now()
+            p.save(update_fields=['kettle_order', 'update_time'])
 
     # Receive message from room group
     async def update_kettle(self, event):
