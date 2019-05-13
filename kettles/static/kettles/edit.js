@@ -139,18 +139,18 @@ function handleKettleSortStop(event, ui){
 
 function handleProductListDrop(event, ui){
   var draggedProduct = $(ui.draggable)
-  var kettleToRemove = draggedProduct.closest('.kettle').attr('id').split('_').pop();
+  if(draggedProduct.parent().hasClass('products-in-kettle') ){
+    var kettleToRemove = draggedProduct.closest('.kettle').attr('id').split('_').pop();
 
-  chatSocket.send(JSON.stringify({
+    chatSocket.send(JSON.stringify({
       'message': 'removeFromKettle',
       'product': draggedProduct.attr('id'),
       'kettle' : kettleToRemove,
       'date' : $('#todays-production-day').text()
-  }));
+    }));
 
-  if (draggedProduct.parent().hasClass('kettle-product-list')){
     draggedProduct.remove()
-  }
+  };
 }
 
 function returnProductKettleOrderArray(productsToOrder){
