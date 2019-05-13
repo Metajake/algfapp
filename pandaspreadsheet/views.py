@@ -26,9 +26,18 @@ def today(request):
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyViewTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
-    cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    # cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
+    print("------------PRINTING------------")
+    # print(productionSpreadsheet)
+    # print(calendar['week 2']['day 1'])
+    # print(taggedCalendar['week 1']['day 1'])
+    # print(scheduleDay)
+    # for product in scheduleDay['products']:
+    #     if product['itemNumber'] == '&nbsp;':
+    #         print("emptyCell")
     context = {
-        "scheduleDay" : cleanScheduleDay,
+        "scheduleDay" : scheduleDay,
     }
     return render(request, 'pandaspreadsheet/today.html', context)
 
@@ -55,10 +64,6 @@ def list(request, date):
         productScheduleDay = Product.objects.filter(production_date=selectedKettleDate)
     else:
         productScheduleDay = Product.objects.filter(production_date=selectedKettleDate)
-        # print(productScheduleDay)
-        # cd = CalendarDay.objects.get(date = selectedKettleDate)
-        # productScheduleDay = cd.products.all()
-        # print(productScheduleDay)
 
     kettles = Kettle.objects.all()
     context = {
@@ -155,7 +160,7 @@ def constructWeekRanges(spreadsheet):
             weekMarkers.append(index)
 
     weekRanges[0] = [weekMarkers[0] + 2, weekMarkers[1] - 1]
-    weekRanges[1] = [weekMarkers[1] + 2, weekMarkers[2] - 2]
+    weekRanges[1] = [weekMarkers[1] + 2, weekMarkers[2] - 1]
     weekRanges[2] = [weekMarkers[2] + 2, spreadsheet.shape[0]]
     return weekRanges
 
@@ -174,6 +179,30 @@ def getTodaysScheduleFromSpreadsheet(calendar):
         return {"products":[],"date":"error"}
     else:
         return scheduleDay
+
+def multiplyScheduleDay(scheduleDay):
+    toReturn = scheduleDay
+    multiples = []
+    for index, product in enumerate(toReturn['products']):
+        toReturn['products'][index]['multiple'] = 0
+        if product['itemNumber'].strip()[-2:][0] == 'x':
+            multiplyAmount = int(product['itemNumber'].strip()[-2:][1])
+            productStringSansMultiplyAmount = product['itemNumber'].strip()[0:-2].strip()
+            toReturn['products'][index]['itemNumber'] = productStringSansMultiplyAmount
+
+            multiples.append({'index': index, 'multiplyAmount': multiplyAmount})
+
+    for i, m in enumerate( multiples[::-1] ):
+        toReturn['products'][m['index']]['multiple'] = m['multiplyAmount']
+        for k in range( m['multiplyAmount'] ):
+            newMultiple = m['multiplyAmount'] - k
+            toInsert = toReturn['products'][m['index']].copy()
+            toInsert['multiple'] = newMultiple
+            toReturn['products'].insert(m['index'], toInsert)
+
+        del toReturn['products'][m['index'] + m['multiplyAmount']]
+        
+    return toReturn
 
 def removeEmptyCellsFromScheduleDay(scheduleDay):
     emptyProductsToRemove = []

@@ -4,7 +4,7 @@ from django.http import Http404
 from datetime import date, timedelta
 import pandas, xlrd, numpy
 from dateutil import parser
-from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN
+from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN, multiplyScheduleDay
 
 from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
@@ -44,13 +44,13 @@ def today(request):
     else:
         notification = ""
 
-    for product in todaysProducts['products']:
+    for index, product in enumerate(todaysProducts['products']):
         try:
             #Look Up Product Gluten, USDA, Name from BaseProduct Model
-            p = Product.objects.get(item_number = product['itemNumber'], production_date = todaysProductionDay)
+            p = Product.objects.get(item_number = product['itemNumber'], production_date = todaysProductionDay, multiple = product['multiple'])
         except Product.DoesNotExist:
             #Look Up Product Gluten, USDA, Name from BaseProduct Model
-            p = Product(item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''])
+            p = Product(item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''], multiple = product['multiple'])
             p.save()
     context = {
         'todays_date' : today,
@@ -103,5 +103,6 @@ def createTodaysProductList():
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyViewTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
-    strippedScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
+    multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
+    strippedScheduleDay = removeEmptyCellsFromScheduleDay(multipliedScheduleDay)
     return strippedScheduleDay

@@ -80,10 +80,6 @@ function setKettleDropping(){
   })
 }
 
-function stopKettleDropping(){
-  $('.products-in-kettle').droppable({disabled: true})
-}
-
 function setProductListDropping(){
   $('.product-list').droppable({
     drop : handleProductListDrop,
@@ -96,10 +92,12 @@ function handleKettleDrop(event, ui){
   var productToDrop = $(ui.draggable);
   var productNumber = productToDrop.attr('id')
   var kettleNumberToDropOn = kettleToDropOn.attr('id').split("_").pop();
+  multiple = checkIfMultiple(productToDrop);
 
   chatSocket.send(JSON.stringify({
       'message': 'addToKettle',
       'product': productNumber,
+      'multiple' : multiple,
       'kettle' : kettleNumberToDropOn,
       'date' : $('#todays-production-day').text()
   }));
@@ -130,7 +128,7 @@ function handleKettleSortStop(event, ui){
   if (products.length){
     chatSocket.send(JSON.stringify({
       'message': 'sortKettle',
-      'products' : returnProductKettleOrderArray( kettleToDropFrom.find('.product') ),
+      'products' : products,
       'kettle' : kettleToDropFrom.attr('id').split("_").pop(),
       'date' : $('#todays-production-day').text()
     }));
@@ -145,6 +143,7 @@ function handleProductListDrop(event, ui){
     chatSocket.send(JSON.stringify({
       'message': 'removeFromKettle',
       'product': draggedProduct.attr('id'),
+      'multiple' : draggedProduct.find('.multiple').attr('id'),
       'kettle' : kettleToRemove,
       'date' : $('#todays-production-day').text()
     }));
@@ -159,9 +158,18 @@ function returnProductKettleOrderArray(productsToOrder){
   productsToOrder.each(function(index, element){
     products.push({
       "product_number" : $(element).attr('id'),
+      "product_multiple" : $(element).find('.multiple').attr('id'),
       "kettle_order" : index,
     })
   })
 
   return products;
+}
+
+function checkIfMultiple(productToCheck){
+  var multiple = 0;
+  if(productToCheck.find('.multiple').text().length){
+    multiple = productToCheck.find('.multiple').attr('id')
+  }
+  return multiple
 }

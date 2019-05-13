@@ -31,6 +31,7 @@ class Product(models.Model):
     production_date = models.ForeignKey(ProductionDay, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)
     kettle = models.ForeignKey(Kettle, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)
     kettle_order = models.IntegerField(blank=True, null=True)
+    multiple = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.item_number + ' ' + self.product_name

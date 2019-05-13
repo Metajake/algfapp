@@ -132,7 +132,8 @@ class KettleConsumer(AsyncWebsocketConsumer):
         )
         p = Product.objects.get(
             item_number = self.text_data_json['product'],
-            production_date = pd
+            production_date = pd,
+            multiple = self.text_data_json['multiple']
         )
         p.kettle = k
         if 'assigned' not in p.tags:
@@ -145,7 +146,8 @@ class KettleConsumer(AsyncWebsocketConsumer):
         pd = ProductionDay.objects.get(date = dateFormatted)
         p = Product.objects.get(
             item_number = self.text_data_json['product'],
-            production_date = pd
+            production_date = pd,
+            multiple = self.text_data_json['multiple']
         )
         p.kettle = None
         if 'assigned' in p.tags:
@@ -160,6 +162,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
         for product in self.text_data_json['products']:
             p = Product.objects.get(
                 item_number = product['product_number'],
+                multiple = product['product_multiple'],
                 production_date = pd,
             )
             p.kettle_order = product['kettle_order']
