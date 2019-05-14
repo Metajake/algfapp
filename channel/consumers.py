@@ -131,7 +131,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
             production_date = pd
         )
         p = Product.objects.get(
-            item_number = self.text_data_json['product'],
+            schedule_number = self.text_data_json['product'],
             production_date = pd,
             multiple = self.text_data_json['multiple']
         )
@@ -145,7 +145,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
         pd = ProductionDay.objects.get(date = dateFormatted)
         p = Product.objects.get(
-            item_number = self.text_data_json['product'],
+            schedule_number = self.text_data_json['product'],
             production_date = pd,
             multiple = self.text_data_json['multiple']
         )
@@ -161,7 +161,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
 
         for product in self.text_data_json['products']:
             p = Product.objects.get(
-                item_number = product['product_number'],
+                schedule_number = product['product_number'],
                 multiple = product['product_multiple'],
                 production_date = pd,
             )

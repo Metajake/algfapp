@@ -10,8 +10,8 @@
     <p id="todays-production-day" style="display:none;">{{production_day}}</p>
     <div class="product-list">
       <ul>{% for product in todays_products %}
-<li class="product {%for tag in product.tags %}{{tag}} {%endfor%}" id="{{product.item_number}}">
-  <h5 id="{{product.item_number}}">{{product.item_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span></h5><small>{{product.note}}</small>
+<li class="product {%for tag in product.tags %}{{tag}} {%endfor%}" id="{{product.schedule_number}}">
+  <h5 id="{{product.schedule_number}}">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span></h5><small>{{product.note}}</small>
 </li>{% endfor %}
       </ul>
     </div>
@@ -22,8 +22,8 @@
 {% load custom_tags %}
 {% if kettle.days_products %}
 <ul class="products-in-kettle" id="sortable_{{kettle}}">{% for product in kettle.days_products.all|sort_by:'kettle_order'%}
-  <li class="product" id="{{product.item_number}}">
-    <h4 class="{%for tag in product.tags %}{{tag}} {%endfor%}" id="{{product.item_number}}">{{product.item_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span></h4>
+  <li class="product" id="{{product.schedule_number}}">
+    <h4 class="{%for tag in product.tags %}{{tag}} {%endfor%}" id="{{product.schedule_number}}">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span></h4>
   </li>{% endfor %}
 </ul>{% endif %}
         </div>

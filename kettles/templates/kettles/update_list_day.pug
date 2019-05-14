@@ -2,6 +2,6 @@
 li {{kettle}}
   ul
     | {% for product in kettle.days_products.all %}
-    li {{ product.item_number }}
+    li {{ product.schedule_number }}
     | {% endfor %}
 | {% endfor %}

@@ -28,7 +28,9 @@ def today(request):
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
     notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
-    # cleanScheduleDay = removeEmptyCellsFromScheduleDay(notedScheduleDay)
+    convertedScheduleDay = convertScheduleNumbersToItemNumbers(notedScheduleDay)
+    cleanScheduleDay = removeEmptyCellsFromScheduleDay(convertedScheduleDay)
+
     # print("------------PRINTING------------")
 
     context = {
@@ -53,7 +55,7 @@ def list(request, date):
         productScheduleDay = expandProductMultiples(cleanScheduleDay)
 
         for product in productScheduleDay['products']:
-            p = Product(item_number=product['itemNumber'], customer=product['customer'], production_date=selectedKettleDate)
+            p = Product(item_number=product['scheduleNumber'], customer=product['customer'], production_date=selectedKettleDate)
             p.save()
 
         productScheduleDay = Product.objects.filter(production_date=selectedKettleDate)
@@ -82,7 +84,7 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
             elif colIndex % 2 == 0:
                 for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
-                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'].append( {'itemNumber': str(replaceNaN(cellValue)) } )
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'].append( {'scheduleNumber': str(replaceNaN(cellValue)) } )
             else:
                 calendar['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = str(spreadsheet[ spreadsheet.columns[colIndex] ][weekRanges[weekIndex-1][0]-2])
                 for rowEnumerationIndex, rowIndex in enumerate( range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]) ):
@@ -108,19 +110,19 @@ def expandProductMultiples(scheduleDay):
     multiplesToExpand = []
     multiples = []
     for index, product in enumerate(scheduleDay['products']):
-        if re.search(r'x[1-9]', product['itemNumber']) and 'note' not in product['tags']:
+        if re.search(r'x[1-9]', product['scheduleNumber']) and 'note' not in product['tags']:
             multiplesToExpand.append(index)
             multiples.append(product)
-            quantity = int(product['itemNumber'][-1])
-            itemNumber = product['itemNumber'][0:-2].strip()
+            quantity = int(product['scheduleNumber'][-1])
+            scheduleNumber = product['scheduleNumber'][0:-2].strip()
     for i in reversed(multiplesToExpand):
         del scheduleDay['products'][i]
 
     for indexx, product in enumerate(multiples):
-        quantity = int(product['itemNumber'][-1])
-        itemNumber = product['itemNumber'][0:-2].strip()
+        quantity = int(product['scheduleNumber'][-1])
+        scheduleNumber = product['scheduleNumber'][0:-2].strip()
         for i in range(0,quantity):
-            scheduleDay['products'].append({'itemNumber':itemNumber, 'customer': product['customer'], 'tags': product['tags']})
+            scheduleDay['products'].append({'scheduleNumber':scheduleNumber, 'customer': product['customer'], 'tags': product['tags']})
     return scheduleDay
 
 def applyViewTags(schedule):
@@ -128,9 +130,9 @@ def applyViewTags(schedule):
         for indexx,day in enumerate(schedule[week]):
             for indexxx, product in enumerate(schedule[week][day]['products']):
                 product['tags'] = []
-                if product['itemNumber'].startswith('*'):
+                if product['scheduleNumber'].startswith('*'):
                     product['tags'].append( 'note' )
-                elif product['itemNumber'] != '&nbsp;' and 'customer' in product and product['customer'] == '&nbsp;':
+                elif product['scheduleNumber'] != '&nbsp;' and 'customer' in product and product['customer'] == '&nbsp;':
                     product['tags'].append( 'note' )
     return schedule
 
@@ -180,10 +182,10 @@ def multiplyScheduleDay(scheduleDay):
     multiples = []
     for index, product in enumerate(toReturn['products']):
         toReturn['products'][index]['multiple'] = 0
-        if product['itemNumber'].strip()[-2:][0] == 'x':
-            multiplyAmount = int(product['itemNumber'].strip()[-2:][1])
-            productStringSansMultiplyAmount = product['itemNumber'].strip()[0:-2].strip()
-            toReturn['products'][index]['itemNumber'] = productStringSansMultiplyAmount
+        if product['scheduleNumber'].strip()[-2:][0] == 'x':
+            multiplyAmount = int(product['scheduleNumber'].strip()[-2:][1])
+            productStringSansMultiplyAmount = product['scheduleNumber'].strip()[0:-2].strip()
+            toReturn['products'][index]['scheduleNumber'] = productStringSansMultiplyAmount
 
             multiples.append({'index': index, 'multiplyAmount': multiplyAmount})
 
@@ -199,27 +201,33 @@ def multiplyScheduleDay(scheduleDay):
 
     return toReturn
 
-def removeEmptyCellsFromScheduleDay(scheduleDay):
-    emptyProductsToRemove = []
-    for index, product in enumerate(scheduleDay['products']):
-        if(product['itemNumber'] == '&nbsp;'):
-            emptyProductsToRemove.append(index)
-    for i in reversed(emptyProductsToRemove):
-        del scheduleDay['products'][i]
-    return scheduleDay
-
 def applyNotesToProducts(scheduleDay):
     for index, product in enumerate( scheduleDay['products'] ):
         product['note'] = ""
         if 'note' in product['tags']:
-            note = product['itemNumber']
+            note = product['scheduleNumber']
             step = 0
-            while scheduleDay['products'][index - step]['itemNumber'] != '&nbsp;':
+            while scheduleDay['products'][index - step]['scheduleNumber'] != '&nbsp;':
                 scheduleDay['products'][index-step]['note'] = note
                 step += 1
     for index, product in enumerate(scheduleDay['products']):
-        if product['itemNumber'].startswith('*'):
+        if product['scheduleNumber'].startswith('*'):
             del scheduleDay['products'][index]
+    return scheduleDay
+
+def convertScheduleNumbersToItemNumbers(scheduleDay):
+    for index, product in enumerate(scheduleDay['products']):
+        itemNumber = re.findall('\d+', product['scheduleNumber'] )
+        product['itemNumber'] = itemNumber
+    return scheduleDay
+
+def removeEmptyCellsFromScheduleDay(scheduleDay):
+    emptyProductsToRemove = []
+    for index, product in enumerate(scheduleDay['products']):
+        if(product['scheduleNumber'] == '&nbsp;'):
+            emptyProductsToRemove.append(index)
+    for i in reversed(emptyProductsToRemove):
+        del scheduleDay['products'][i]
     return scheduleDay
 
 def replaceNaN(cellValue):

@@ -2,8 +2,8 @@
 | {% if kettle.days_products %}
 ul(id="sortable_{{kettle}}").products-in-kettle
   | {% for product in kettle.days_products.all|sort_by:'kettle_order'%}
-  li.product(id='{{product.item_number}}')
-    h4(id='{{product.item_number}}' class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.item_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span>
+  li.product(id='{{product.schedule_number}}')
+    h4(id='{{product.schedule_number}}' class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span>
     //- | {% if product.update_time %}
     //- p {{product.update_time|date:"U"}}
     //- | {% endif%}
