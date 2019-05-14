@@ -7,4 +7,4 @@ class Product(models.Model):
     usda_product = models.BooleanField(default = False)
 
     def __str__(self):
-        return self.item_number + ' ' + self.product_name
+        return self.item_number

@@ -36,7 +36,7 @@ class Product(models.Model):
     note = models.CharField(max_length=300, blank =True, null=True)
 
     def __str__(self):
-        return self.item_number + ' ' + self.product_name
+        return self.schedule_number + ' ' + self.product_name
 
     # class Meta:
     #     ordering = ['creation_date', 'update_time']

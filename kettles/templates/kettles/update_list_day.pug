@@ -3,5 +3,6 @@ li {{kettle}}
   ul
     | {% for product in kettle.days_products.all %}
     li {{ product.schedule_number }}
+      small {{ product.product_name }}
     | {% endfor %}
 | {% endfor %}

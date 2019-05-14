@@ -87,7 +87,7 @@ function setProductListDropping(){
 }
 
 function handleKettleDrop(event, ui){
-  // console.log("Handling Kettle Drop");
+  console.log("Handling Kettle Drop");
   var kettleToDropOn = $(event.target)
   var productToDrop = $(ui.draggable);
   var productNumber = productToDrop.attr('id')
@@ -108,7 +108,7 @@ function handleKettleDrop(event, ui){
 }
 
 function handleKettleSortReceive(event, ui){
-  // console.log("Handling kettle sort receive.")
+  console.log("Handling kettle sort receive.")
   var kettleToDropOn = $(event.target);
   var kettleNumberToDropOn = kettleToDropOn.attr('id').split("_").pop();
 
@@ -121,7 +121,7 @@ function handleKettleSortReceive(event, ui){
 }
 
 function handleKettleSortStop(event, ui){
-  // console.log('handling kettle sort Stop')
+  console.log('handling kettle sort Stop')
   var kettleToDropFrom = $(event.target);
 
   var products = returnProductKettleOrderArray( kettleToDropFrom.find('.product') );

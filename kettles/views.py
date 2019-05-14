@@ -46,12 +46,16 @@ def today(request):
 
     for index, product in enumerate(todaysProducts['products']):
         try:
-            #Look Up Product Gluten, USDA, Name from BaseProduct Model
             p = Product.objects.get(schedule_number = product['scheduleNumber'], production_date = todaysProductionDay, multiple = product['multiple'])
         except Product.DoesNotExist:
-            #Look Up Product Gluten, USDA, Name from BaseProduct Model
-            p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''], multiple = product['multiple'], note = product['note'])
-            p.save()
+            try:
+                bp = BaseProduct.objects.get(item_number = product['itemNumber'])
+            except BaseProduct.DoesNotExist:
+                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''], multiple = product['multiple'], note = product['note'])
+                p.save()
+            else:
+                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], product_name = bp.product_name, gluten_free = bp.gluten_free, production_date = todaysProductionDay, tags=[''], multiple = product['multiple'], note = product['note'])
+                p.save()
     context = {
         'todays_date' : today,
         'production_day' : todaysProductionDay,

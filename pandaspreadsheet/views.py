@@ -218,7 +218,10 @@ def applyNotesToProducts(scheduleDay):
 def convertScheduleNumbersToItemNumbers(scheduleDay):
     for index, product in enumerate(scheduleDay['products']):
         itemNumber = re.findall('\d+', product['scheduleNumber'] )
-        product['itemNumber'] = itemNumber
+        if len(itemNumber):
+            product['itemNumber'] = itemNumber[0]
+        else:
+            product['itemNumber'] = ''
     return scheduleDay
 
 def removeEmptyCellsFromScheduleDay(scheduleDay):

@@ -8,7 +8,7 @@
     <ul id="production-list">{% for kettle in production_day.kettles.all %}
       <li>{{kettle}}
         <ul>{% for product in kettle.days_products.all %}
-          <li>{{ product.item_number }}</li>{% endfor %}
+          <li>{{ product.schedule_number }}<small>{{ product.product_name }}</small></li>{% endfor %}
         </ul>
       </li>{% endfor %}
     </ul>{% load static %}
