@@ -1,4 +1,5 @@
 | {% for product in todays_products %}
 li.product(id='{{product.item_number}}' class="{%for tag in product.tags %}{{tag}} {%endfor%}")
   h5(id='{{product.item_number}}') {{product.item_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span>
+  small {{product.note}}
 | {% endfor %}

@@ -26,16 +26,11 @@ def today(request):
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyViewTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
-    # cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
-    print("------------PRINTING------------")
-    # print(productionSpreadsheet)
-    # print(calendar['week 2']['day 1'])
-    # print(taggedCalendar['week 1']['day 1'])
-    # print(scheduleDay)
-    # for product in scheduleDay['products']:
-    #     if product['itemNumber'] == '&nbsp;':
-    #         print("emptyCell")
+    notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
+    # cleanScheduleDay = removeEmptyCellsFromScheduleDay(notedScheduleDay)
+    # print("------------PRINTING------------")
+
     context = {
         "scheduleDay" : scheduleDay,
     }
@@ -201,7 +196,7 @@ def multiplyScheduleDay(scheduleDay):
             toReturn['products'].insert(m['index'], toInsert)
 
         del toReturn['products'][m['index'] + m['multiplyAmount']]
-        
+
     return toReturn
 
 def removeEmptyCellsFromScheduleDay(scheduleDay):
@@ -211,6 +206,20 @@ def removeEmptyCellsFromScheduleDay(scheduleDay):
             emptyProductsToRemove.append(index)
     for i in reversed(emptyProductsToRemove):
         del scheduleDay['products'][i]
+    return scheduleDay
+
+def applyNotesToProducts(scheduleDay):
+    for index, product in enumerate( scheduleDay['products'] ):
+        product['note'] = ""
+        if 'note' in product['tags']:
+            note = product['itemNumber']
+            step = 0
+            while scheduleDay['products'][index - step]['itemNumber'] != '&nbsp;':
+                scheduleDay['products'][index-step]['note'] = note
+                step += 1
+    for index, product in enumerate(scheduleDay['products']):
+        if product['itemNumber'].startswith('*'):
+            del scheduleDay['products'][index]
     return scheduleDay
 
 def replaceNaN(cellValue):

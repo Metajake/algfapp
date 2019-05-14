@@ -4,7 +4,7 @@ from django.http import Http404
 from datetime import date, timedelta
 import pandas, xlrd, numpy
 from dateutil import parser
-from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN, multiplyScheduleDay
+from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN, multiplyScheduleDay, applyNotesToProducts
 
 from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
@@ -50,7 +50,7 @@ def today(request):
             p = Product.objects.get(item_number = product['itemNumber'], production_date = todaysProductionDay, multiple = product['multiple'])
         except Product.DoesNotExist:
             #Look Up Product Gluten, USDA, Name from BaseProduct Model
-            p = Product(item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''], multiple = product['multiple'])
+            p = Product(item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''], multiple = product['multiple'], note = product['note'])
             p.save()
     context = {
         'todays_date' : today,
@@ -104,5 +104,7 @@ def createTodaysProductList():
     taggedCalendar = applyViewTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
-    strippedScheduleDay = removeEmptyCellsFromScheduleDay(multipliedScheduleDay)
+    notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
+    strippedScheduleDay = removeEmptyCellsFromScheduleDay(notedScheduleDay)
+    print(strippedScheduleDay)
     return strippedScheduleDay
