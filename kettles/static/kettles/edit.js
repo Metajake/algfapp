@@ -104,6 +104,7 @@ function handleKettleDrop(event, ui){
 
   if (productToDrop.parent().parent().hasClass('product-list') ){
     productToDrop.addClass('assigned')
+    ui.draggable.draggable({disabled: true})
   }
 }
 

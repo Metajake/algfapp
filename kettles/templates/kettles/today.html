@@ -9,11 +9,11 @@
     <h1>{{todays_date}}</h1>
     <p id="todays-production-day" style="display:none;">{{production_day}}</p>
     <div class="product-list">
-      <ul>{% for product in todays_products %}
-<li class="product {%for tag in product.tags %}{{tag}} {%endfor%}" id="{{product.schedule_number}}">
-  <h5 id="{{product.schedule_number}}">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span></h5><small>{{product.note}}</small><small>{{product.product_name}}</small>
-</li>{% endfor %}
-      </ul>
+<ul>{% for product in todays_products %}
+  <li class="product {%for tag in product.tags %}{{tag}} {%endfor%}" id="{{product.schedule_number}}">
+    <h5 id="{{product.schedule_number}}">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span></h5><small>{{product.note}}</small><small>{{product.product_name}}</small>
+  </li>{% endfor %}
+</ul>
     </div>
     <div class="kettle-list">{% for kettle in production_day.kettles.all %}
       <div class="kettle" id="{{kettle.kettle_number}}">

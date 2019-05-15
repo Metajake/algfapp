@@ -11,8 +11,7 @@ html
     h1 {{todays_date}}
     p#todays-production-day(style="display:none;") {{production_day}}
     .product-list
-      ul
-        include update_production_list.html
+      include update_production_list.html
     .kettle-list
         | {% for kettle in production_day.kettles.all %}
         .kettle(id="{{kettle.kettle_number}}")
