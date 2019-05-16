@@ -6,7 +6,7 @@ import pandas, xlrd, numpy
 
 from .models import Kettle, Product, CalendarDay
 
-productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.XLS', sheet_name = 0)
+productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.xls', sheet_name = 0)
 
 def test (request):
     return HttpResponse("Test Page")
