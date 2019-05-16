@@ -1,0 +1,32 @@
+| {% extends 'kettles/base.html' %}
+
+| {% load static %}
+
+| {% block extraStyle%}
+link(rel="stylesheet" href="{% static 'kettles/assign.css' %}" type="text/css" media="screen, projection")
+| {% endblock %}
+
+| {% block content %}
+#wrapper
+  #container
+    header
+    aside
+      .days-product-list
+        | {% for product in todays_products %}
+        .product-item(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
+          p.product-schedule-number {{product.schedule_number}}
+          | {% if product.product_name == '' %}
+          p.product-name Product Name
+          | {% else %}
+          p.product-name {{ product.product_name }}
+          | {% endif %}
+          | {% if product.note != '' %}
+          p.note {{product.note}}
+          | {% endif %}
+        | {% endfor %}
+    main
+| {% endblock %}
+
+| {% block extraScripts %}
+script(type="text/javascript" src="{% static 'kettles/assign_day.js'%}")
+| {% endblock %}

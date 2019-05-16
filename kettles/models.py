@@ -27,12 +27,14 @@ class Product(models.Model):
     schedule_number = models.CharField(max_length=20)
     product_name = models.CharField(blank=True, max_length = 100)
     gluten_free = models.BooleanField(blank=True, default = False)
+    # MAYBE GET RID OF THIS
     usda_product = models.BooleanField(blank=True, default = False)
     tags = ArrayField(models.CharField(max_length = 20, blank=True), blank=True)
     production_date = models.ForeignKey(ProductionDay, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)
     kettle = models.ForeignKey(Kettle, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)
     kettle_order = models.IntegerField(blank=True, null=True)
     multiple = models.IntegerField(blank=True, null=True)
+    # MAYBE GET RID OF THIS
     note = models.CharField(max_length=300, blank =True, null=True)
 
     def __str__(self):

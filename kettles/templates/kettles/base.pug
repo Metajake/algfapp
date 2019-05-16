@@ -1,0 +1,13 @@
+| {% load static %}
+
+doctype html
+html
+  head
+    title AL!GF App
+    include includes/head.pug
+  body
+    | {% block content %}
+    | {% endblock %}
+    include includes/scripts.pug
+    | {% block extraScripts %}
+    | {% endblock %}

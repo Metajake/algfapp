@@ -1,0 +1,13 @@
+
+{% extends 'kettles/base.html' %}
+{% load static %}
+{% block content %}
+<ul>
+  {% for day in days reversed %}
+  {% if forloop.first %}
+  <li>
+    <p>Today: <a href="{{ day.date }}"> {{ day }}</a></p>
+  </li>{% else %}
+  <li><a href="{{ day.date }}">{{ day }}</a></li>{% endif %}
+  {% endfor %}
+</ul>{% endblock %}

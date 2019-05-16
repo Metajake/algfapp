@@ -1,0 +1,25 @@
+
+{% extends 'kettles/base.html' %}
+{% load static %}
+{% block extraStyle%}
+<link rel="stylesheet" href="{% static 'kettles/assign.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+{% block content %}
+<div id="wrapper">
+  <div id="container">
+    <header></header>
+    <aside>
+      <div class="days-product-list">{% for product in todays_products %}
+        <div class="product-item {% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}">
+          <p class="product-schedule-number">{{product.schedule_number}}</p>{% if product.product_name == '' %}
+          <p class="product-name">Product Name</p>{% else %}
+          <p class="product-name">{{ product.product_name }}</p>{% endif %}
+          {% if product.note != '' %}
+          <p class="note">{{product.note}}</p>{% endif %}
+        </div>{% endfor %}
+      </div>
+    </aside>
+    <main></main>
+  </div>
+</div>{% endblock %}
+{% block extraScripts %}
+<script type="text/javascript" src="{% static 'kettles/assign_day.js'%}"></script>{% endblock %}

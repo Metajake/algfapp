@@ -20,29 +20,43 @@ def this_week(request):
     }
     return render(request, 'kettles/this_week.html', context)
 
-def today(request):
-    today = date.today()
+def assignment_days(request):
+    assignment_days = ProductionDay.objects.all()
+    #eventually return the past 7 days. To get older days you gotta click and "archive" link
+    context = {
+        'days' : assignment_days,
+    }
+    return render(request, 'kettles/assignment_days.html', context)
 
-    #Create a New Production Day, if it does not already exist
-    try:
-        todaysProductionDay = ProductionDay.objects.get(date=today)
-    except ProductionDay.DoesNotExist:
-        todaysProductionDay = ProductionDay(date=today)
-        todaysProductionDay.save()
+def assignment_date(request, date_to_assign):
+    theDate = parser.parse(date_to_assign).strftime('%Y-%m-%d')
 
-    kettle_numbers = ['K1', 'K2', 'K3', 'K4', 'L5', 'T6', 'K7', 'K8', 'T9']
-    for i in kettle_numbers:
-        try:
-            k = Kettle.objects.get(kettle_number = i, production_date = todaysProductionDay)
-        except Kettle.DoesNotExist:
-            k = Kettle(kettle_number = i, production_date = todaysProductionDay)
-            k.save()
+    todaysProductionDay = checkAndCreateProductionDay(theDate)
+
+    checkAndCreateKettles(todaysProductionDay)
 
     todaysProducts = createTodaysProductList()
-    if todaysProducts['date'] == "error":
-        notification = "There is a conflict between the app and the Production Schedule, having to do with the DATE.\n"
-    else:
-        notification = ""
+
+    notification = checkForDateNotification(todaysProducts)
+
+    checkAndCreateProducts(todaysProductionDay, todaysProducts)
+
+    context = {
+        'production_day' : todaysProductionDay,
+        'todays_products': todaysProductionDay.days_products.all().order_by('creation_date'),
+        'notification' : notification,
+    }
+    return render(request, 'kettles/assignment_date.html', context)
+
+def today(request):
+
+    todaysProductionDay = checkAndCreateProductionDay(date.today())
+
+    checkAndCreateKettles(todaysProductionDay)
+
+    todaysProducts = createTodaysProductList()
+
+    notification = checkForDateNotification(todaysProducts)
 
     for index, product in enumerate(todaysProducts['products']):
         try:
@@ -57,7 +71,7 @@ def today(request):
                 p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], product_name = bp.product_name, gluten_free = bp.gluten_free, production_date = todaysProductionDay, tags=[''], multiple = product['multiple'], note = product['note'])
                 p.save()
     context = {
-        'todays_date' : today,
+        'todays_date' : date.today(),
         'production_day' : todaysProductionDay,
         'todays_products': todaysProductionDay.days_products.all().order_by('creation_date'),
         'notification' : notification,
@@ -101,6 +115,46 @@ def testchannels(request):
     'message' : "yoyo",
     }
     return render(request, 'kettles/edit.html', context)
+
+def checkAndCreateProductionDay(the_date):
+    try:
+        todaysProductionDay = ProductionDay.objects.get(date=the_date)
+    except ProductionDay.DoesNotExist:
+        todaysProductionDay = ProductionDay(date=the_date)
+        todaysProductionDay.save()
+
+    return todaysProductionDay
+
+def checkAndCreateKettles(the_date):
+    kettle_numbers = ['K1', 'K2', 'K3', 'K4', 'L5', 'T6', 'K7', 'K8', 'T9']
+    for i in kettle_numbers:
+        try:
+            k = Kettle.objects.get(kettle_number = i, production_date = the_date)
+        except Kettle.DoesNotExist:
+            k = Kettle(kettle_number = i, production_date = the_date)
+            k.save()
+
+def checkAndCreateProducts(production_day, days_products):
+    for index, product in enumerate(days_products['products']):
+        try:
+            p = Product.objects.get(schedule_number = product['scheduleNumber'], production_date = production_day, multiple = product['multiple'])
+        except Product.DoesNotExist:
+            try:
+                bp = BaseProduct.objects.get(item_number = product['itemNumber'])
+            except BaseProduct.DoesNotExist:
+                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'])
+                p.save()
+            else:
+                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], product_name = bp.product_name, gluten_free = bp.gluten_free, production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'])
+                p.save()
+
+def checkForDateNotification(days_products):
+    if days_products['date'] == "error":
+        notification = "There is a conflict between the app and the Production Schedule, having to do with the DATE.\n"
+    else:
+        notification = ""
+
+    return notification
 
 def createTodaysProductList():
     weekRanges = constructWeekRanges(productionSpreadsheet)

@@ -1,0 +1,19 @@
+{% load static %}<!DOCTYPE html>
+<html>
+  <head>
+    <title>AL!GF App</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="{% static 'kettles/base.css' %}" type="text/css" media="screen,projection">{% block extraStyle %}
+    {% endblock %}
+  </head>
+  <body>
+    {% block content %}
+    {% endblock %}
+    <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/jquerytouch.js'%}"></script>{% block extraScripts %}
+    {% endblock %}
+  </body>
+</html>
