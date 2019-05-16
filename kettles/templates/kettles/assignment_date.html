@@ -2,7 +2,7 @@
 {% extends 'kettles/base.html' %}
 {% load static %}
 {% block extraStyle%}
-<link rel="stylesheet" href="{% static 'kettles/assign.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+<link rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
 <div id="wrapper">
   <div id="container">
@@ -17,8 +17,13 @@
           <p class="note">{{product.note}}</p>{% endif %}
         </div>{% endfor %}
       </div>
-    </aside>
-    <main></main>
+    </aside>{% for kettle in production_day.kettles.all %}
+    <div class="kettle-container" id="{{kettle.kettle_number}}">
+      <div class="kettle-container-header">
+        <h4 class="text-center">{{kettle}}</h4>
+      </div>
+      <div class="kettle-container-content"></div>
+    </div>{% endfor %}
   </div>
 </div>{% endblock %}
 {% block extraScripts %}

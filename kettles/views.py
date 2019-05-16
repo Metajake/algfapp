@@ -21,8 +21,14 @@ def this_week(request):
     return render(request, 'kettles/this_week.html', context)
 
 def assignment_days(request):
+    try:
+        todays_production_day = ProductionDay.objects.get(date=date.today())
+    except ProductionDay.DoesNotExist:
+        todays_production_day = ProductionDay(date=date.today())
+        todays_production_day.save()
+        
     assignment_days = ProductionDay.objects.all()
-    #eventually return the past 7 days. To get older days you gotta click and "archive" link
+    #convert to return the past 7 days. To get older days you gotta click and "archive" link
     context = {
         'days' : assignment_days,
     }

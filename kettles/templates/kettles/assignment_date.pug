@@ -3,7 +3,7 @@
 | {% load static %}
 
 | {% block extraStyle%}
-link(rel="stylesheet" href="{% static 'kettles/assign.css' %}" type="text/css" media="screen, projection")
+link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/css" media="screen, projection")
 | {% endblock %}
 
 | {% block content %}
@@ -24,7 +24,14 @@ link(rel="stylesheet" href="{% static 'kettles/assign.css' %}" type="text/css" m
           p.note {{product.note}}
           | {% endif %}
         | {% endfor %}
-    main
+    
+    | {% for kettle in production_day.kettles.all %}
+    div(id='{{kettle.kettle_number}}').kettle-container
+      .kettle-container-header
+        h4.text-center {{kettle}}
+      .kettle-container-content
+    | {% endfor %}
+      
 | {% endblock %}
 
 | {% block extraScripts %}
