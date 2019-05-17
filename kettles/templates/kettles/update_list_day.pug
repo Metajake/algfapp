@@ -3,6 +3,10 @@ li {{kettle}}
   ul
     | {% for product in kettle.days_products.all %}
     li {{ product.schedule_number }}
+      | {% if product.product_name %}
       small {{ product.product_name }}
+      | {%else%}
+      small Product Name
+      | {%endif%}
     | {% endfor %}
 | {% endfor %}

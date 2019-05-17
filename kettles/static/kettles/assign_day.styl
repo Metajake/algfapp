@@ -29,17 +29,25 @@
       flex-grow:1
     .kettle-container-content
       flex-grow:20
-
       outline: 3px dashed #88e
 
+#days-product-list
+  height: 100%
+  outline: 3px dashed #e88
+div[id^="sortable_"]
+  height:100%
 
-.days-product-list
-  .product-item
-    &.note
-      color: red
-    &.gluten-free
-      color:blue
-    .note
-      color:red
-      font-weight: bold
-    // height:100px
+.product-item
+  outline: 1px solid gray
+  padding:5px
+  &.note
+    color: red
+  &.gluten-free
+    color:blue
+  .note
+    color:red
+    font-weight: bold
+
+.product-sort-placeholder
+  height:25px
+  background-color: #cceebb

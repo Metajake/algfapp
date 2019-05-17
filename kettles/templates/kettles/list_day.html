@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html>
   <head>
     <title>Kettles</title>
@@ -6,12 +6,13 @@
   <body>
     <p>{{production_day}}</p>
     <ul id="production-list">{% for kettle in production_day.kettles.all %}
-      <li>{{kettle}}
-        <ul>{% for product in kettle.days_products.all %}
-          <li>{{ product.schedule_number }}<small>{{ product.product_name }}</small></li>{% endfor %}
-        </ul>
-      </li>{% endfor %}
-    </ul>{% load static %}
+<li>{{kettle}}
+  <ul>{% for product in kettle.days_products.all %}
+    <li>
+      {{ product.schedule_number }}{% if product.product_name %}<small>{{ product.product_name }}</small>{%else%}<small>Product Name</small>{%endif%}</li>{% endfor %}
+  </ul>
+</li>{% endfor %}
+    </ul>
     <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/jquerytouch.js'%}"></script>

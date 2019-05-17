@@ -1,6 +1,7 @@
 | {% extends 'kettles/base.html' %}
 
 | {% load static %}
+| {% load custom_tags %}
 
 | {% block extraStyle%}
 link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/css" media="screen, projection")
@@ -10,11 +11,13 @@ link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/cs
 #wrapper
   #container
     header
+      p#todays-production-day(style="display:none;") {{production_day}}
     aside
-      .days-product-list
-        | {% for product in todays_products %}
-        .product-item(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-          p.product-schedule-number {{product.schedule_number}}
+      #days-product-list.sortable-products-list
+        | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
+        | {% if product.assigned == False %}
+        .product-item(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
+          p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
           | {% if product.product_name == '' %}
           p.product-name Product Name
           | {% else %}
@@ -23,6 +26,7 @@ link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/cs
           | {% if product.note != '' %}
           p.note {{product.note}}
           | {% endif %}
+        | {% endif %}
         | {% endfor %}
     
     | {% for kettle in production_day.kettles.all %}
@@ -30,6 +34,19 @@ link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/cs
       .kettle-container-header
         h4.text-center {{kettle}}
       .kettle-container-content
+        div(id="sortable_{{kettle}}").sortable-products-list
+          | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
+          .product-item(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
+            p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
+            | {% if product.product_name == '' %}
+            p.product-name Product Name
+            | {% else %}
+            p.product-name {{ product.product_name }}
+            | {% endif %}
+            | {% if product.note != '' %}
+            p.note {{product.note}}
+            | {% endif %}
+          | {% endfor %}
     | {% endfor %}
       
 | {% endblock %}

@@ -22,13 +22,16 @@ class Kettle(models.Model):
 
 class Product(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True)
-    update_time = models.DateTimeField(blank=True, null=True) # MAYBE GET RID OF THIS (if we don't end up using it)
+    # MAYBE GET RID OF THIS (if we don't end up using it)
+    update_time = models.DateTimeField(blank=True, null=True)
     item_number = models.CharField(max_length=20)
     schedule_number = models.CharField(max_length=20)
     product_name = models.CharField(blank=True, max_length = 100)
+    assigned = models.BooleanField(blank=True, default=False)
     gluten_free = models.BooleanField(blank=True, default = False)
     # MAYBE GET RID OF THIS
     usda_product = models.BooleanField(blank=True, default = False)
+    #MAYBE GET RID OF THIS
     tags = ArrayField(models.CharField(max_length = 20, blank=True), blank=True)
     production_date = models.ForeignKey(ProductionDay, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)
     kettle = models.ForeignKey(Kettle, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)

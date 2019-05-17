@@ -1,6 +1,7 @@
 {% for kettle in production_day.kettles.all %}
 <li>{{kettle}}
   <ul>{% for product in kettle.days_products.all %}
-    <li>{{ product.schedule_number }}</li>{% endfor %}
+    <li>
+      {{ product.schedule_number }}{% if product.product_name %}<small>{{ product.product_name }}</small>{%else%}<small>Product Name</small>{%endif%}</li>{% endfor %}
   </ul>
 </li>{% endfor %}

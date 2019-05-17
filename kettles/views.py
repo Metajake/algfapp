@@ -9,24 +9,13 @@ from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, p
 from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
 
-def this_week(request):
-    firstDayOfWeek = date.today() - timedelta(days=3)
-    today = date.today()
-    lastDayOfWeek = date.today() + timedelta(days=3)
-    context = {
-        'firstDay' : firstDayOfWeek,
-        'today' : today,
-        'lastDay' : lastDayOfWeek,
-    }
-    return render(request, 'kettles/this_week.html', context)
-
 def assignment_days(request):
     try:
         todays_production_day = ProductionDay.objects.get(date=date.today())
     except ProductionDay.DoesNotExist:
         todays_production_day = ProductionDay(date=date.today())
         todays_production_day.save()
-        
+
     assignment_days = ProductionDay.objects.all()
     #convert to return the past 7 days. To get older days you gotta click and "archive" link
     context = {
@@ -54,36 +43,6 @@ def assignment_date(request, date_to_assign):
     }
     return render(request, 'kettles/assignment_date.html', context)
 
-def today(request):
-
-    todaysProductionDay = checkAndCreateProductionDay(date.today())
-
-    checkAndCreateKettles(todaysProductionDay)
-
-    todaysProducts = createTodaysProductList()
-
-    notification = checkForDateNotification(todaysProducts)
-
-    for index, product in enumerate(todaysProducts['products']):
-        try:
-            p = Product.objects.get(schedule_number = product['scheduleNumber'], production_date = todaysProductionDay, multiple = product['multiple'])
-        except Product.DoesNotExist:
-            try:
-                bp = BaseProduct.objects.get(item_number = product['itemNumber'])
-            except BaseProduct.DoesNotExist:
-                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], production_date = todaysProductionDay, tags=[''], multiple = product['multiple'], note = product['note'])
-                p.save()
-            else:
-                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], product_name = bp.product_name, gluten_free = bp.gluten_free, production_date = todaysProductionDay, tags=[''], multiple = product['multiple'], note = product['note'])
-                p.save()
-    context = {
-        'todays_date' : date.today(),
-        'production_day' : todaysProductionDay,
-        'todays_products': todaysProductionDay.days_products.all().order_by('creation_date'),
-        'notification' : notification,
-    }
-    return render(request, 'kettles/today.html', context)
-
 def list(request):
     productionDays = ProductionDay.objects.all()
     context = {
@@ -97,20 +56,7 @@ def list_day(request, list_date):
     context = {
         'production_day' : productionDay,
     }
-    return render(request, 'kettles/day.html', context)
-
-def update_kettle(request):
-    pd = ProductionDay.objects.get(date=request.GET['date'])
-    kettle = Kettle.objects.get(production_date=pd, kettle_number=request.GET['kettle'])
-    return render_to_response('kettles/update_kettle.html', {'kettle': kettle})
-
-def update_production_list(request):
-    pd = ProductionDay.objects.get(date=request.GET['date'])
-    context = {
-        "production_day" : pd,
-        "todays_products" : pd.days_products.all().order_by('creation_date'),
-    }
-    return render_to_response('kettles/update_production_list.html', context)
+    return render(request, 'kettles/list_day.html', context)
 
 def update_list_day(request, list_date):
     pd = ProductionDay.objects.get(date=request.GET['date'])
@@ -148,10 +94,10 @@ def checkAndCreateProducts(production_day, days_products):
             try:
                 bp = BaseProduct.objects.get(item_number = product['itemNumber'])
             except BaseProduct.DoesNotExist:
-                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'])
+                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'], kettle_order = index)
                 p.save()
             else:
-                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], product_name = bp.product_name, gluten_free = bp.gluten_free, production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'])
+                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], product_name = bp.product_name, gluten_free = bp.gluten_free, production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'], kettle_order = index)
                 p.save()
 
 def checkForDateNotification(days_products):
