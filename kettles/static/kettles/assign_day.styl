@@ -18,7 +18,7 @@
     grid-column: 1/2
     grid-row: 2/5
     background-color: #ccc
-    padding:20px 30px
+    padding:20px 0 20px 50px
     overflow-x: hidden
     overflow-y: scroll
   .kettle-container
@@ -30,12 +30,14 @@
     .kettle-container-content
       flex-grow:20
       outline: 3px dashed #88e
+      display:flex
+      flex-direction:column
 
 #days-product-list
   height: 100%
   outline: 3px dashed #e88
 div[id^="sortable_"]
-  height:100%
+  flex-grow:1
 
 .product-item
   outline: 1px solid gray
