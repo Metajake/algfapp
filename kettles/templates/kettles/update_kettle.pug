@@ -6,8 +6,5 @@ ul(id="sortable_{{kettle}}").products-in-kettle
   li.product(id='{{product.schedule_number}}')
     h4(id='{{product.schedule_number}}' class="{%for tag in product.tags %}{{tag}} {%endfor%}") {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}(x{{product.multiple}}){% endif %}</span>
     small {{product.product_name}}
-    //- | {% if product.update_time %}
-    //- p {{product.update_time|date:"U"}}
-    //- | {% endif%}
   | {% endfor %}
 | {% endif %}

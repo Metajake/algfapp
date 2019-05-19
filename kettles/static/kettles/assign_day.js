@@ -4,12 +4,13 @@ chatSocket.onopen = function(event) {
 };
 
 $( "#days-product-list, #sortable_K1, #sortable_K2, #sortable_K3, #sortable_K4, #sortable_L5, #sortable_T6, #sortable_K7, #sortable_K8, #sortable_T9" ).sortable({
-  handle: ".product-sort-handle",
+  handle: ".product-sort-handle:not(.is-complete)",
   placeholder: "product-sort-placeholder",
   connectWith: ".sortable-products-list",
   receive: handleToListSortReceive,
   stop: handleFromListSortStop,
 }).disableSelection();
+
 
 function handleToListSortReceive(event, ui){
   console.log("Handling list sort receive.")
@@ -57,3 +58,18 @@ function returnProductKettleOrderArray(productsToOrder){
   })
   return products;
 }
+
+$('.product-complete').click(function(event){
+  var isComplete = $(event.target).is(':checked')
+  $(event.currentTarget).closest('.product-item').find('.product-sort-handle').disableSelection().toggleClass('is-complete')
+  var product = {
+      'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
+      'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
+  }
+  chatSocket.send(JSON.stringify({
+    'message': 'toggleProductComplete',
+    'product' : product,
+    'isComplete' : isComplete,
+    'date' : $('#todays-production-day').text(),
+  }));
+})

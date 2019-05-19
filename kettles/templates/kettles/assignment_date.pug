@@ -19,14 +19,14 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
         | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
         | {% if product.assigned == False %}
         .product-item(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-          .product-sort-handle
+          .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
             .schedule-number-container
               p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
             .product-name-container
               | {% if product.product_name == '' %}
               p.product-name Product Name
               | {% else %}
-              p.product-name {{ product.product_name }}
+              p.product-name {{ product.product_name|truncatechars:26 }}
               | {% endif %}
             .note-container
               | {% if product.note != '' %}
@@ -34,7 +34,11 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
               | {% endif %}
           .product-complete-container
             label.checkbox-container
-              input.product-complete(type="checkbox" checked="checked")
+              | {% if product.is_complete %}
+              input.product-complete(type="checkbox" checked)
+              | {% else %}
+              input.product-complete(type="checkbox")
+              | {% endif %}
               span.checkmark
             
         | {% endif %}
@@ -48,7 +52,7 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
           .product-item(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-            .product-sort-handle
+            .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
               .schedule-number-container
                 p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
               .product-name-container
@@ -63,7 +67,11 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
                 | {% endif %}
             .product-complete-container
               label.checkbox-container
-                input.product-complete(type="checkbox" checked="checked")
+                | {% if product.is_complete %}
+                input.product-complete(type="checkbox" checked)
+                | {% else %}
+                input.product-complete(type="checkbox")
+                | {% endif %}
                 span.checkmark
           | {% endfor %}
     | {% endfor %}

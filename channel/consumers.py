@@ -60,6 +60,18 @@ class KettleConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        elif message == 'toggleProductComplete':
+            print('-----Toggling Product Complete--------')
+            self.kettleReceive = await database_sync_to_async(self.toggleProductComplete)()
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "update_products",
+                    'message' : 'updating_products',
+                    'date' : self.text_data_json['date'],
+                }
+            )
+
     def receiveAndSortProductList(self):
         print('-------Receive and Sorting Product List-------')
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
@@ -100,6 +112,17 @@ class KettleConsumer(AsyncWebsocketConsumer):
             p.kettle_order = prod['list_order']
             p.save(update_fields=['kettle_order'])
 
+    def toggleProductComplete(self):
+        print('----Toggling----')
+        dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
+        pd = ProductionDay.objects.get(date = dateFormatted)
+        p = Product.objects.get(
+            schedule_number = self.text_data_json['product']['schedule_number'],
+            multiple = self.text_data_json['product']['multiple'],
+            production_date = pd,
+        )
+        p.is_complete = self.text_data_json['isComplete']
+        p.save(update_fields=['is_complete'])
     # Receive message from room group
     async def update_products(self, event):
         message = event['message']

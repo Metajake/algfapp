@@ -46,6 +46,10 @@ div[id^="sortable_"]
   outline: 1px solid gray
   padding:5px
   display:flex
+  .multiple
+    font-weight:bold
+    font-size: 1.1rem
+    line-height: 1rem
   &.note
     color: red
   &.gluten-free
@@ -53,10 +57,15 @@ div[id^="sortable_"]
   .note
     color:red
     font-weight: bold
+
   .product-sort-handle
     flex:4
     display:flex
     flex-direction: column
+    &.is-complete
+      opacity:0.5
+      p
+        text-decoration: line-through
     .schedule-number-container
       flex:1 1 auto
       p
