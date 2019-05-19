@@ -5,27 +5,38 @@
 
 | {% block extraStyle%}
 link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/css" media="screen, projection")
+link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css" media="screen,projection")
 | {% endblock %}
 
 | {% block content %}
 #wrapper
   #container
     header
+      h2.text-center {{production_day.date}}
       p#todays-production-day(style="display:none;") {{production_day}}
     aside
       #days-product-list.sortable-products-list
         | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
         | {% if product.assigned == False %}
         .product-item(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-          p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
-          | {% if product.product_name == '' %}
-          p.product-name Product Name
-          | {% else %}
-          p.product-name {{ product.product_name }}
-          | {% endif %}
-          | {% if product.note != '' %}
-          p.note {{product.note}}
-          | {% endif %}
+          .product-sort-handle
+            .schedule-number-container
+              p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
+            .product-name-container
+              | {% if product.product_name == '' %}
+              p.product-name Product Name
+              | {% else %}
+              p.product-name {{ product.product_name }}
+              | {% endif %}
+            .note-container
+              | {% if product.note != '' %}
+              p.note {{product.note}}
+              | {% endif %}
+          .product-complete-container
+            label.checkbox-container
+              input.product-complete(type="checkbox" checked="checked")
+              span.checkmark
+            
         | {% endif %}
         | {% endfor %}
     
@@ -37,15 +48,23 @@ link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/cs
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
           .product-item(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-            p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
-            | {% if product.product_name == '' %}
-            p.product-name Product Name
-            | {% else %}
-            p.product-name {{ product.product_name }}
-            | {% endif %}
-            | {% if product.note != '' %}
-            p.note {{product.note}}
-            | {% endif %}
+            .product-sort-handle
+              .schedule-number-container
+                p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
+              .product-name-container
+                | {% if product.product_name == '' %}
+                p.product-name Product Name
+                | {% else %}
+                p.product-name {{ product.product_name|truncatechars:26 }}
+                | {% endif %}
+              .note-container
+                | {% if product.note != '' %}
+                p.note {{product.note}}
+                | {% endif %}
+            .product-complete-container
+              label.checkbox-container
+                input.product-complete(type="checkbox" checked="checked")
+                span.checkmark
           | {% endfor %}
     | {% endfor %}
       

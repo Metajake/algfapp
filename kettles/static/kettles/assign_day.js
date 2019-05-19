@@ -4,6 +4,7 @@ chatSocket.onopen = function(event) {
 };
 
 $( "#days-product-list, #sortable_K1, #sortable_K2, #sortable_K3, #sortable_K4, #sortable_L5, #sortable_T6, #sortable_K7, #sortable_K8, #sortable_T9" ).sortable({
+  handle: ".product-sort-handle",
   placeholder: "product-sort-placeholder",
   connectWith: ".sortable-products-list",
   receive: handleToListSortReceive,

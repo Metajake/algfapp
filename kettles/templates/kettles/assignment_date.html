@@ -3,11 +3,13 @@
 {% load static %}
 {% load custom_tags %}
 {% block extraStyle%}
-<link rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+<link rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css" media="screen,projection"/>{% endblock %}
 {% block content %}
 <div id="wrapper">
   <div id="container">
     <header>
+      <h2 class="text-center">{{production_day.date}}</h2>
       <p id="todays-production-day" style="display:none;">{{production_day}}</p>
     </header>
     <aside>
@@ -15,11 +17,23 @@
         {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
         {% if product.assigned == False %}
         <div class="product-item {% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}" id="{{product.schedule_number}}">
-          <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span></p>{% if product.product_name == '' %}
-          <p class="product-name">Product Name</p>{% else %}
-          <p class="product-name">{{ product.product_name }}</p>{% endif %}
-          {% if product.note != '' %}
-          <p class="note">{{product.note}}</p>{% endif %}
+          <div class="product-sort-handle">
+            <div class="schedule-number-container">
+              <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span></p>
+            </div>
+            <div class="product-name-container">{% if product.product_name == '' %}
+              <p class="product-name">Product Name</p>{% else %}
+              <p class="product-name">{{ product.product_name }}</p>{% endif %}
+            </div>
+            <div class="note-container">{% if product.note != '' %}
+              <p class="note">{{product.note}}</p>{% endif %}
+            </div>
+          </div>
+          <div class="product-complete-container">
+            <label class="checkbox-container">
+              <input class="product-complete" type="checkbox" checked="checked"/><span class="checkmark"></span>
+            </label>
+          </div>
         </div>{% endif %}
         {% endfor %}
       </div>
@@ -31,11 +45,23 @@
       <div class="kettle-container-content">
         <div class="sortable-products-list" id="sortable_{{kettle}}">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}
           <div class="product-item {% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}" id="{{product.schedule_number}}">
-            <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span></p>{% if product.product_name == '' %}
-            <p class="product-name">Product Name</p>{% else %}
-            <p class="product-name">{{ product.product_name }}</p>{% endif %}
-            {% if product.note != '' %}
-            <p class="note">{{product.note}}</p>{% endif %}
+            <div class="product-sort-handle">
+              <div class="schedule-number-container">
+                <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span></p>
+              </div>
+              <div class="product-name-container">{% if product.product_name == '' %}
+                <p class="product-name">Product Name</p>{% else %}
+                <p class="product-name">{{ product.product_name|truncatechars:26 }}</p>{% endif %}
+              </div>
+              <div class="note-container">{% if product.note != '' %}
+                <p class="note">{{product.note}}</p>{% endif %}
+              </div>
+            </div>
+            <div class="product-complete-container">
+              <label class="checkbox-container">
+                <input class="product-complete" type="checkbox" checked="checked"/><span class="checkmark"></span>
+              </label>
+            </div>
           </div>{% endfor %}
         </div>
       </div>

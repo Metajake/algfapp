@@ -1,0 +1,45 @@
+.checkbox-container
+  display: block
+  position: relative
+  padding-left: 35px
+  margin-bottom: 12px
+  cursor: pointer
+  font-size: 22px
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  input
+    position: absolute
+    opacity: 0
+    cursor: pointer
+    height: 0
+    width: 0
+  .checkmark
+    position: absolute
+    top: 0
+    right: 0
+    height: 35px
+    width: 35px
+    background-color: #fff
+    border:2px solid #aaa
+    &:after
+      content: ""
+      position: absolute
+      display: none
+  // &:hover input ~ .checkmark
+  //   background-color: #ccc
+  & input:checked ~ .checkmark
+    background-color: #cceebb
+  & input:checked ~ .checkmark:after
+    display: block
+  & .checkmark:after
+    left: 9px
+    top: 0
+    width: 10px
+    height: 20px
+    border: solid darkgreen
+    border-width: 0 4px 4px 0
+    -webkit-transform: rotate(45deg)
+    -ms-transform: rotate(45deg)
+    transform: rotate(45deg)
