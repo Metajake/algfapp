@@ -25,7 +25,7 @@ def today(request):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyViewTags(calendar)
-    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
+    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, datetime.datetime.today().day)
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
     notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
     convertedScheduleDay = convertScheduleNumbersToItemNumbers(notedScheduleDay)
@@ -50,7 +50,7 @@ def list(request, date):
         weekRanges = constructWeekRanges(productionSpreadsheet)
         calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
         taggedCalendar = applyViewTags(calendar)
-        scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
+        scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, datetime.datetime.today().day)
         cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
         productScheduleDay = expandProductMultiples(cleanScheduleDay)
 
@@ -161,9 +161,9 @@ def constructWeekRanges(spreadsheet):
     weekRanges[2] = [weekMarkers[2] + 2, spreadsheet.shape[0]]
     return weekRanges
 
-def getTodaysScheduleFromSpreadsheet(calendar):
+def getTodaysScheduleFromSpreadsheet(calendar, dayToSchedule):
     scheduleDay = None
-    todaysDate = datetime.datetime.today().day
+    todaysDate = dayToSchedule
     for index, week in enumerate(calendar):
         for index, day in enumerate(calendar[week]):
             dateString = calendar[week][day]['date'].strip()

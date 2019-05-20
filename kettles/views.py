@@ -1,6 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.http import Http404
 
+import datetime
 from datetime import date, timedelta
 import pandas, xlrd, numpy
 from dateutil import parser
@@ -32,15 +33,12 @@ def assignment_days(request):
 
 def assignment_date(request, date_to_assign):
     theDate = parser.parse(date_to_assign).strftime('%Y-%m-%d')
+    theDateDay = theDate[-2:]
 
     todaysProductionDay = checkAndCreateProductionDay(theDate)
-
     checkAndCreateKettles(todaysProductionDay)
-
-    todaysProducts = createTodaysProductList()
-
+    todaysProducts = createTodaysProductList(theDateDay)
     notification = checkForDateNotification(todaysProducts)
-
     checkAndCreateProducts(todaysProductionDay, todaysProducts)
 
     context = {
@@ -109,11 +107,11 @@ def checkForDateNotification(days_products):
 
     return notification
 
-def createTodaysProductList():
+def createTodaysProductList(dayToSchedule):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyViewTags(calendar)
-    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar)
+    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, dayToSchedule)
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
     notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
     convertedScheduleDay = convertScheduleNumbersToItemNumbers(notedScheduleDay)
