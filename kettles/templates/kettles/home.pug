@@ -1,0 +1,21 @@
+| {% extends 'kettles/base.html' %}
+
+| {% load static %}
+
+| {% block extraStyle%}
+link(rel="stylesheet" href="{% static 'kettles/home.css' %}" type="text/css" media="screen, projection")
+| {% endblock %}
+
+| {% block content %}
+#wrapper
+    | {% url 'assign_days' as assign %}
+    | {% url 'list_days' as list %}
+    ul
+      li
+        a(href='{{assign}}') Assign Products to Kettles
+      li
+        a(href='{{list}}') Show Kettles
+| {% endblock %}
+
+| {% block extraScripts %}
+| {% endblock %}

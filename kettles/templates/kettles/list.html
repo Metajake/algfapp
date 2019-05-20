@@ -1,28 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Kettles</title>
-  </head>
-  <body>
-    <ul>{% for day in production_days %}
-      <li><a href="{{ day.date }}">{{ day.date }}</a></li>{% endfor %}
-    </ul>
-    <script>
-      console.log( "Listing.." );
-      
-      var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/kettles/');
-      
-      chatSocket.onopen = function(event) {
-        console.log("WebSocket is open now.");
-      };
-      
-      chatSocket.onmessage = function(e) {
-          console.log("GOT MESSAqge");
-          //- location.reload();
-          //- var data = JSON.parse(e.data);
-          //- var message = data['message'];
-          //- console.log( message );
-      };
-    </script>
-  </body>
-</html>
+
+{% extends 'kettles/base.html' %}
+{% load static %}
+{% block extraStyle%}
+<link rel="stylesheet" href="{% static 'kettles/list_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+{% block content %}
+<div id="wrapper">
+  <ul>{% for day in production_days %}
+    <li><a href="{{ day.date }}">{{ day.date }}</a></li>{% endfor %}
+  </ul>
+</div>{% endblock %}
+{% block extraScripts %}
+{% endblock %}

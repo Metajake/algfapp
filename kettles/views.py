@@ -9,6 +9,10 @@ from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, p
 from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
 
+def kettle_home(request):
+    context={}
+    return render(request, "kettles/home.html", context)
+
 def assignment_days(request):
     try:
         todays_production_day = ProductionDay.objects.get(date=date.today())

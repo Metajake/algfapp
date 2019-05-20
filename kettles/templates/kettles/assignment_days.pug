@@ -2,14 +2,24 @@
 
 | {% load static %}
 
+| {% block extraStyle%}
+link(rel="stylesheet" href="{% static 'kettles/assign_days.css' %}" type="text/css" media="screen, projection")
+| {% endblock %}
+
 | {% block content %}
-ul
-  | {% for day in days reversed %}
-  | {% if forloop.first %}
-  li
-    p Today: <a href="{{ day.date }}"> {{ day }}</a>
-  | {% else %}
-  li: a(href="{{ day.date }}") {{ day }}
-  | {% endif %}
-  | {% endfor %}
+
+#wrapper
+  ul
+    | {% for day in days reversed %}
+    | {% if forloop.first %}
+    li
+      p Today: <a href="{{ day.date }}"> {{ day }}</a>
+    | {% else %}
+    li: a(href="{{ day.date }}") {{ day }}
+    | {% endif %}
+    | {% endfor %}
+    
+| {% endblock %}
+
+| {% block extraScripts %}
 | {% endblock %}

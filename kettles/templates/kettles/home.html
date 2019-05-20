@@ -1,0 +1,16 @@
+
+{% extends 'kettles/base.html' %}
+{% load static %}
+{% block extraStyle%}
+<link rel="stylesheet" href="{% static 'kettles/home.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+{% block content %}
+<div id="wrapper">
+  {% url 'assign_days' as assign %}
+  {% url 'list_days' as list %}
+  <ul>
+    <li><a href="{{assign}}">Assign Products to Kettles</a></li>
+    <li><a href="{{list}}">Show Kettles</a></li>
+  </ul>
+</div>{% endblock %}
+{% block extraScripts %}
+{% endblock %}

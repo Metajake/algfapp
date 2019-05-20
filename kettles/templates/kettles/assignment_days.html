@@ -1,13 +1,19 @@
 
 {% extends 'kettles/base.html' %}
 {% load static %}
+{% block extraStyle%}
+<link rel="stylesheet" href="{% static 'kettles/assign_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
-<ul>
-  {% for day in days reversed %}
-  {% if forloop.first %}
-  <li>
-    <p>Today: <a href="{{ day.date }}"> {{ day }}</a></p>
-  </li>{% else %}
-  <li><a href="{{ day.date }}">{{ day }}</a></li>{% endif %}
-  {% endfor %}
-</ul>{% endblock %}
+<div id="wrapper">
+  <ul>
+    {% for day in days reversed %}
+    {% if forloop.first %}
+    <li>
+      <p>Today: <a href="{{ day.date }}"> {{ day }}</a></p>
+    </li>{% else %}
+    <li><a href="{{ day.date }}">{{ day }}</a></li>{% endif %}
+    {% endfor %}
+  </ul>
+</div>{% endblock %}
+{% block extraScripts %}
+{% endblock %}
