@@ -17,7 +17,7 @@
           <h4>{{ dailyinfo.date }}</h4>{% for product in dailyinfo.products %}
           <div class="cell">
             <div class="column {%for tag in product.tags %}{{tag}} {%endfor%}">
-              <p>{{ product.itemNumber|safe }}</p>
+              <p>{{ product.scheduleNumber|safe }}</p>
             </div>
             <div class="column">
               <p>{{ product.customer|safe }}</p>

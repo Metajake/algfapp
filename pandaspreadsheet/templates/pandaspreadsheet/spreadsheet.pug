@@ -17,7 +17,7 @@ html
           | {% for product in dailyinfo.products %}
           .cell
             .column(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
-              p {{ product.itemNumber|safe }}
+              p {{ product.scheduleNumber|safe }}
             .column
               p {{ product.customer|safe }}
           | {% endfor %}

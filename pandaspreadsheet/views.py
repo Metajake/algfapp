@@ -202,14 +202,18 @@ def multiplyScheduleDay(scheduleDay):
     return toReturn
 
 def applyNotesToProducts(scheduleDay):
+    # print(scheduleDay)
     for index, product in enumerate( scheduleDay['products'] ):
         product['note'] = ""
-        if 'note' in product['tags']:
+        if 'note' in product['tags'] and product['scheduleNumber'].startswith('*'):
             note = product['scheduleNumber']
             step = 0
             while scheduleDay['products'][index - step]['scheduleNumber'] != '&nbsp;':
                 scheduleDay['products'][index-step]['note'] = note
                 step += 1
+        if product['customer'].lower().startswith('goes '):
+            product['tags'].append('note')
+            product['note'] = product['customer'].lower()
     for index, product in enumerate(scheduleDay['products']):
         if product['scheduleNumber'].startswith('*'):
             del scheduleDay['products'][index]
