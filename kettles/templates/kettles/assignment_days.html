@@ -5,14 +5,11 @@
 <link rel="stylesheet" href="{% static 'kettles/assign_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
 <div id="wrapper">
-  <ul>
-    {% for day in days reversed %}
-    {% if forloop.first %}
-    <li>
-      <p>Today: <a href="{{ day.date }}"> {{ day }}</a></p>
-    </li>{% else %}
-    <li><a href="{{ day.date }}">{{ day }}</a></li>{% endif %}
-    {% endfor %}
+  <p style="margin-right:40px;display:inline;">Today: <a href="{{ today }}"> {{ today }}</a></p>
+  <p style="display:inline;">Tomorrow: <a href="{{ tomorrow }}"> {{ tomorrow }}</a></p>
+  <h3 style="margin-top:40px;">Archive:</h3>
+  <ul>{% for day in days reversed %}
+    <li><a href="{{ day.date }}">{{ day.date }}</a></li>{% endfor %}
   </ul>
 </div>{% endblock %}
 {% block extraScripts %}
