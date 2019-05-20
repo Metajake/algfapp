@@ -9,14 +9,13 @@ link(rel="stylesheet" href="{% static 'kettles/assign_days.css' %}" type="text/c
 | {% block content %}
 
 #wrapper
+  p(style="margin-right:40px;display:inline;") Today: <a href="{{ today }}"> {{ today }}</a>
+  p(style="display:inline;") Tomorrow: <a href="{{ tomorrow }}"> {{ tomorrow }}</a>
+  
+  h3(style="margin-top:40px;") Archive:
   ul
     | {% for day in days reversed %}
-    | {% if forloop.first %}
-    li
-      p Today: <a href="{{ day.date }}"> {{ day }}</a>
-    | {% else %}
-    li: a(href="{{ day.date }}") {{ day }}
-    | {% endif %}
+    li: a(href="{{ day.date }}") {{ day.date }}
     | {% endfor %}
     
 | {% endblock %}

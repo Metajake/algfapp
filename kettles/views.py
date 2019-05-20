@@ -22,7 +22,10 @@ def assignment_days(request):
 
     assignment_days = ProductionDay.objects.all()
     #convert to return the past 7 days. To get older days you gotta click and "archive" link
+    print(date.today() + timedelta(1))
     context = {
+        'today' : date.today(),
+        'tomorrow' : date.today() + timedelta(days=1),
         'days' : assignment_days,
     }
     return render(request, 'kettles/assignment_days.html', context)
