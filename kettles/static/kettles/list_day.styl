@@ -14,6 +14,7 @@ header
   grid-template-rows: repeat(3, minmax(1fr, auto))
   // grid-template-rows: 33vmin 33vmin 33vmin
   min-width: 0
+  padding-left:20px
 
 .kettle-container
   padding-bottom:20px
@@ -24,12 +25,14 @@ header
 
 .product-list
   // outline: 3px dashed #88e
-  border-left: 1px solid blue
-  border-right: 1px solid blue
+  border-right: 2px solid blue
   height:92%
   padding: 5px 5px
   display:flex
   flex-direction: column
+
+.product-list:nth-child(4)
+  background-color:red
 
 .product-item
   background-color:white
