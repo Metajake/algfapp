@@ -1,12 +1,21 @@
+| {% load custom_tags %}
+
 | {% for kettle in production_day.kettles.all %}
-li {{kettle}}
-  ul
-    | {% for product in kettle.days_products.all %}
-    li {{ product.schedule_number }}
-      | {% if product.product_name %}
-      small {{ product.product_name }}
-      | {%else%}
-      small Product Name
-      | {%endif%}
+.kettle-container
+  h4.text-center {{kettle}}
+  .product-list
+    | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
+    .product-item.text-center(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}")
+      p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
+      
+      | {% if product.note != '' %}
+      p.note {{product.note|truncatechars:11}}
+      | {% endif %}
+      
+      | {% if product.product_name == '' %}
+      p.product-name Product Name
+      | {% else %}
+      p.product-name {{ product.product_name|truncatechars:24 }}
+      | {% endif %}
     | {% endfor %}
 | {% endfor %}

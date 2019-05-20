@@ -47,7 +47,7 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
     | {% for kettle in production_day.kettles.all %}
     div(id='{{kettle.kettle_number}}').kettle-container
       .kettle-container-header
-        h4.text-center {{kettle}}
+        h6.text-center {{kettle}}
       .kettle-container-content
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}

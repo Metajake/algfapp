@@ -41,7 +41,7 @@
     </aside>{% for kettle in production_day.kettles.all %}
     <div class="kettle-container" id="{{kettle.kettle_number}}">
       <div class="kettle-container-header">
-        <h4 class="text-center">{{kettle}}</h4>
+        <h6 class="text-center">{{kettle}}</h6>
       </div>
       <div class="kettle-container-content">
         <div class="sortable-products-list" id="sortable_{{kettle}}">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}

@@ -35,7 +35,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
         message = self.text_data_json['message']
 
         if message == 'listSortReceive':
-            print('-------List Sort Receive--------')
+            # print('-------List Sort Receive--------')
             self.kettleReceive = await database_sync_to_async(self.receiveAndSortProductList)()
             #Send "Kettle Update" message to room group
             await self.channel_layer.group_send(
@@ -48,7 +48,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
             )
 
         elif message == 'listSort':
-            print('-------List Sort--------')
+            # print('-------List Sort--------')
             self.kettleReceive = await database_sync_to_async(self.sortProductList)()
             #Send "Kettle Update" message to room group
             await self.channel_layer.group_send(
@@ -73,7 +73,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
             )
 
     def receiveAndSortProductList(self):
-        print('-------Receive and Sorting Product List-------')
+        # print('-------Receive and Sorting Product List-------')
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
         pd = ProductionDay.objects.get(date = dateFormatted)
         product = Product.objects.get(
@@ -100,7 +100,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
             p.save(update_fields=['kettle_order'])
 
     def sortProductList(self):
-        print('-------Sorting Product List-------')
+        # print('-------Sorting Product List-------')
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
         pd = ProductionDay.objects.get(date = dateFormatted)
         for prod in self.text_data_json['products']:
@@ -113,7 +113,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
             p.save(update_fields=['kettle_order'])
 
     def toggleProductComplete(self):
-        print('----Toggling----')
+        # print('----Toggling----')
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
         pd = ProductionDay.objects.get(date = dateFormatted)
         p = Product.objects.get(
@@ -125,6 +125,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
         p.save(update_fields=['is_complete'])
     # Receive message from room group
     async def update_products(self, event):
+        print('---------Updating Products Message---------')
         message = event['message']
         dateFormatted = parser.parse(event['date']).strftime('%Y-%m-%d')
 

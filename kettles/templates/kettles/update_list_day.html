@@ -1,7 +1,15 @@
+
+{% load custom_tags %}
 {% for kettle in production_day.kettles.all %}
-<li>{{kettle}}
-  <ul>{% for product in kettle.days_products.all %}
-    <li>
-      {{ product.schedule_number }}{% if product.product_name %}<small>{{ product.product_name }}</small>{%else%}<small>Product Name</small>{%endif%}</li>{% endfor %}
-  </ul>
-</li>{% endfor %}
+<div class="kettle-container">
+  <h4 class="text-center">{{kettle}}</h4>
+  <div class="product-list">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}
+    <div class="product-item text-center {% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}" id="{{product.schedule_number}}">
+      <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span></p>{% if product.note != '' %}
+      <p class="note">{{product.note|truncatechars:11}}</p>{% endif %}
+      {% if product.product_name == '' %}
+      <p class="product-name">Product Name</p>{% else %}
+      <p class="product-name">{{ product.product_name|truncatechars:24 }}</p>{% endif %}
+    </div>{% endfor %}
+  </div>
+</div>{% endfor %}

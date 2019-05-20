@@ -62,12 +62,6 @@ def update_list_day(request, list_date):
     pd = ProductionDay.objects.get(date=request.GET['date'])
     return render_to_response('kettles/update_list_day.html', {'production_day': pd})
 
-def testchannels(request):
-    context = {
-    'message' : "yoyo",
-    }
-    return render(request, 'kettles/edit.html', context)
-
 def checkAndCreateProductionDay(the_date):
     try:
         todaysProductionDay = ProductionDay.objects.get(date=the_date)

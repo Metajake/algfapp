@@ -7,7 +7,7 @@ chatSocket.onopen = function(event) {
 };
 
 chatSocket.onmessage = function(e) {
-    // console.log("GOT MESSAqge");
+    console.log("GOT MESSAqge");
     var data = JSON.parse(e.data);
     var date = data['date'];
     $.ajax({

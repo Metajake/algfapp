@@ -1,21 +1,26 @@
-{% load static %}<!DOCTYPE html>
-<html>
-  <head>
-    <title>Kettles</title>
-  </head>
-  <body>
-    <p>{{production_day}}</p>
-    <ul id="production-list">{% for kettle in production_day.kettles.all %}
-<li>{{kettle}}
-  <ul>{% for product in kettle.days_products.all %}
-    <li>
-      {{ product.schedule_number }}{% if product.product_name %}<small>{{ product.product_name }}</small>{%else%}<small>Product Name</small>{%endif%}</li>{% endfor %}
-  </ul>
-</li>{% endfor %}
-    </ul>
-    <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
-    <script type="text/javascript" src="{% static 'js/jqueryui.js'%}"></script>
-    <script type="text/javascript" src="{% static 'js/jquerytouch.js'%}"></script>
-    <script type="text/javascript" src="{% static 'kettles/list_day.js'%}"> </script>
-  </body>
-</html>
+
+{% extends 'kettles/base.html' %}
+{% load static %}
+{% block extraStyle%}
+<link rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+{% block content %}
+<div id="wrapper">
+  <main id="production-list">
+{% load custom_tags %}
+{% for kettle in production_day.kettles.all %}
+<div class="kettle-container">
+  <h4 class="text-center">{{kettle}}</h4>
+  <div class="product-list">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}
+    <div class="product-item text-center {% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}" id="{{product.schedule_number}}">
+      <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span></p>{% if product.note != '' %}
+      <p class="note">{{product.note|truncatechars:11}}</p>{% endif %}
+      {% if product.product_name == '' %}
+      <p class="product-name">Product Name</p>{% else %}
+      <p class="product-name">{{ product.product_name|truncatechars:24 }}</p>{% endif %}
+    </div>{% endfor %}
+  </div>
+</div>{% endfor %}
+  </main>
+</div>{% endblock %}
+{% block extraScripts %}
+<script type="text/javascript" src="{% static 'kettles/list_day.js'%}"> </script>{% endblock %}
