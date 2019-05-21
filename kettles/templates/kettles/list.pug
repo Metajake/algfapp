@@ -11,7 +11,7 @@ link(rel="stylesheet" href="{% static 'kettles/list_days.css' %}" type="text/css
 #wrapper
   ul
     | {% for day in production_days %}
-    li: a(href='{{ day.date }}') {{ day.date }}
+    li: a(href='{{ day.date }}/detail_false') {{ day.date }} <a style="font-size:1.2rem;" href='{{ day.date }}/detail_true'>(Detail View)</a>
     | {% endfor %}
     
 | {% endblock %}

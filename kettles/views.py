@@ -53,11 +53,16 @@ def list(request):
     }
     return render(request, 'kettles/list.html', context)
 
-def list_day(request, list_date):
+def list_day(request, list_date, detail):
     formattedDate = parser.parse(list_date).strftime('%Y-%m-%d')
     productionDay = ProductionDay.objects.get(date=formattedDate)
+    if detail == 'detail_true':
+        isDetail = True
+    else:
+        isDetail = False
     context = {
         'production_day' : productionDay,
+        'is_detail' : isDetail,
     }
     return render(request, 'kettles/list_day.html', context)
 

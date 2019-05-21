@@ -16,12 +16,24 @@ header
   min-width: 0
   padding-left:20px
 
+.kettle-container:not(.is-detail)
+  .detail
+    display:none
+  .product-item
+    p
+      font-size:3.5vh
+    .product-schedule-number
+      float:none
+
 .kettle-container
   padding-bottom:20px
   text-align: center
   h4
     display: inline-block
     border-bottom:2px solid darkgreen
+  &.is-detail
+    .detail
+      display:block
 
 .product-list
   // outline: 3px dashed #88e
@@ -40,7 +52,6 @@ header
   border-bottom:3px solid darkgreen
   padding:3px 0 5px 0
   margin:3px 0
-  font-weight:bold
   flex:1
   p
     font-size:.5rem
@@ -56,6 +67,7 @@ header
       opacity: 0.4
   .product-schedule-number
     float:left
+    font-weight:bold
   .note
     float:right
     font-weight: bold
