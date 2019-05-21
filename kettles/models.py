@@ -7,7 +7,7 @@ class ProductionDay(models.Model):
     date = models.DateField()
 
     def __str__(self):
-        return self.date.strftime('%m/%d/%Y')
+        return str(self.date)#.strftime('%m/%d/%Y')
 
 class Kettle(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True)

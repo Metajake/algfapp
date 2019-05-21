@@ -23,7 +23,6 @@ def assignment_days(request):
 
     assignment_days = ProductionDay.objects.all()
     #convert to return the past 7 days. To get older days you gotta click and "archive" link
-    print(date.today() + timedelta(1))
     context = {
         'today' : date.today(),
         'tomorrow' : date.today() + timedelta(days=1),
@@ -34,13 +33,12 @@ def assignment_days(request):
 def assignment_date(request, date_to_assign):
     theDate = parser.parse(date_to_assign).strftime('%Y-%m-%d')
     theDateDay = theDate[-2:]
-
     todaysProductionDay = checkAndCreateProductionDay(theDate)
     checkAndCreateKettles(todaysProductionDay)
     todaysProducts = createTodaysProductList(theDateDay)
     notification = checkForDateNotification(todaysProducts)
     checkAndCreateProducts(todaysProductionDay, todaysProducts)
-
+    # print(todaysProducts)
     context = {
         'production_day' : todaysProductionDay,
         'todays_products': todaysProductionDay.days_products.all().order_by('creation_date'),
