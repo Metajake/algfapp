@@ -8,10 +8,7 @@ link(rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css"
 
 | {% block content %}
 #wrapper
-    //- header
-    //-   h3.text-center {{production_day.date}}
-    main#production-list
-      include update_list_day.html
+  include update_list_day.html
 | {% endblock %}
 
 | {% block extraScripts %}
