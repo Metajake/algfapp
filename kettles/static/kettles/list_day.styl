@@ -1,3 +1,5 @@
+base-font-size = 3vh
+
 #wrapper
   width:100%
   height:100%
@@ -16,24 +18,32 @@ header
   min-width: 0
   padding-left:20px
 
+.kettle-container
+  padding-bottom:20px
+  text-align: center
+  .kettle-header
+    display: inline-block
+    border-bottom:3px solid darkgreen
+    padding:0 15px
+  &.is-detail
+    .detail
+      display:block
+
 .kettle-container:not(.is-detail)
   .detail
     display:none
   .product-item
     p
-      font-size:3.5vh
+      font-size: "calc(%s + 1vh)" % base-font-size
     .product-schedule-number
       float:none
 
 .kettle-container
-  padding-bottom:20px
-  text-align: center
-  h4
-    display: inline-block
-    border-bottom:2px solid darkgreen
-  &.is-detail
-    .detail
-      display:block
+  .product-item
+    &.is-complete
+      p
+        font-size: "calc(%s + .5vh)" % base-font-size
+
 
 .product-list
   // outline: 3px dashed #88e
@@ -49,13 +59,12 @@ header
 .product-item
   background-color:white
   // outline: 1px solid gray
-  border-bottom:3px solid darkgreen
+  border-bottom:2px solid darkgreen
   padding:3px 0 5px 0
   margin:3px 0
-  flex:1
   p
     font-size:.5rem
-    font-size:3vh
+    font-size:base-font-size
     // font-size:calc(1rem + 1.3vh)
   &.note
     color: red
@@ -64,7 +73,7 @@ header
   &.is-complete
     p
       text-decoration: line-through
-      opacity: 0.4
+      opacity: 0.35
   .product-schedule-number
     float:left
     font-weight:bold

@@ -2,7 +2,7 @@
 
 | {% for kettle in production_day.kettles.all %}
 .kettle-container(class="{% if is_detail %}is-detail{% endif %}")
-  h4.text-center {{kettle}}
+  h2.kettle-header.text-center {{kettle}}
   .product-list
     | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
     .product-item.text-center(id='{{product.schedule_number}}')(class="{% if product.note != '' %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}")
