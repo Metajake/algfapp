@@ -1,6 +1,7 @@
 
 {% extends 'kettles/base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block extraStyle%}
 <link rel="stylesheet" href="{% static 'kettles/assign_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
@@ -8,7 +9,7 @@
   <p style="margin-right:40px;display:inline;">Today: <a href="{{ today }}"> {{ today }}, {{ today|date:"l" }}</a></p>
   <p style="display:inline;">Tomorrow: <a href="{{ tomorrow }}"> {{ tomorrow }}, {{ tomorrow|date:"l" }}</a></p>
   <h3 style="margin-top:40px;">Archive:</h3>
-  <ul>{% for day in days reversed %}
+  <ul>{% for day in days|sort_by:'date' reversed  %}
     <li><a href="{{ day.date }}">{{ day.date }}, {{ day.date|date:"l" }}</a></li>{% endfor %}
   </ul>
 </div>{% endblock %}
