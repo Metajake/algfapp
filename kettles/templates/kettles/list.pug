@@ -1,6 +1,7 @@
 | {% extends 'kettles/base.html' %}
 
 | {% load static %}
+| {% load custom_tags %}
 
 | {% block extraStyle%}
 link(rel="stylesheet" href="{% static 'kettles/list_days.css' %}" type="text/css" media="screen, projection")
@@ -10,8 +11,8 @@ link(rel="stylesheet" href="{% static 'kettles/list_days.css' %}" type="text/css
 
 #wrapper
   ul
-    | {% for day in production_days %}
-    li: a(href='{{ day.date }}/detail_false') {{ day.date }} <a style="font-size:1.2rem;" href='{{ day.date }}/detail_true'>(Detail View)</a>
+    | {% for day in production_days|sort_by:'date' reversed %}
+    li: a(href='{{ day.date }}/detail_false') {{ day.date }}</a> <a style="font-size:1.2rem;" href='{{ day.date }}/detail_true'>(Detail View)</a>
     | {% endfor %}
     
 | {% endblock %}
