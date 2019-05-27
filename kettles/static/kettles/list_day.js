@@ -26,6 +26,26 @@ function styleFirstScheduleNumberToMake(){
 
 styleFirstScheduleNumberToMake();
 
+function showProductionDay(){
+  setTimeout(function(){
+    $('#slide-week').fadeToggle(1000, function(){
+      $('#slide-day').fadeToggle(1000)
+    })
+    showProductionWeek()
+  }, 180000) //five minutes
+}
+
+function showProductionWeek(){
+  setTimeout(function(){
+    $('#slide-day').fadeToggle(1000, function(){
+      $('#slide-week').fadeToggle(1000)
+    })
+    showProductionDay()
+  }, 300000) //five minutes
+}
+
+showProductionWeek()
+
 chatSocket.onmessage = function(e) {
     console.log("GOT MESSAqge");
     var data = JSON.parse(e.data);
@@ -36,8 +56,8 @@ chatSocket.onmessage = function(e) {
         "date": date,
       },
       success: function(data){
-        $('#wrapper').html('');
-        $('#wrapper').html(data);
+        $('#slide-day').html('');
+        $('#slide-day').html(data);
         styleFirstScheduleNumberToMake();
       },
     })

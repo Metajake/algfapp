@@ -7,6 +7,15 @@ base-font-size = calc(1rem + .8vw)
 header
   min-height:20px
 
+#slide-day
+  width:100%
+  height:100%
+
+#slide-week
+  width:100%
+  height:100%
+  display:none
+
 aside
  width:20%
  float:left
@@ -18,6 +27,7 @@ aside
   display:flex
   flex-direction:column
   background-color:#ee5
+  overflow-y: scroll
   .production-day-item
     text-align:center
     padding:10px 0
@@ -105,3 +115,21 @@ aside
   .product-name
     clear:both
     text-align:left
+
+.production-week
+  display:flex
+  width:100%
+  height:75%
+  margin-top:20px
+  .production-week-day
+    flex:1
+    display:flex
+    flex-direction:column
+    &:nth-child(even)
+      background-color:#eee
+    .production-week-day-product
+      flex:1
+      border-right:1px solid gray
+      border-bottom:1px solid gray
+      font-size:calc(1rem + .2vw)
+      font-weight:bold
