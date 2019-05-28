@@ -26,6 +26,32 @@ function styleFirstScheduleNumberToMake(){
 
 styleFirstScheduleNumberToMake();
 
+function showProductionDay(duration){
+  setTimeout(function(){
+    $('#slide-week').fadeToggle(1000, function(){
+      $('#slide-day').fadeToggle(1000)
+    })
+    showProductionWeek(duration)
+  }, duration*.6) //three minutes
+}
+
+function showProductionWeek(duration){
+  setTimeout(function(){
+    $('#slide-day').fadeToggle(1000, function(){
+      $('#slide-week').fadeToggle(1000)
+    })
+    showProductionDay(duration)
+  }, duration) //five minutes
+}
+
+if(window.location.hostname === "localhost"){
+  // $('#slide-day').css('display', 'none')
+  // $('#slide-week').css('display', 'block')
+  showProductionWeek(10000)
+}else{
+  showProductionWeek(300000)
+}
+
 chatSocket.onmessage = function(e) {
     console.log("GOT MESSAqge");
     var data = JSON.parse(e.data);
@@ -36,8 +62,8 @@ chatSocket.onmessage = function(e) {
         "date": date,
       },
       success: function(data){
-        $('#wrapper').html('');
-        $('#wrapper').html(data);
+        $('#slide-day').html('');
+        $('#slide-day').html(data);
         styleFirstScheduleNumberToMake();
       },
     })

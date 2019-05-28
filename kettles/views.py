@@ -1,7 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.http import Http404
 
-import datetime
+import datetime, re
 from datetime import date, timedelta
 import pandas, xlrd, numpy
 from dateutil import parser
@@ -55,6 +55,19 @@ def list(request):
 
 def list_day(request, list_date, detail):
     formattedDate = parser.parse(list_date).strftime('%Y-%m-%d')
+    theDateDay = formattedDate[-2:]
+
+    weekRanges = constructWeekRanges(productionSpreadsheet)
+    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
+    taggedCalendar = applyViewTags(calendar)
+    thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, theDateDay)
+    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
+
+    for index, day in enumerate(productionWeek):
+        productionWeek[index] = applyNotesToProducts(productionWeek[index])
+        #Future: Check Item Numbers against Base Products for Gluten Free Notes...
+        # productionWeek[index] = convertScheduleNumbersToItemNumbers(productionWeek[index])
+
     productionDay = ProductionDay.objects.get(date=formattedDate)
     if detail == 'detail_true':
         isDetail = True
@@ -63,6 +76,7 @@ def list_day(request, list_date, detail):
     context = {
         'production_day' : productionDay,
         'is_detail' : isDetail,
+        'production_week' : productionWeek,
     }
     return render(request, 'kettles/list_day.html', context)
 
@@ -109,6 +123,21 @@ def checkForDateNotification(days_products):
         notification = ""
 
     return notification
+
+def getThisWeeksProductionSchedule(fullProductionSchedule, todaysDate):
+    for weekIndex, week in enumerate(fullProductionSchedule):
+        for dayIndex, day in enumerate(fullProductionSchedule[week]):
+            dayDate = fullProductionSchedule[week][day]['date'][-2:]
+            if todaysDate == dayDate:
+                thisWeek = fullProductionSchedule[week]
+    return thisWeek
+
+def getThisWeeksScheduleDays(weekSchedule):
+    scheduledProductionSheetDays = []
+    for day in weekSchedule:
+        if re.match('(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)', weekSchedule[day]['date']) is not None:
+            scheduledProductionSheetDays.append(weekSchedule[day])
+    return scheduledProductionSheetDays
 
 def createTodaysProductList(dayToSchedule):
     weekRanges = constructWeekRanges(productionSpreadsheet)

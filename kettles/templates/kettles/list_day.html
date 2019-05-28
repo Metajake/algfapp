@@ -4,7 +4,8 @@
 {% block extraStyle%}
 <link rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
-<div id="wrapper">{% load custom_tags %}
+<div id="wrapper">
+  <div id="slide-day">{% load custom_tags %}
 <aside>
   <div class="production-day-list">
     {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
@@ -29,6 +30,20 @@
     </div>
   </div>{% endfor %}
 </main>
+  </div>
+  <div id="slide-week">
+    <div class="production-week">{% for day in production_week %}
+      <div class="production-week-day">
+        <div class="production-week-date">
+          <h4 class="text-center">{{day.date}}</h4>
+        </div>{% for product in day.products %}
+        {% if product.scheduleNumber == '&nbsp;' %}
+        <div class="production-week-day-product"></div>{% else %}
+        <div class="production-week-day-product text-center {% if product.note != '' %}note{% endif %}">{{product.scheduleNumber}}</div>{% endif %}
+        {% endfor %}
+      </div>{% endfor %}
+    </div>
+  </div>
 </div>{% endblock %}
 {% block extraScripts %}
 <script type="text/javascript" src="{% static 'kettles/list_day.js'%}"> </script>{% endblock %}
