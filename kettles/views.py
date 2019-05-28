@@ -125,6 +125,7 @@ def checkForDateNotification(days_products):
     return notification
 
 def getThisWeeksProductionSchedule(fullProductionSchedule, todaysDate):
+    thisWeek = {}
     for weekIndex, week in enumerate(fullProductionSchedule):
         for dayIndex, day in enumerate(fullProductionSchedule[week]):
             dayDate = fullProductionSchedule[week][day]['date'][-2:]
