@@ -32,7 +32,7 @@ function showProductionDay(){
       $('#slide-day').fadeToggle(1000)
     })
     showProductionWeek()
-  }, 180000) //five minutes
+  }, 180000) //three minutes
 }
 
 function showProductionWeek(){
@@ -44,9 +44,9 @@ function showProductionWeek(){
   }, 300000) //five minutes
 }
 
-// showProductionWeek()
-$('#slide-day').css('display', 'none')
-$('#slide-week').css('display', 'block')
+showProductionWeek()
+// $('#slide-day').css('display', 'none')
+// $('#slide-week').css('display', 'block')
 
 chatSocket.onmessage = function(e) {
     console.log("GOT MESSAqge");
