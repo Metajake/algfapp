@@ -44,9 +44,12 @@ function showProductionWeek(){
   }, 300000) //five minutes
 }
 
-showProductionWeek()
-// $('#slide-day').css('display', 'none')
-// $('#slide-week').css('display', 'block')
+if(window.location.hostname === "localhost"){
+  $('#slide-day').css('display', 'none')
+  $('#slide-week').css('display', 'block')
+}else{
+  showProductionWeek()
+}
 
 chatSocket.onmessage = function(e) {
     console.log("GOT MESSAqge");
