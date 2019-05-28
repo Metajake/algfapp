@@ -21,7 +21,7 @@ link(rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css"
         | {% if product.scheduleNumber == '&nbsp;' %}
         .production-week-day-product
         | {% else %}
-        .production-week-day-product.text-center {{product.scheduleNumber}}
+        .production-week-day-product.text-center(class="{% if product.note != '' %}note{% endif %}") {{product.scheduleNumber}}
         | {% endif %}
         | {% endfor %}
       | {% endfor %}

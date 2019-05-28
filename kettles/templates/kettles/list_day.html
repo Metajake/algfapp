@@ -40,7 +40,7 @@
         </div>{% for product in day.products %}
         {% if product.scheduleNumber == '&nbsp;' %}
         <div class="production-week-day-product"></div>{% else %}
-        <div class="production-week-day-product text-center">{{product.scheduleNumber}}</div>{% endif %}
+        <div class="production-week-day-product text-center {% if product.note != '' %}note{% endif %}">{{product.scheduleNumber}}</div>{% endif %}
         {% endfor %}
       </div>{% endfor %}
     </div>

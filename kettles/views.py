@@ -59,8 +59,14 @@ def list_day(request, list_date, detail):
 
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    thisWeeksSchedule = getThisWeeksProductionSchedule(calendar, theDateDay)
+    taggedCalendar = applyViewTags(calendar)
+    thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, theDateDay)
     productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
+
+    for index, day in enumerate(productionWeek):
+        productionWeek[index] = applyNotesToProducts(productionWeek[index])
+        #Future: Check Item Numbers against Base Products for Gluten Free Notes...
+        # productionWeek[index] = convertScheduleNumbersToItemNumbers(productionWeek[index])
 
     productionDay = ProductionDay.objects.get(date=formattedDate)
     if detail == 'detail_true':
