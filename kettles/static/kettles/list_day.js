@@ -26,29 +26,30 @@ function styleFirstScheduleNumberToMake(){
 
 styleFirstScheduleNumberToMake();
 
-function showProductionDay(){
+function showProductionDay(duration){
   setTimeout(function(){
     $('#slide-week').fadeToggle(1000, function(){
       $('#slide-day').fadeToggle(1000)
     })
-    showProductionWeek()
-  }, 180000) //three minutes
+    showProductionWeek(duration)
+  }, duration*.6) //three minutes
 }
 
-function showProductionWeek(){
+function showProductionWeek(duration){
   setTimeout(function(){
     $('#slide-day').fadeToggle(1000, function(){
       $('#slide-week').fadeToggle(1000)
     })
-    showProductionDay()
-  }, 300000) //five minutes
+    showProductionDay(duration)
+  }, duration) //five minutes
 }
 
 if(window.location.hostname === "localhost"){
-  $('#slide-day').css('display', 'none')
-  $('#slide-week').css('display', 'block')
+  // $('#slide-day').css('display', 'none')
+  // $('#slide-week').css('display', 'block')
+  showProductionWeek(10000)
 }else{
-  showProductionWeek()
+  showProductionWeek(300000)
 }
 
 chatSocket.onmessage = function(e) {
