@@ -4,7 +4,7 @@
     {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
     {% if product.assigned != True %}
     <div class="production-day-item">
-      <p class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}">{{ product.schedule_number }}</p>
+      <p class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}">{{ product.schedule_number }} {% if product.multiple > 0%}({{product.multiple}}){% endif %}</p>
     </div>{% endif %}
     {% endfor %}
   </div>
