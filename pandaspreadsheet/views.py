@@ -182,7 +182,7 @@ def multiplyScheduleDay(scheduleDay):
     multiples = []
     for index, product in enumerate(toReturn['products']):
         toReturn['products'][index]['multiple'] = 0
-        if product['scheduleNumber'].strip()[-2:][0] == 'x':
+        if product['scheduleNumber'].strip()[-2:][0].lower() == 'x':
             multiplyAmount = int(product['scheduleNumber'].strip()[-2:][1])
             productStringSansMultiplyAmount = product['scheduleNumber'].strip()[0:-2].strip()
             toReturn['products'][index]['scheduleNumber'] = productStringSansMultiplyAmount

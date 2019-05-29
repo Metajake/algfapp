@@ -47,7 +47,7 @@ function showProductionWeek(duration){
 if(window.location.hostname === "localhost"){
   // $('#slide-day').css('display', 'none')
   // $('#slide-week').css('display', 'block')
-  showProductionWeek(10000)
+  // showProductionWeek(10000)
 }else{
   showProductionWeek(300000)
 }
