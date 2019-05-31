@@ -1,7 +1,25 @@
-var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/kettles/');
-chatSocket.onopen = function(event) {
-  console.log("WebSocket is open now.");
-};
+var ws;
+function startWebsocket(websocketServerLocation){
+    ws = new WebSocket(websocketServerLocation);
+    ws.onclose = function(){
+        console.log("Closed")
+        ws = null;
+        setTimeout(function(){startWebsocket(websocketServerLocation)}, 3000);
+    };
+    ws.onError = function(){
+        ws = null;
+        console.log("Error")
+        setTimeout(function(){startWebsocket(websocketServerLocation)}, 3000);
+    };
+    ws.onopen = function(event) {
+      console.log("WebSocket is open now.");
+    };
+    ws.onmessage = function(e) {
+        console.log("GOT MESSAqge");
+    };
+}
+
+startWebsocket('ws://' + window.location.host + '/ws/kettles/')
 
 $( "#days-product-list, #sortable_K1, #sortable_K2, #sortable_K3, #sortable_K4, #sortable_L5, #sortable_T6, #sortable_K7, #sortable_K8, #sortable_T9" ).sortable({
   handle: ".product-sort-handle:not(.is-complete)",
@@ -21,10 +39,8 @@ function handleToListSortReceive(event, ui){
   var listNumberToDropOn;
   var listToDropOn = $(event.target)
   listToDropOn.is('#days-product-list') ? listNumberToDropOn = '' : listNumberToDropOn = listToDropOn.attr('id').split("_").pop();
-
   var products = returnProductKettleOrderArray( listToDropOn.find('.product-item') )
-
-  chatSocket.send(JSON.stringify({
+  ws.send(JSON.stringify({
     'message': 'listSortReceive',
     'product': product,
     'products' : products,
@@ -39,7 +55,7 @@ function handleFromListSortStop(event, ui){
   var listToDropOn = $(event.target)
   listToDropOn.is('#days-product-list') ? listNumberToDropOn = '' : listNumberToDropOn = listToDropOn.attr('id').split("_").pop();
   var products = returnProductKettleOrderArray( listToDropOn.find('.product-item') )
-  chatSocket.send(JSON.stringify({
+  ws.send(JSON.stringify({
     'message': 'listSort',
     'products' : products,
     'list' : listNumberToDropOn,
@@ -66,7 +82,7 @@ $('.product-complete').click(function(event){
       'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
       'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
   }
-  chatSocket.send(JSON.stringify({
+  ws.send(JSON.stringify({
     'message': 'toggleProductComplete',
     'product' : product,
     'isComplete' : isComplete,
