@@ -7,7 +7,7 @@
 {% block content %}
 <div id="wrapper">
   <ul>{% for day in production_days|sort_by:'date' reversed %}
-    <li><a href="{{ day.date }}/detail_false">{{ day.date }}</a> <a style="font-size:1.2rem;" href='{{ day.date }}/detail_true'>(Detail View)</a></a></li>{% endfor %}
+    <li><a href="{{ day.date }}/detail_false">{{ day.date }}, {{ day.date|date:"l" }}</a> <a style="font-size:1.2rem;" href='{{ day.date }}/detail_true'>(Detail View)</a></a></li>{% endfor %}
   </ul>
 </div>{% endblock %}
 {% block extraScripts %}
