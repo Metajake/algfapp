@@ -164,6 +164,8 @@ def constructWeekRanges(spreadsheet):
 def getTodaysScheduleFromSpreadsheet(calendar, dayToSchedule):
     scheduleDay = None
     todaysDate = dayToSchedule
+    if todaysDate.startswith('0'):
+        todaysDate = todaysDate[1:]
     for index, week in enumerate(calendar):
         for index, day in enumerate(calendar[week]):
             dateString = calendar[week][day]['date'].strip()

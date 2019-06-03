@@ -38,7 +38,6 @@ def assignment_date(request, date_to_assign):
     todaysProducts = createTodaysProductList(theDateDay)
     notification = checkForDateNotification(todaysProducts)
     checkAndCreateProducts(todaysProductionDay, todaysProducts)
-    # print(todaysProducts)
     context = {
         'production_day' : todaysProductionDay,
         'todays_products': todaysProductionDay.days_products.all().order_by('creation_date'),
