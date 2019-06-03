@@ -1,0 +1,13 @@
+.production-week
+  | {% for day in production_week %}
+  .production-week-day
+    .production-week-date
+      h4.text-center {{day.date}}
+    | {% for product in day.products %}
+    | {% if product.scheduleNumber == '&nbsp;' %}
+    .production-week-day-product
+    | {% else %}
+    .production-week-day-product.text-center(class="{% if product.note != '' %}note{% endif %}") {{product.scheduleNumber}}
+    | {% endif %}
+    | {% endfor %}
+  | {% endfor %}

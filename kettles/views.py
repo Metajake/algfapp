@@ -56,16 +56,10 @@ def list_day(request, list_date, detail):
     formattedDate = parser.parse(list_date).strftime('%Y-%m-%d')
     theDateDay = formattedDate[-2:]
 
-    weekRanges = constructWeekRanges(productionSpreadsheet)
-    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    taggedCalendar = applyViewTags(calendar)
+    taggedCalendar = getTaggedCalendar()
     thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, theDateDay)
     productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
-
-    for index, day in enumerate(productionWeek):
-        productionWeek[index] = applyNotesToProducts(productionWeek[index])
-        #Future: Check Item Numbers against Base Products for Gluten Free Notes...
-        # productionWeek[index] = convertScheduleNumbersToItemNumbers(productionWeek[index])
+    notedProductionWeek = applyNotesToProductionWeek(productionWeek)
 
     productionDay = ProductionDay.objects.get(date=formattedDate)
     if detail == 'detail_true':
@@ -75,13 +69,40 @@ def list_day(request, list_date, detail):
     context = {
         'production_day' : productionDay,
         'is_detail' : isDetail,
-        'production_week' : productionWeek,
+        'production_week' : notedProductionWeek,
     }
     return render(request, 'kettles/list_day.html', context)
+
+def list_active(request):
+    latestProductionDay = ProductionDay.objects.latest('date')
+
+    taggedCalendar = getTaggedCalendar()
+    thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, str(latestProductionDay)[-2:])
+    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
+    notedProductionWeek = applyNotesToProductionWeek(productionWeek)
+
+    context = {
+        'production_day': ProductionDay.objects.latest('date'),
+        'production_week' : notedProductionWeek,
+    }
+    return render(request, 'kettles/list_active.html', context)
+
 
 def update_list_day(request, list_date):
     pd = ProductionDay.objects.get(date=request.GET['date'])
     return render_to_response('kettles/update_list_day.html', {'production_day': pd})
+
+def update_list_active(request):
+    activeDate=request.GET['date']
+    taggedCalendar = getTaggedCalendar()
+    thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, activeDate[-2:])
+    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
+    notedProductionWeek = applyNotesToProductionWeek(productionWeek)
+    context = {
+        'production_day' : ProductionDay.objects.get(date=activeDate),
+        'production_week' : notedProductionWeek,
+    }
+    return render_to_response('kettles/update_list_active.html', context)
 
 def checkAndCreateProductionDay(the_date):
     try:
@@ -125,9 +146,11 @@ def checkForDateNotification(days_products):
 
 def getThisWeeksProductionSchedule(fullProductionSchedule, todaysDate):
     thisWeek = {}
+    if todaysDate.startswith('0'):
+        todaysDate = todaysDate[1:]
     for weekIndex, week in enumerate(fullProductionSchedule):
         for dayIndex, day in enumerate(fullProductionSchedule[week]):
-            dayDate = fullProductionSchedule[week][day]['date'][-2:]
+            dayDate = fullProductionSchedule[week][day]['date'][-2:].strip()
             if todaysDate == dayDate:
                 thisWeek = fullProductionSchedule[week]
     return thisWeek
@@ -149,3 +172,16 @@ def createTodaysProductList(dayToSchedule):
     convertedScheduleDay = convertScheduleNumbersToItemNumbers(notedScheduleDay)
     strippedScheduleDay = removeEmptyCellsFromScheduleDay(convertedScheduleDay)
     return strippedScheduleDay
+
+def getTaggedCalendar():
+    weekRanges = constructWeekRanges(productionSpreadsheet)
+    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
+    taggedCalendar = applyViewTags(calendar)
+    return taggedCalendar
+
+def applyNotesToProductionWeek(weekToNote):
+    for index, day in enumerate(weekToNote):
+        weekToNote[index] = applyNotesToProducts(weekToNote[index])
+        #Future: Check Item Numbers against Base Products for Gluten Free Notes...
+        # productionWeek[index] = convertScheduleNumbersToItemNumbers(productionWeek[index])
+    return weekToNote
