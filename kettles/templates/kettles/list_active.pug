@@ -15,5 +15,27 @@ link(rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css"
 | {% endblock %}
 
 | {% block extraScripts %}
-script(type="text/javascript" src="{% static 'kettles/list_active.js'%}")  
+script(type="text/javascript" src="{% static 'kettles/list_day.js'%}")  
+script.
+  ws.onmessage = function(e) {
+      console.log("GOT MESSAqge");
+      var data = JSON.parse(e.data);
+      var date = data['date'];
+      $.ajax({
+        url: 'update_list_active/',
+        data:{
+          "date": date,
+        },
+        dataType:'html',
+        success: function(data){
+          html = $.parseHTML(data)
+          $('#slide-day').html('');
+          $('#slide-day').append(html[1]);
+          $('#slide-day').append(html[3]);
+          $('#slide-week').html('');
+          $('#slide-week').append(html[5]);
+          styleFirstScheduleNumberToMake();
+        },
+      })
+  };
 | {% endblock %}

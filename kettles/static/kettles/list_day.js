@@ -36,7 +36,8 @@ startWebsocket('ws://' + window.location.host + '/ws/kettles/')
 
 function styleFirstScheduleNumberToMake(){
   var value = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-  if(value === 'detail_false'){
+  //If "Detail_True", make sure we're not styling first schedule number
+  if(value !== 'detail_true'){
     var newFontSize = 'calc(1rem + 2vw)'
     $('.product-list').each(function(index, item){
       var firstProduct = $(item).find('.product-item.is-complete + .product-item:not(".is-complete")');
@@ -54,28 +55,29 @@ function styleFirstScheduleNumberToMake(){
 
 styleFirstScheduleNumberToMake();
 
+//Toggle Display from Production Week to Production Day
 function showProductionDay(duration){
   setTimeout(function(){
     $('#slide-week').fadeToggle(1000, function(){
       $('#slide-day').fadeToggle(1000)
     })
     showProductionWeek(duration)
-  }, duration*.6) //three minutes
+  }, duration*.6)
 }
-
+//Toggle Display from Production Day to Production Week
 function showProductionWeek(duration){
   setTimeout(function(){
     $('#slide-day').fadeToggle(1000, function(){
       $('#slide-week').fadeToggle(1000)
     })
     showProductionDay(duration)
-  }, duration) //five minutes
+  }, duration)
 }
 
-if(window.location.hostname === "localhost"){
-  $('#slide-day').css('display', 'none')
-  $('#slide-week').css('display', 'block')
-  // showProductionWeek(10000)
+if(window.location.hostname !== "10.0.1.164"){
+  // $('#slide-day').css('display', 'none')
+  // $('#slide-week').css('display', 'block')
+  showProductionWeek(10000)
 }else{
-  showProductionWeek(300000)
+  showProductionWeek(300000) //five minutes
 }
