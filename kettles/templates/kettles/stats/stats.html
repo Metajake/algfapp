@@ -1,0 +1,15 @@
+
+{% extends 'kettles/base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block extraStyle%}
+<link rel="stylesheet" href="{% static 'kettles/list_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+{% block content %}
+<div id="wrapper"><a href="overall/">Overall</a>
+  <hr/>
+  <ul>{% for day in production_days|sort_by:'date' reversed %}
+    <li style="text-decoration:line-through;"><a href="days/{{ day.date }}/">{{ day.date }}, {{ day.date|date:"l" }}</a></li>{% endfor %}
+  </ul>
+</div>{% endblock %}
+{% block extraScripts %}
+{% endblock %}

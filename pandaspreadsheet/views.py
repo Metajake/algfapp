@@ -239,5 +239,44 @@ def removeEmptyCellsFromScheduleDay(scheduleDay):
         del scheduleDay['products'][i]
     return scheduleDay
 
+def applyNotesToProductionWeek(weekToNote):
+    for index, day in enumerate(weekToNote):
+        weekToNote[index] = applyNotesToProducts(weekToNote[index])
+        #Future: Check Item Numbers against Base Products for Gluten Free Notes...
+        # productionWeek[index] = convertScheduleNumbersToItemNumbers(productionWeek[index])
+    return weekToNote
+
+def getThisWeeksScheduleDays(weekSchedule):
+    scheduledProductionSheetDays = []
+    for day in weekSchedule:
+        if re.match('(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)', weekSchedule[day]['date']) is not None:
+            scheduledProductionSheetDays.append(weekSchedule[day])
+    return scheduledProductionSheetDays
+
+def getThisWeeksProductionSchedule(fullProductionSchedule, todaysDate):
+    thisWeek = {}
+    if todaysDate.startswith('0'):
+        todaysDate = todaysDate[1:]
+    for weekIndex, week in enumerate(fullProductionSchedule):
+        for dayIndex, day in enumerate(fullProductionSchedule[week]):
+            dayDate = fullProductionSchedule[week][day]['date'][-2:].strip()
+            if todaysDate == dayDate:
+                thisWeek = fullProductionSchedule[week]
+    return thisWeek
+
+def checkForDateNotification(days_products):
+    if days_products['date'] == "error":
+        notification = "There is a conflict between the app and the Production Schedule, having to do with the DATE.\n"
+    else:
+        notification = ""
+
+    return notification
+
+def getTaggedCalendar(sheetToTag):
+    weekRanges = constructWeekRanges(sheetToTag)
+    calendar = parseCalendarFromSpreadsheet(sheetToTag, weekRanges)
+    taggedCalendar = applyViewTags(calendar)
+    return taggedCalendar
+    
 def replaceNaN(cellValue):
     return "&nbsp;" if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ) else cellValue

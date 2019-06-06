@@ -1,0 +1,31 @@
+| {% extends 'kettles/base.html' %}
+
+| {% load static %}
+| {% load custom_tags %}
+
+| {% block extraStyle%}
+link(rel="stylesheet" href="{% static 'kettles/stats.css' %}" type="text/css" media="screen, projection")
+| {% endblock %}
+
+| {% block content %}
+.chart
+| {% endblock %}
+
+| {% block extraScripts %}
+script(type="text/javascript" src="{% static 'js/d3.js'%}")  
+
+script.
+  var dailyProductCount = []
+
+  for (i=0;i<{{production_days_data|safe}}.length;i++){
+    dailyProductCount.push({{production_days_data|safe}}[i].count)
+  }
+
+  d3.select('.chart')
+    .selectAll('div')
+    .data({{production_days_data|safe}})
+      .enter()
+      .append('div')
+      .style("width", function(d){return (110+d.count) + 'px'})
+      .text(function(d){return d.date + ': '+ d.count }); 
+| {% endblock %}

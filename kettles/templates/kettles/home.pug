@@ -10,11 +10,14 @@ link(rel="stylesheet" href="{% static 'kettles/home.css' %}" type="text/css" med
 #wrapper
     | {% url 'assign_days' as assign %}
     | {% url 'list_days' as list %}
+    | {% url 'stats' as stats %}
     ul
       li
         a(href='{{assign}}') Assign Products to Kettles
       li
         a(href='{{list}}') Show Kettles
+      li
+        a(href='{{stats}}') Statistics
 | {% endblock %}
 
 | {% block extraScripts %}
