@@ -5,9 +5,10 @@
 {% block extraStyle%}
 <link rel="stylesheet" href="{% static 'kettles/stats.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
-<div class="chart"></div>{% endblock %}
+<div class="chart"></div>
+<div class="bubble-chart"></div>{% endblock %}
 {% block extraScripts %}
-<script type="text/javascript" src="{% static 'js/d3.js'%}"> </script>
+<script type="text/javascript" src="{% static 'js/d3.js'%}"></script>
 <script>
   var dailyProductCount = []
   
@@ -21,5 +22,6 @@
       .enter()
       .append('div')
       .style("width", function(d){return (110+d.count) + 'px'})
-      .text(function(d){return d.date + ': '+ d.count }); 
+      .text(function(d){return d.date + ': '+ d.count });
+        
 </script>{% endblock %}

@@ -9,11 +9,11 @@ link(rel="stylesheet" href="{% static 'kettles/stats.css' %}" type="text/css" me
 
 | {% block content %}
 .chart
+.bubble-chart
 | {% endblock %}
 
 | {% block extraScripts %}
-script(type="text/javascript" src="{% static 'js/d3.js'%}")  
-
+script(type="text/javascript" src="{% static 'js/d3.js'%}")
 script.
   var dailyProductCount = []
 
@@ -27,5 +27,6 @@ script.
       .enter()
       .append('div')
       .style("width", function(d){return (110+d.count) + 'px'})
-      .text(function(d){return d.date + ': '+ d.count }); 
+      .text(function(d){return d.date + ': '+ d.count });
+        
 | {% endblock %}

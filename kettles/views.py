@@ -97,12 +97,20 @@ def stats(request):
 
 def stats_overall(request):
     productionDays = ProductionDay.objects.all().order_by("date").reverse()
+
     productionDaysData = []
     for day in productionDays:
         productionDaysData.append({"date":day.date.strftime('%m-%d-%Y'),"count":len( day.days_products.all() )})
-    print(productionDaysData)
+
+    baseItems = []
+    productCounts = []
+    for item in BaseProduct.objects.all():
+        productCounts.append( {"itemNumber": item.item_number, "count": len( Product.objects.filter(item_number=item.item_number) )} )
+
     context = {
         'production_days_data' : json.dumps(productionDaysData),
+        'product_counts' : json.dumps(productCounts),
+        'console_data' : json.dumps(productCounts),
     }
     return render(request, 'kettles/stats/stats_overall.html', context)
 

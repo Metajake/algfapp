@@ -1,1 +1,1 @@
-body{background-color:#fee}.chart{padding:10px}.chart div{background-color:#34d;color:#fff;margin:4px 0;padding:5px}
+body{background-color:#fee}.chart{padding:10px;width:50%;float:left}.chart div{background-color:#34d;color:#fff;margin:4px 0;padding:5px}.bubble-chart{width:50%;float:right;height:100%}
