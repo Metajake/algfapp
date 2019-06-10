@@ -1,13 +1,13 @@
 | {% load custom_tags %}
 
-aside
-  .production-day-list
-    | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
-    | {% if product.assigned != True %}
-    .production-day-item
-      p(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}") {{ product.schedule_number }} {% if product.multiple > 0%}({{product.multiple}}){% endif %}
-    | {% endif %}
-    | {% endfor %}
+//- asid[e
+//-   .production-day-list
+//-     | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
+//-     | {% if product.assigned != True %}
+//-     .production-day-item
+//-       p(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}") {{ product.schedule_number }} {% if product.multiple > 0%}({{product.multiple}}){% endif %}
+//-     | {% endif %}
+//-     | {% endfor %}]
 main#production-list
   | {% for kettle in production_day.kettles.all %}
   .kettle-container(class="{% if is_detail %}is-detail{% endif %}")

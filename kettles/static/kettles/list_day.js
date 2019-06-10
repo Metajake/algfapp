@@ -26,7 +26,7 @@ function startWebsocket(websocketServerLocation){
           success: function(data){
             $('#slide-day').html('');
             $('#slide-day').html(data);
-            styleFirstScheduleNumberToMake();
+            // styleFirstScheduleNumberToMake();
           },
         })
     };
@@ -53,7 +53,7 @@ function styleFirstScheduleNumberToMake(){
   }
 }
 
-styleFirstScheduleNumberToMake();
+// styleFirstScheduleNumberToMake();
 
 //Toggle Display from Production Week to Production Day
 function showProductionDay(duration){
@@ -62,7 +62,7 @@ function showProductionDay(duration){
       $('#slide-day').fadeToggle(1000)
     })
     showProductionWeek(duration)
-  }, duration*.6)
+  }, duration*.15)//5 minutes*.15=45 seconds
 }
 //Toggle Display from Production Day to Production Week
 function showProductionWeek(duration){
