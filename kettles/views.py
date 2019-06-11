@@ -35,6 +35,7 @@ def assignment_date(request, date_to_assign):
     theDate = parser.parse(date_to_assign).strftime('%Y-%m-%d')
     theDateDay = theDate[-2:]
     todaysProductionDay = checkAndCreateProductionDay(theDate)
+
     checkAndCreateKettles(todaysProductionDay)
     todaysProducts = createTodaysProductList(theDateDay)
     notification = checkForDateNotification(todaysProducts)
@@ -147,14 +148,16 @@ def checkAndCreateProductionDay(the_date):
 
     return todaysProductionDay
 
-def checkAndCreateKettles(the_date):
-    kettle_numbers = ['K1', 'K2', 'K3', 'K4', 'L5', 'T6', 'K7', 'K8', 'T9']
-    for i in kettle_numbers:
-        try:
-            k = Kettle.objects.get(kettle_number = i, production_date = the_date)
-        except Kettle.DoesNotExist:
-            k = Kettle(kettle_number = i, production_date = the_date)
-            k.save()
+def checkAndCreateKettles(productionDayToKettle):
+    kettle_numbers = ['K-1', 'K-2', 'K-3', 'K-4', 'K-5', 'K-6', 'TK-1', 'TK-2']
+
+    if productionDayToKettle.has_kettle() == False:
+        for i in kettle_numbers:
+            try:
+                k = Kettle.objects.get(kettle_number = i, production_date = productionDayToKettle)
+            except Kettle.DoesNotExist:
+                k = Kettle(kettle_number = i, production_date = productionDayToKettle)
+                k.save()
 
 def checkAndCreateProducts(production_day, days_products):
     for index, product in enumerate(days_products['products']):

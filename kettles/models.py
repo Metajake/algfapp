@@ -6,6 +6,9 @@ from datetime import datetime
 class ProductionDay(models.Model):
     date = models.DateField()
 
+    def has_kettle(self):
+        return False if self.kettles.count() == 0 else True
+
     def __str__(self):
         return str(self.date)#.strftime('%m/%d/%Y')
 
