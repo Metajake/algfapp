@@ -26,34 +26,12 @@ function startWebsocket(websocketServerLocation){
           success: function(data){
             $('#slide-day').html('');
             $('#slide-day').html(data);
-            // styleFirstScheduleNumberToMake();
           },
         })
     };
 }
 
 startWebsocket('ws://' + window.location.host + '/ws/kettles/')
-
-function styleFirstScheduleNumberToMake(){
-  var value = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-  //If "Detail_True", make sure we're not styling first schedule number
-  if(value !== 'detail_true'){
-    var newFontSize = 'calc(1rem + 2vw)'
-    $('.product-list').each(function(index, item){
-      var firstProduct = $(item).find('.product-item.is-complete + .product-item:not(".is-complete")');
-      if(firstProduct.length){
-        firstProduct.each(function(index2, item2){
-          $(item2).find('p.product-schedule-number').css('font-size', newFontSize)
-          return false;
-        })
-      }else(
-        $(item).find('.product-item:not(".is-complete"):first-child').find('p.product-schedule-number').css('font-size', newFontSize)
-      );
-    })
-  }
-}
-
-// styleFirstScheduleNumberToMake();
 
 //Toggle Display from Production Week to Production Day
 function showProductionDay(duration){

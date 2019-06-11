@@ -2,7 +2,7 @@
   | {% for day in production_week %}
   .production-week-day
     .production-week-date
-      h4.text-center {{day.date}}
+      h3.text-center {{day.date}}
     | {% for product in day.products %}
     | {% if product.scheduleNumber == '&nbsp;' %}
     .production-week-day-product
