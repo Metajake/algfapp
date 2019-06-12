@@ -6,8 +6,8 @@ import datetime, re, json
 from datetime import date, timedelta
 import pandas, xlrd, numpy
 from dateutil import parser
-from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN, multiplyScheduleDay, applyNotesToProducts, convertScheduleNumbersToItemNumbers, applyNotesToProductionWeek, getThisWeeksScheduleDays, getThisWeeksProductionSchedule, checkForDateNotification, getTaggedCalendar
-import pandaspreadsheet.views as panda
+from pandaspreadsheet.views import *
+from kettles.kettlefunctions import *
 
 from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
@@ -24,10 +24,14 @@ def assignment_days(request):
         todays_production_day.save()
 
     assignment_days = ProductionDay.objects.all()
+
+    nextMonday = getNextMonday()
+
     #convert to return the past 7 days. To get older days you gotta click and "archive" link
     context = {
         'today' : date.today(),
         'tomorrow' : date.today() + timedelta(days=1),
+        'next_monday' : nextMonday,
         'days' : assignment_days,
     }
     return render(request, 'kettles/assignment_days.html', context)
@@ -38,7 +42,7 @@ def assignment_date(request, date_to_assign):
     todaysProductionDay = checkAndCreateProductionDay(theDate)
 
     checkAndCreateKettles(todaysProductionDay)
-    todaysProducts = createTodaysProductList(theDateDay)
+    todaysProducts = createTodaysProductList(theDateDay, productionSpreadsheet)
     notification = checkForDateNotification(todaysProducts)
     checkAndCreateProducts(todaysProductionDay, todaysProducts)
     context = {
@@ -139,49 +143,3 @@ def update_list_active(request):
         'production_week' : notedProductionWeek,
     }
     return render_to_response('kettles/update_list_active.html', context)
-
-def checkAndCreateProductionDay(the_date):
-    try:
-        todaysProductionDay = ProductionDay.objects.get(date=the_date)
-    except ProductionDay.DoesNotExist:
-        todaysProductionDay = ProductionDay(date=the_date)
-        todaysProductionDay.save()
-
-    return todaysProductionDay
-
-def checkAndCreateKettles(productionDayToKettle):
-    kettle_numbers = ['K-1', 'K-2', 'K-3', 'K-4', 'K-5', 'K-6', 'TK-1', 'TK-2']
-
-    if productionDayToKettle.has_kettle() == False:
-        for i in kettle_numbers:
-            try:
-                k = Kettle.objects.get(kettle_number = i, production_date = productionDayToKettle)
-            except Kettle.DoesNotExist:
-                k = Kettle(kettle_number = i, production_date = productionDayToKettle)
-                k.save()
-
-def checkAndCreateProducts(production_day, days_products):
-    for index, product in enumerate(days_products['products']):
-        try:
-            p = Product.objects.get(schedule_number = product['scheduleNumber'], production_date = production_day, multiple = product['multiple'])
-        except Product.DoesNotExist:
-            try:
-                bp = BaseProduct.objects.get(item_number = product['itemNumber'])
-            except BaseProduct.DoesNotExist:
-                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'], kettle_order = index)
-                p.save()
-            else:
-                p = Product(schedule_number = product['scheduleNumber'], item_number = product['itemNumber'], product_name = bp.product_name, gluten_free = bp.gluten_free, production_date = production_day, tags=[''], multiple = product['multiple'], note = product['note'], kettle_order = index)
-                p.save()
-
-def createTodaysProductList(dayToSchedule):
-    weekRanges = constructWeekRanges(productionSpreadsheet)
-    calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    taggedCalendar = applyViewTags(calendar)
-    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, dayToSchedule)
-    multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
-    notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
-    tucsLessScheduleDay = panda.removeTucsFromScheduleNumbers(notedScheduleDay)
-    convertedScheduleDay = convertScheduleNumbersToItemNumbers(tucsLessScheduleDay)
-    strippedScheduleDay = removeEmptyCellsFromScheduleDay(convertedScheduleDay)
-    return strippedScheduleDay

@@ -6,8 +6,17 @@
 <link rel="stylesheet" href="{% static 'kettles/assign_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
 <div id="wrapper">
-  <p style="margin-right:40px;display:inline;">Today: <a href="{{ today }}"> {{ today }}, {{ today|date:"l" }}</a></p>
-  <p style="display:inline;">Tomorrow: <a href="{{ tomorrow }}"> {{ tomorrow }}, {{ tomorrow|date:"l" }}</a></p>
+  <div id="masthead">
+    <div class="third">
+      <p>Today: <a href="{{ today }}"> {{ today }}, {{ today|date:"l" }}</a></p>
+    </div>
+    <div class="third">
+      <p>Tomorrow: <a href="{{ tomorrow }}"> {{ tomorrow }}, {{ tomorrow|date:"l" }}</a></p>
+    </div>
+    <div class="third">{% if next_monday %}
+      <p>Next Monday: <a href="{{ next_monday }}"> {{ next_monday }}, {{ next_monday|date:"l" }}</a></p>{% endif %}
+    </div>
+  </div>
   <h3 style="margin-top:40px;">Archive:</h3>
   <ul>{% for day in days|sort_by:'date' reversed  %}
     <li><a href="{{ day.date }}">{{ day.date }}, {{ day.date|date:"l" }}</a></li>{% endfor %}
