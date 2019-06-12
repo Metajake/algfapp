@@ -18,7 +18,7 @@
         </p></a></nav>
     <div class="grid-50-50 headline-list pull-center" id="todays-products">{% for product in scheduleDay.products %}
       <div class="item align-center {%for tag in product.tags %}{{tag}} {%endfor%}">
-        <h3>{{product.itemNumber|safe}}</h3>
+        <h3>{{product.scheduleNumber|safe}}</h3>
       </div>
       <div class="item align-center">
         <h3>{{product.customer|safe}}</h3>

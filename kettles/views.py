@@ -6,7 +6,8 @@ import datetime, re, json
 from datetime import date, timedelta
 import pandas, xlrd, numpy
 from dateutil import parser
-from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN, multiplyScheduleDay, applyNotesToProducts, convertScheduleNumbersToItemNumbers, applyNotesToProductionWeek, getThisWeeksScheduleDays, getThisWeeksProductionSchedule, checkForDateNotification, getTaggedCalendar
+from pandaspreadsheet.views import productionSpreadsheet, constructWeekRanges, parseCalendarFromSpreadsheet, applyViewTags, getTodaysScheduleFromSpreadsheet, removeEmptyCellsFromScheduleDay, replaceNaN, multiplyScheduleDay, applyNotesToProducts, convertScheduleNumbersToItemNumbers, applyNotesToProductionWeek, getThisWeeksScheduleDays, getThisWeeksProductionSchedule, checkForDateNotification, getTaggedCalendar
+import pandaspreadsheet.views as panda
 
 from products.models import Product as BaseProduct
 from .models import ProductionDay, Kettle, Product
@@ -180,6 +181,7 @@ def createTodaysProductList(dayToSchedule):
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, dayToSchedule)
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
     notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
-    convertedScheduleDay = convertScheduleNumbersToItemNumbers(notedScheduleDay)
+    tucsLessScheduleDay = panda.removeTucsFromScheduleNumbers(notedScheduleDay)
+    convertedScheduleDay = convertScheduleNumbersToItemNumbers(tucsLessScheduleDay)
     strippedScheduleDay = removeEmptyCellsFromScheduleDay(convertedScheduleDay)
     return strippedScheduleDay

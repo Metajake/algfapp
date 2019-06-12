@@ -25,10 +25,11 @@ def today(request):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyViewTags(calendar)
-    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, datetime.datetime.today().day)
+    scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, str(datetime.datetime.today().day) )
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
     notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
-    convertedScheduleDay = convertScheduleNumbersToItemNumbers(notedScheduleDay)
+    tucsLessScheduleDay = removeTucsFromScheduleNumbers(notedScheduleDay)
+    convertedScheduleDay = convertScheduleNumbersToItemNumbers(tucsLessScheduleDay)
     cleanScheduleDay = removeEmptyCellsFromScheduleDay(convertedScheduleDay)
 
     # print("------------PRINTING------------")
@@ -221,6 +222,12 @@ def applyNotesToProducts(scheduleDay):
             del scheduleDay['products'][index]
     return scheduleDay
 
+def removeTucsFromScheduleNumbers(scheduleDay):
+    for product in scheduleDay['products']:
+        if product['scheduleNumber'].startswith('TUC'):
+            product['scheduleNumber'] = product['scheduleNumber'].split(' ',1)[1]
+    return scheduleDay
+
 def convertScheduleNumbersToItemNumbers(scheduleDay):
     for index, product in enumerate(scheduleDay['products']):
         itemNumber = re.findall('\d+', product['scheduleNumber'] )
@@ -277,6 +284,6 @@ def getTaggedCalendar(sheetToTag):
     calendar = parseCalendarFromSpreadsheet(sheetToTag, weekRanges)
     taggedCalendar = applyViewTags(calendar)
     return taggedCalendar
-    
+
 def replaceNaN(cellValue):
     return "&nbsp;" if( (type (cellValue) is float or type (cellValue) is numpy.float64) and math.isnan(cellValue) ) else cellValue

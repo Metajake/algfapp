@@ -21,7 +21,7 @@ function startWebsocket(websocketServerLocation){
 
 startWebsocket('ws://' + window.location.host + '/ws/kettles/')
 
-$( "#days-product-list, #sortable_K1, #sortable_K2, #sortable_K3, #sortable_K4, #sortable_L5, #sortable_T6, #sortable_K7, #sortable_K8, #sortable_T9" ).sortable({
+$( "#days-product-list, [id^=sortable_]" ).sortable({
   handle: ".product-sort-handle:not(.is-complete)",
   placeholder: "product-sort-placeholder",
   connectWith: ".sortable-products-list",
