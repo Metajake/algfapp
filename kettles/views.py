@@ -52,6 +52,10 @@ def assignment_date(request, date_to_assign):
     }
     return render(request, 'kettles/assignment_date.html', context)
 
+def assign_calendar(request):
+    context = {}
+    return render(request, 'kettles/assign/calendar.html', context)
+
 def list(request):
     productionDays = ProductionDay.objects.all()
     context = {
