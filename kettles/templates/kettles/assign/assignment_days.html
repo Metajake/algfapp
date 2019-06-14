@@ -8,18 +8,18 @@
 <div id="wrapper">
   <div id="masthead">
     <div class="third">
-      <p>Today: <a href="{{ today }}"> {{ today }}, {{ today|date:"l" }}</a></p>
+      <p>Today: <a href="{{ today|date:"Y-m-d" }}"> {{ today }}, {{ today|date:"l" }}</a></p>
     </div>
     <div class="third">
-      <p>Tomorrow: <a href="{{ tomorrow }}"> {{ tomorrow }}, {{ tomorrow|date:"l" }}</a></p>
+      <p>Tomorrow: <a href="{{ tomorrow|date:"Y-m-d" }}"> {{ tomorrow }}, {{ tomorrow|date:"l" }}</a></p>
     </div>
     <div class="third">{% if next_monday %}
-      <p>Next Monday: <a href="{{ next_monday }}"> {{ next_monday }}, {{ next_monday|date:"l" }}</a></p>{% endif %}
+      <p>Next Monday: <a href="{{ next_monday|date:"Y-m-d" }}"> {{ next_monday }}, {{ next_monday|date:"l" }}</a></p>{% endif %}
     </div>
   </div>
   <h3 style="margin-top:40px;">Archive:</h3>
   <ul>{% for day in days|sort_by:'date' reversed  %}
-    <li><a href="{{ day.date }}">{{ day.date }}, {{ day.date|date:"l" }}</a></li>{% endfor %}
+    <li><a href="{{ day.date|date:'Y-m-d' }}">{{ day.date }}, {{ day.date|date:"l" }}</a></li>{% endfor %}
   </ul>
 </div>{% endblock %}
 {% block extraScripts %}

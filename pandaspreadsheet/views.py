@@ -14,7 +14,7 @@ def test (request):
 def schedule(request):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    taggedCalendar = applyViewTags(calendar)
+    taggedCalendar = applyNoteTags(calendar)
     context = {
         'lastModified': productionSpreadsheet.columns[0],
         'calendar' : taggedCalendar,
@@ -24,7 +24,7 @@ def schedule(request):
 def today(request):
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-    taggedCalendar = applyViewTags(calendar)
+    taggedCalendar = applyNoteTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, str(datetime.datetime.today().day) )
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
     notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
@@ -50,7 +50,7 @@ def list(request, date):
 
         weekRanges = constructWeekRanges(productionSpreadsheet)
         calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
-        taggedCalendar = applyViewTags(calendar)
+        taggedCalendar = applyNoteTags(calendar)
         scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, datetime.datetime.today().day)
         cleanScheduleDay = removeEmptyCellsFromScheduleDay(scheduleDay)
         productScheduleDay = expandProductMultiples(cleanScheduleDay)
@@ -126,7 +126,7 @@ def expandProductMultiples(scheduleDay):
             scheduleDay['products'].append({'scheduleNumber':scheduleNumber, 'customer': product['customer'], 'tags': product['tags']})
     return scheduleDay
 
-def applyViewTags(schedule):
+def applyNoteTags(schedule):
     for index,week in enumerate(schedule):
         for indexx,day in enumerate(schedule[week]):
             for indexxx, product in enumerate(schedule[week][day]['products']):
@@ -246,6 +246,17 @@ def removeEmptyCellsFromScheduleDay(scheduleDay):
         del scheduleDay['products'][i]
     return scheduleDay
 
+def removeEmptyCellsFromProductionSchedule(calendarToClean):
+    for week in calendarToClean:
+        emptyDaysToRemove = []
+        for day in calendarToClean[week]:
+            calendarToClean[week][day] = removeEmptyCellsFromScheduleDay(calendarToClean[week][day])
+            if calendarToClean[week][day]['date'] == '':
+                emptyDaysToRemove.append(day)
+        for dayToRemove in emptyDaysToRemove:
+            del calendarToClean[week][dayToRemove]
+    return calendarToClean
+
 def applyNotesToProductionWeek(weekToNote):
     for index, day in enumerate(weekToNote):
         weekToNote[index] = applyNotesToProducts(weekToNote[index])
@@ -282,7 +293,7 @@ def checkForDateNotification(days_products):
 def getTaggedCalendar(sheetToTag):
     weekRanges = constructWeekRanges(sheetToTag)
     calendar = parseCalendarFromSpreadsheet(sheetToTag, weekRanges)
-    taggedCalendar = applyViewTags(calendar)
+    taggedCalendar = applyNoteTags(calendar)
     return taggedCalendar
 
 def replaceNaN(cellValue):

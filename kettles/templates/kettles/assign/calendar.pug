@@ -5,6 +5,7 @@
 | {% block extraStyle%}
 link(rel="stylesheet" href="{% static 'fullcalendar/main.min.css' %}" type="text/css" media="screen, projection")
 link(rel="stylesheet" href="{% static 'fullcalendar/daygrid.min.css' %}" type="text/css" media="screen, projection")
+link(rel="stylesheet" href="{% static 'fullcalendar/assign_calendar.css' %}" type="text/css" media="screen, projection")
 | {% endblock %}
 
 | {% block content %}
@@ -17,16 +18,37 @@ script(type="text/javascript" src="{% static 'fullcalendar/daygrid.min.js'%}")
 script(type="text/javascript" src="{% static 'fullcalendar/interaction.min.js'%}")
 
 script.
+  console.log( {{dates_containing_products|safe}} )
   document.addEventListener('DOMContentLoaded', function(){
     var calendarEl = document.getElementById('calendar');
     
     var calendar = new FullCalendar.Calendar(calendarEl, {
-      plugins: ['dayGrid', 'interaction'],
-      dateClick: function(info){
-        document.location.assign(info.dateStr);
+      plugins: ['dayGrid'],
+      height:window.innerHeight,
+      showNonCurrentDates: false,
+      header: {
+        right: '',
       },
+      dayRender: function(date){
+        if( $(date.el).attr('data-date') ){
+          calendarDate = date.date.getDate().toString()
+          if( {{dates_containing_products|safe}}.includes(calendarDate) ){
+            dataDate = $(date.el).attr('data-date')
+            $(date.el).addClass('can-assign').click(function(){
+              document.location.assign($(this).attr('data-date'));
+            })
+            
+            // Add Click behavior to calendar day headers
+            $(document).find('thead [data-date="'+dataDate+'"]').click(function(){
+              document.location.assign($(this).attr('data-date'));
+            })
+            
+          } 
+        }
+      }
     });
     
     calendar.render();
+    
   })
 | {% endblock %}

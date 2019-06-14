@@ -12,18 +12,18 @@ link(rel="stylesheet" href="{% static 'kettles/assign_days.css' %}" type="text/c
 #wrapper
   #masthead
     .third
-      p Today: <a href="{{ today }}"> {{ today }}, {{ today|date:"l" }}</a>
+      p Today: <a href="{{ today|date:"Y-m-d" }}"> {{ today }}, {{ today|date:"l" }}</a>
     .third
-      p Tomorrow: <a href="{{ tomorrow }}"> {{ tomorrow }}, {{ tomorrow|date:"l" }}</a>
+      p Tomorrow: <a href="{{ tomorrow|date:"Y-m-d" }}"> {{ tomorrow }}, {{ tomorrow|date:"l" }}</a>
     .third
       | {% if next_monday %}
-      p Next Monday: <a href="{{ next_monday }}"> {{ next_monday }}, {{ next_monday|date:"l" }}</a>
+      p Next Monday: <a href="{{ next_monday|date:"Y-m-d" }}"> {{ next_monday }}, {{ next_monday|date:"l" }}</a>
       | {% endif %}
       
   h3(style="margin-top:40px;") Archive:
   ul
     | {% for day in days|sort_by:'date' reversed  %}
-    li: a(href="{{ day.date }}") {{ day.date }}, {{ day.date|date:"l" }}
+    li: a(href="{{ day.date|date:'Y-m-d' }}") {{ day.date }}, {{ day.date|date:"l" }}
     | {% endfor %}
     
 | {% endblock %}

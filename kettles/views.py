@@ -3,7 +3,7 @@ from django.http import Http404
 from django.core import serializers
 
 import datetime, re, json
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 import pandas, xlrd, numpy
 from dateutil import parser
 from pandaspreadsheet.views import *
@@ -34,11 +34,10 @@ def assignment_days(request):
         'next_monday' : nextMonday,
         'days' : assignment_days,
     }
-    return render(request, 'kettles/assignment_days.html', context)
+    return render(request, 'kettles/assign/assignment_days.html', context)
 
 def assignment_date(request, date_to_assign):
     theDate = date_to_assign
-    # theDate = parser.parse(date_to_assign).strftime('%Y-%m-%d')
     theDateDay = theDate[-2:]
     todaysProductionDay = checkAndCreateProductionDay(theDate)
 
@@ -51,10 +50,22 @@ def assignment_date(request, date_to_assign):
         'todays_products': todaysProductionDay.days_products.all().order_by('creation_date'),
         'notification' : notification,
     }
-    return render(request, 'kettles/assignment_date.html', context)
+    return render(request, 'kettles/assign/assignment_date.html', context)
 
 def assign_calendar(request):
-    context = {}
+    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
+    cleanCalendar = removeEmptyCellsFromProductionSchedule(parsedCalendar)
+    datesContainingProducts = getDatesWithProductCounts(cleanCalendar)
+
+    print(datesContainingProducts)
+    thisMonthsAssignedProductionDays = ProductionDay.objects.filter(date__month=date.today().month)
+    for day in thisMonthsAssignedProductionDays:
+        if day.has_products():
+            datesContainingProducts.append(str( int(day.date.strftime('%d')) ) )
+
+    context = {
+        'dates_containing_products': json.dumps(datesContainingProducts),
+    }
     return render(request, 'kettles/assign/calendar.html', context)
 
 def list(request):
@@ -68,8 +79,8 @@ def list_day(request, list_date, detail):
     formattedDate = parser.parse(list_date).strftime('%Y-%m-%d')
     theDateDay = formattedDate[-2:]
 
-    taggedCalendar = getTaggedCalendar(productionSpreadsheet)
-    thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, theDateDay)
+    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
+    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, theDateDay)
     productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
     notedProductionWeek = applyNotesToProductionWeek(productionWeek)
 
@@ -88,8 +99,8 @@ def list_day(request, list_date, detail):
 def list_active(request):
     latestProductionDay = ProductionDay.objects.latest('date')
 
-    taggedCalendar = getTaggedCalendar(productionSpreadsheet)
-    thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, str(latestProductionDay)[-2:])
+    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
+    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, str(latestProductionDay)[-2:])
     productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
     notedProductionWeek = applyNotesToProductionWeek(productionWeek)
 
@@ -139,8 +150,8 @@ def update_list_day(request, list_date):
 
 def update_list_active(request):
     activeDate=request.GET['date']
-    taggedCalendar = getTaggedCalendar(productionSpreadsheet)
-    thisWeeksSchedule = getThisWeeksProductionSchedule(taggedCalendar, activeDate[-2:])
+    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
+    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, activeDate[-2:])
     productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
     notedProductionWeek = applyNotesToProductionWeek(productionWeek)
     context = {

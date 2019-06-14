@@ -9,6 +9,9 @@ class ProductionDay(models.Model):
     def has_kettle(self):
         return False if self.kettles.count() == 0 else True
 
+    def has_products(self):
+        return False if self.days_products.count() == 0 else True
+
     def __str__(self):
         return str(self.date)#.strftime('%m/%d/%Y')
 

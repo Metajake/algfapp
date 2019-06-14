@@ -13,7 +13,7 @@ def getNextMonday():
 def createTodaysProductList(dayToSchedule, spreadsheetToParse):
     weekRanges = constructWeekRanges(spreadsheetToParse)
     calendar = parseCalendarFromSpreadsheet(spreadsheetToParse, weekRanges)
-    taggedCalendar = applyViewTags(calendar)
+    taggedCalendar = applyNoteTags(calendar)
     scheduleDay = getTodaysScheduleFromSpreadsheet(taggedCalendar, dayToSchedule)
     multipliedScheduleDay = multiplyScheduleDay(scheduleDay)
     notedScheduleDay = applyNotesToProducts(multipliedScheduleDay)
@@ -55,3 +55,11 @@ def checkAndCreateKettles(productionDayToKettle):
             except Kettle.DoesNotExist:
                 k = Kettle(kettle_number = i, production_date = productionDayToKettle)
                 k.save()
+
+def getDatesWithProductCounts(calendarToParse):
+    daysWithProducts = []
+    for week in calendarToParse:
+        for day in calendarToParse[week]:
+            if len(calendarToParse[week][day]['products']):
+                daysWithProducts.append(calendarToParse[week][day]['date'][-2:].strip())
+    return daysWithProducts
