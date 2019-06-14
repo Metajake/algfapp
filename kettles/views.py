@@ -37,7 +37,8 @@ def assignment_days(request):
     return render(request, 'kettles/assignment_days.html', context)
 
 def assignment_date(request, date_to_assign):
-    theDate = parser.parse(date_to_assign).strftime('%Y-%m-%d')
+    theDate = date_to_assign
+    # theDate = parser.parse(date_to_assign).strftime('%Y-%m-%d')
     theDateDay = theDate[-2:]
     todaysProductionDay = checkAndCreateProductionDay(theDate)
 
