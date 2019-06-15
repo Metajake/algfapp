@@ -73,7 +73,7 @@ def list(request):
     context = {
         'production_days' : productionDays,
     }
-    return render(request, 'kettles/list.html', context)
+    return render(request, 'kettles/list/list.html', context)
 
 def list_day(request, list_date, detail):
     formattedDate = parser.parse(list_date).strftime('%Y-%m-%d')
@@ -94,7 +94,7 @@ def list_day(request, list_date, detail):
         'is_detail' : isDetail,
         'production_week' : notedProductionWeek,
     }
-    return render(request, 'kettles/list_day.html', context)
+    return render(request, 'kettles/list/list_day.html', context)
 
 def list_active(request):
     latestProductionDay = ProductionDay.objects.latest('date')
@@ -108,7 +108,7 @@ def list_active(request):
         'production_day': ProductionDay.objects.latest('date'),
         'production_week' : notedProductionWeek,
     }
-    return render(request, 'kettles/list_active.html', context)
+    return render(request, 'kettles/list/list_active.html', context)
 
 def stats(request):
     productionDays = ProductionDay.objects.all()
@@ -146,7 +146,7 @@ def stats_day(request, stats_date):
 
 def update_list_day(request, list_date):
     pd = ProductionDay.objects.get(date=request.GET['date'])
-    return render_to_response('kettles/update_list_day.html', {'production_day': pd})
+    return render_to_response('kettles/updates/update_list_day.html', {'production_day': pd})
 
 def update_list_active(request):
     activeDate=request.GET['date']
@@ -158,4 +158,4 @@ def update_list_active(request):
         'production_day' : ProductionDay.objects.get(date=activeDate),
         'production_week' : notedProductionWeek,
     }
-    return render_to_response('kettles/update_list_active.html', context)
+    return render_to_response('kettles/updates/update_list_active.html', context)
