@@ -180,27 +180,40 @@ def getTodaysScheduleFromSpreadsheet(calendar, dayToSchedule):
     else:
         return scheduleDay
 
+#TODO Refactor this function into separate parts
 def multiplyScheduleDay(scheduleDay):
     toReturn = scheduleDay
     multiples = []
     for index, product in enumerate(toReturn['products']):
         toReturn['products'][index]['multiple'] = 0
-        if product['scheduleNumber'].strip()[-2:][0].lower() == 'x':
-            multiplyAmount = int(product['scheduleNumber'].strip()[-2:][1])
-            productStringSansMultiplyAmount = product['scheduleNumber'].strip()[0:-2].strip()
+        scheduleNumber = product['scheduleNumber']
+
+        toSearchFor = re.compile('x|X')
+        productHasMultiple = toSearchFor.search(scheduleNumber)
+
+        if productHasMultiple:
+            multiplierPosition = productHasMultiple.start()
+            multiplyAmount = float( scheduleNumber[multiplierPosition+1:])
+            productStringSansMultiplyAmount = scheduleNumber[0:multiplierPosition].strip()
             toReturn['products'][index]['scheduleNumber'] = productStringSansMultiplyAmount
 
             multiples.append({'index': index, 'multiplyAmount': multiplyAmount})
 
     for i, m in enumerate( multiples[::-1] ):
+        originalMultiplyAmount = int( math.ceil(m['multiplyAmount']) )
         toReturn['products'][m['index']]['multiple'] = m['multiplyAmount']
-        for k in range( m['multiplyAmount'] ):
-            newMultiple = m['multiplyAmount'] - k
+
+        while m['multiplyAmount'] > 0.0:
             toInsert = toReturn['products'][m['index']].copy()
+            if m['multiplyAmount'] >= 1.0:
+                newMultiple = int( m['multiplyAmount'] )
+            else:
+                newMultiple = m['multiplyAmount']
             toInsert['multiple'] = newMultiple
             toReturn['products'].insert(m['index'], toInsert)
+            m['multiplyAmount'] -= 1.0
 
-        del toReturn['products'][m['index'] + m['multiplyAmount']]
+        del toReturn['products'][m['index'] + originalMultiplyAmount]
 
     return toReturn
 

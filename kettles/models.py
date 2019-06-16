@@ -36,7 +36,7 @@ class Product(models.Model):
     production_date = models.ForeignKey(ProductionDay, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)
     kettle = models.ForeignKey(Kettle, related_name="days_products", on_delete=models.CASCADE, null=True, blank=True)
     kettle_order = models.IntegerField(blank=True, null=True)
-    multiple = models.IntegerField(blank=True, null=True)
+    multiple = models.FloatField(blank=True, null=True)
     note = models.CharField(max_length=300, blank =True, null=True)
     is_complete = models.BooleanField(blank=True, default=False)
     #MAYBE GET RID OF THIS

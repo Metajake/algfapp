@@ -21,7 +21,7 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
         .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
           .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
             .schedule-number-container
-              p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
+              p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
             .product-name-container
               | {% if product.product_name == '' %}
               p.product-name Product Name
@@ -54,7 +54,7 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
           .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
             .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
               .schedule-number-container
-                p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
+                p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
               .product-name-container
                 | {% if product.product_name == '' %}
                 p.product-name Product Name

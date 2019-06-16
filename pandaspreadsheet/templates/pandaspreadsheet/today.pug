@@ -18,7 +18,7 @@ html
     #todays-products.grid-50-50.headline-list.pull-center
       | {% for product in scheduleDay.products %}
       .item.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
-        h3 {{product.scheduleNumber|safe}}
+        h3 {{product.scheduleNumber|safe}} {% if product.multiple > 0 %}({{product.multiple}}){% endif %}
       .item.align-center
         h3 {{product.customer|safe}}
       | {% endfor %}

@@ -15,3 +15,9 @@ def print_timestamp(timestamp):
     except ValueError:
         return None
     return datetime.datetime.fromtimestamp(ts)
+
+@register.filter
+def whole_float_to_int(numberToCheck):
+    if (numberToCheck >= 1.0):
+        numberToCheck = int( numberToCheck )
+    return numberToCheck

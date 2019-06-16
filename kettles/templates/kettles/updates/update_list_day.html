@@ -4,7 +4,7 @@
     <h2 class="kettle-header text-center">{{kettle}}</h2>
     <div class="product-list">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}
       <div class="product-item text-center {% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}" id="{{product.schedule_number}}">
-        <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span></p>{% if product.note != '' %}
+        <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span></p>{% if product.note != '' %}
         <p class="note detail">{{product.note|truncatechars:11}}</p>{% endif %}
         {% if product.product_name == '' %}
         <p class="product-name detail">Product Name</p>{% else %}
