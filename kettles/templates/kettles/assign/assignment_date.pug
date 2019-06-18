@@ -4,8 +4,8 @@
 | {% load custom_tags %}
 
 | {% block extraStyle%}
-link(rel="stylesheet" href="{% static 'kettles/assign_day.css' %}" type="text/css" media="screen, projection")
-link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css" media="screen,projection")
+link(rel="stylesheet" href="{% static 'kettles/assign/assign_day.css' %}" type="text/css" media="screen, projection")
+link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="text/css" media="screen,projection")
 | {% endblock %}
 
 | {% block content %}
@@ -79,5 +79,5 @@ link(rel="stylesheet" href="{% static 'kettles/checkbox.css' %}" type="text/css"
 | {% endblock %}
 
 | {% block extraScripts %}
-script(type="text/javascript" src="{% static 'kettles/assign_day.js'%}")
+script(type="text/javascript" src="{% static 'kettles/js/assign_day.js'%}")
 | {% endblock %}

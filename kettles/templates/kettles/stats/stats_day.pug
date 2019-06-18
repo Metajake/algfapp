@@ -3,7 +3,7 @@
 | {% load static %}
 
 | {% block extraStyle%}
-link(rel="stylesheet" href="{% static 'kettles/stats.css' %}" type="text/css" media="screen, projection")
+link(rel="stylesheet" href="{% static 'kettles/stats/stats.css' %}" type="text/css" media="screen, projection")
 | {% endblock %}
 
 | {% block content %}
@@ -12,5 +12,5 @@ link(rel="stylesheet" href="{% static 'kettles/stats.css' %}" type="text/css" me
 
 | {% block extraScripts %}
 script(type="text/javascript" src="{% static 'js/d3.js'%}")  
-script(type="text/javascript" src="{% static 'kettles/stats.js'%}")  
+//- script(type="text/javascript" src="{% static 'kettles/stats.js'%}")  
 | {% endblock %}

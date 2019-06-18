@@ -2,7 +2,7 @@
 {% extends 'kettles/base.html' %}
 {% load static %}
 {% block extraStyle%}
-<link rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+<link rel="stylesheet" href="{% static 'kettles/list/list_day.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
 <div id="wrapper">
   <div id="slide-day">{% load custom_tags %}
@@ -36,8 +36,10 @@
   </div>
 </div>{% endblock %}
 {% block extraScripts %}
-<script type="text/javascript" src="{% static 'kettles/list_day.js'%}"> </script>
+<script type="text/javascript" src="{% static 'kettles/js/list_base.js'%}"> </script>
+<script type="text/javascript" src="{% static 'kettles/js/list_day_websocket.js'%}"> </script>
 <script>
+  console.log('list active')
   ws.onmessage = function(e) {
       console.log("GOT MESSAqge");
       var data = JSON.parse(e.data);

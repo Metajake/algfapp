@@ -3,7 +3,7 @@
 | {% load static %}
 
 | {% block extraStyle%}
-link(rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css" media="screen, projection")
+link(rel="stylesheet" href="{% static 'kettles/list/list_day.css' %}" type="text/css" media="screen, projection")
 | {% endblock %}
 
 | {% block content %}
@@ -15,8 +15,10 @@ link(rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css"
 | {% endblock %}
 
 | {% block extraScripts %}
-script(type="text/javascript" src="{% static 'kettles/list_day.js'%}")  
+script(type="text/javascript" src="{% static 'kettles/js/list_base.js'%}")  
+script(type="text/javascript" src="{% static 'kettles/js/list_day_websocket.js'%}")  
 script.
+  console.log('list active')
   ws.onmessage = function(e) {
       console.log("GOT MESSAqge");
       var data = JSON.parse(e.data);

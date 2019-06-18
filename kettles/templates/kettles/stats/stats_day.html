@@ -2,9 +2,8 @@
 {% extends 'kettles/base.html' %}
 {% load static %}
 {% block extraStyle%}
-<link rel="stylesheet" href="{% static 'kettles/stats.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+<link rel="stylesheet" href="{% static 'kettles/stats/stats.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
 <div class="chart"></div>{% endblock %}
 {% block extraScripts %}
-<script type="text/javascript" src="{% static 'js/d3.js'%}"> </script>
-<script type="text/javascript" src="{% static 'kettles/stats.js'%}"> </script>{% endblock %}
+<script type="text/javascript" src="{% static 'js/d3.js'%}"> </script>{% endblock %}

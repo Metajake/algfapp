@@ -3,7 +3,7 @@
 {% load static %}
 {% load custom_tags %}
 {% block extraStyle%}
-<link rel="stylesheet" href="{% static 'kettles/list_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+<link rel="stylesheet" href="{% static 'kettles/list/list_days.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
 <div id="wrapper">
   <ul>{% for day in production_days|sort_by:'date' reversed %}
