@@ -6,7 +6,7 @@ from channels.db import database_sync_to_async
 
 import json
 from dateutil import parser
-from datetime import datetime
+from datetime import datetime, date
 
 from kettles.models import Kettle, ProductionDay, Product
 
@@ -133,4 +133,13 @@ class KettleConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message,
             'date': dateFormatted,
+        }))
+
+    async def update_list_day(self, event):
+        print('-----Update List Day-------')
+        message = event['message']
+        
+        await self.send(text_data=json.dumps({
+            'message': message,
+            'date': date.today().strftime('%Y-%m-%d'),
         }))

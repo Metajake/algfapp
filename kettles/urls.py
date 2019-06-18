@@ -10,6 +10,7 @@ urlpatterns = [
     path('list/', views.list, name="list_days"),
     path('list/<str:list_date>/<str:detail>', views.list_day, name="list_date"),
     path('list/active/', views.list_active, name="list_active"),
+    path('list/daily/', views.list_daily, name="list_daily"),
     path('stats/', views.stats, name="stats"),
     path('stats/overall/', views.stats_overall, name="stats_overall"),
     path('stats/days/<str:stats_date>/', views.stats_day, name="stats_day"),

@@ -1,0 +1,21 @@
+| {% extends 'kettles/base.html' %}
+
+| {% load static %}
+
+| {% block extraStyle%}
+link(rel="stylesheet" href="{% static 'kettles/list_day.css' %}" type="text/css" media="screen, projection")
+| {% endblock %}
+
+| {% block content %}
+#wrapper
+  span.date {{production_day}}
+  #slide-day
+    include ../updates/update_list_day.html
+  #slide-week
+    include ../updates/update_list_week.html
+| {% endblock %}
+
+| {% block extraScripts %}
+script(type="text/javascript" src="{% static 'kettles/list_base.js'%}")  
+script(type="text/javascript" src="{% static 'kettles/list_daily.js'%}")
+| {% endblock %}

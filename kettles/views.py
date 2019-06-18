@@ -17,14 +17,8 @@ def kettle_home(request):
     return render(request, "kettles/home.html", context)
 
 def assignment_days(request):
-    try:
-        todays_production_day = ProductionDay.objects.get(date=date.today())
-    except ProductionDay.DoesNotExist:
-        todays_production_day = ProductionDay(date=date.today())
-        todays_production_day.save()
-
+    todaysProductionDay = checkAndCreateProductionDay(date.today())
     assignment_days = ProductionDay.objects.all()
-
     nextMonday = getNextMonday()
 
     #convert to return the past 7 days. To get older days you gotta click and "archive" link
@@ -109,6 +103,19 @@ def list_active(request):
         'production_week' : notedProductionWeek,
     }
     return render(request, 'kettles/list/list_active.html', context)
+
+def list_daily(request):
+    todaysProductionDay = checkAndCreateProductionDay(date.today())
+    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
+    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, str(todaysProductionDay)[-2:])
+    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
+    notedProductionWeek = applyNotesToProductionWeek(productionWeek)
+
+    context = {
+        'production_day': todaysProductionDay,
+        'production_week' : notedProductionWeek,
+    }
+    return render(request, 'kettles/list/list_daily.html', context)
 
 def stats(request):
     productionDays = ProductionDay.objects.all()
