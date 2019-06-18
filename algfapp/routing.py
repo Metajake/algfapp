@@ -9,8 +9,5 @@ application = ProtocolTypeRouter({
         URLRouter(
             channel.routing.websocket_urlpatterns
         )
-    ),
-    'channel': ChannelNameRouter({
-        'background-tasks': KettleConsumer
-    })
+    )
 })
