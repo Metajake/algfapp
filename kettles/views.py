@@ -51,7 +51,6 @@ def assign_calendar(request):
     cleanCalendar = removeEmptyCellsFromProductionSchedule(parsedCalendar)
     datesContainingProducts = getDatesWithProductCounts(cleanCalendar)
 
-    print(datesContainingProducts)
     thisMonthsAssignedProductionDays = ProductionDay.objects.filter(date__month=date.today().month)
     for day in thisMonthsAssignedProductionDays:
         if day.has_products():
