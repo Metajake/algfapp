@@ -1,13 +1,5 @@
 | {% load custom_tags %}
 
-aside
-  .production-day-list
-    | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
-    | {% if product.assigned != True %}
-    .production-day-item
-      p(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}") {{ product.schedule_number }} {% if product.multiple > 0%}({{product.multiple}}){% endif %}
-    | {% endif %}
-    | {% endfor %}
 main#production-list
   | {% for kettle in production_day.kettles.all %}
   .kettle-container(class="{% if is_detail %}is-detail{% endif %}")
@@ -15,7 +7,7 @@ main#production-list
     .product-list
       | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
       .product-item.text-center(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}")
-        p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple}}){% endif %}</span>
+        p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
         
         | {% if product.note != '' %}
         p.note.detail {{product.note|truncatechars:11}}

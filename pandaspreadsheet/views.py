@@ -1,17 +1,18 @@
-import os, datetime, math, re
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
+
+import os, datetime, math, re
 import pandas, xlrd, numpy
 
+from pandaspreadsheet.exceptions import BusinessLogicException
 from .models import Kettle, Product, CalendarDay
-
-productionSpreadsheet = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.xls', sheet_name = 0)
 
 def test (request):
     return HttpResponse("Test Page")
 
 def schedule(request):
+    productionSpreadsheet = readSpreadsheet()
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyNoteTags(calendar)
@@ -22,6 +23,7 @@ def schedule(request):
     return render(request, 'pandaspreadsheet/spreadsheet.html', context)
 
 def today(request):
+    productionSpreadsheet = readSpreadsheet()
     weekRanges = constructWeekRanges(productionSpreadsheet)
     calendar = parseCalendarFromSpreadsheet(productionSpreadsheet, weekRanges)
     taggedCalendar = applyNoteTags(calendar)
@@ -40,6 +42,7 @@ def today(request):
     return render(request, 'pandaspreadsheet/today.html', context)
 
 def list(request, date):
+    productionSpreadsheet = readSpreadsheet()
     selectedKettleDate = datetime.datetime(year=datetime.date.today().year, month=datetime.date.today().month, day=int(date[-2:]))
 
     dateIsKettled = checkIfDateKettled(selectedKettleDate)
@@ -70,6 +73,19 @@ def list(request, date):
         "dateIsKettled": dateIsKettled,
     }
     return render(request, 'pandaspreadsheet/list.html', context)
+
+def getThisWeeksParsedNotedProductionSchedule(scheduleToParse, dateToParseFrom):
+    parsedCalendar = getTaggedCalendar(scheduleToParse)
+    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, dateToParseFrom)
+    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
+    return applyNotesToProductionWeek(productionWeek)
+
+def readSpreadsheet():
+    try:
+        toReturn = pandas.read_excel(settings.FORM_LOCATION+'PRODUCTION FORM.xls', sheet_name = 0)
+    except:
+        raise BusinessLogicException("ERROR READING PRODUCTION SCHEDULE (Excel Spreadsheet). Please Consult Site Admin.")
+    return toReturn
 
 def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
     calendar = {
@@ -286,8 +302,7 @@ def getThisWeeksScheduleDays(weekSchedule):
 
 def getThisWeeksProductionSchedule(fullProductionSchedule, todaysDate):
     thisWeek = {}
-    if todaysDate.startswith('0'):
-        todaysDate = todaysDate[1:]
+    todaysDate = str( int(todaysDate) ) #If todaysDate starts with 0, convert to int, then convert back to string
     for weekIndex, week in enumerate(fullProductionSchedule):
         for dayIndex, day in enumerate(fullProductionSchedule[week]):
             dayDate = fullProductionSchedule[week][day]['date'][-2:].strip()

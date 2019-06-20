@@ -4,7 +4,7 @@
 {% block extraStyle%}
 <link rel="stylesheet" href="{% static 'kettles/list/list_day.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
 {% block content %}
-<div id="wrapper">
+<div id="wrapper"><span class="date">{{production_day}}</span>
   <div id="slide-day">{% load custom_tags %}
 <main id="production-list">{% for kettle in production_day.kettles.all %}
   <div class="kettle-container {% if is_detail %}is-detail{% endif %}">
@@ -52,12 +52,11 @@
         dataType:'html',
         success: function(data){
           html = $.parseHTML(data)
+          console.log(html)
           $('#slide-day').html('');
           $('#slide-day').append(html[1]);
-          $('#slide-day').append(html[3]);
           $('#slide-week').html('');
-          $('#slide-week').append(html[5]);
-          styleFirstScheduleNumberToMake();
+          $('#slide-week').append(html[3]);
         },
       })
   };

@@ -8,6 +8,7 @@ link(rel="stylesheet" href="{% static 'kettles/list/list_day.css' %}" type="text
 
 | {% block content %}
 #wrapper
+  span.date {{production_day}}
   #slide-day
     include ../updates/update_list_day.html
   #slide-week
@@ -31,12 +32,11 @@ script.
         dataType:'html',
         success: function(data){
           html = $.parseHTML(data)
+          console.log(html)
           $('#slide-day').html('');
           $('#slide-day').append(html[1]);
-          $('#slide-day').append(html[3]);
           $('#slide-week').html('');
-          $('#slide-week').append(html[5]);
-          styleFirstScheduleNumberToMake();
+          $('#slide-week').append(html[3]);
         },
       })
   };
