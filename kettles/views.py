@@ -21,7 +21,6 @@ def assignment_days(request):
     assignment_days = ProductionDay.objects.all()
     nextMonday = getNextMonday()
 
-    #convert to return the past 7 days. To get older days you gotta click and "archive" link
     context = {
         'today' : date.today(),
         'tomorrow' : date.today() + timedelta(days=1),
@@ -31,6 +30,7 @@ def assignment_days(request):
     return render(request, 'kettles/assign/assignment_days.html', context)
 
 def assignment_date(request, date_to_assign):
+    productionSpreadsheet = readSpreadsheet()
     theDate = date_to_assign
     theDateDay = theDate[-2:]
     todaysProductionDay = checkAndCreateProductionDay(theDate)
@@ -47,6 +47,7 @@ def assignment_date(request, date_to_assign):
     return render(request, 'kettles/assign/assignment_date.html', context)
 
 def assign_calendar(request):
+    productionSpreadsheet = readSpreadsheet()
     parsedCalendar = getTaggedCalendar(productionSpreadsheet)
     cleanCalendar = removeEmptyCellsFromProductionSchedule(parsedCalendar)
     datesContainingProducts = getDatesWithProductCounts(cleanCalendar)
@@ -69,50 +70,43 @@ def list(request):
     return render(request, 'kettles/list/list.html', context)
 
 def list_day(request, list_date, detail):
+    productionSpreadsheet = readSpreadsheet()
     formattedDate = parser.parse(list_date).strftime('%Y-%m-%d')
     theDateDay = formattedDate[-2:]
-
-    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
-    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, theDateDay)
-    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
-    notedProductionWeek = applyNotesToProductionWeek(productionWeek)
-
+    productionWeek = getThisWeeksParsedNotedProductionSchedule(productionSpreadsheet, theDateDay)
     productionDay = ProductionDay.objects.get(date=formattedDate)
+
     if detail == 'detail_true':
         isDetail = True
     else:
         isDetail = False
+
     context = {
         'production_day' : productionDay,
         'is_detail' : isDetail,
-        'production_week' : notedProductionWeek,
+        'production_week' : productionWeek,
     }
     return render(request, 'kettles/list/list_day.html', context)
 
 def list_active(request):
+    productionSpreadsheet = readSpreadsheet()
     latestProductionDay = ProductionDay.objects.latest('date')
-
-    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
-    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, str(latestProductionDay)[-2:])
-    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
-    notedProductionWeek = applyNotesToProductionWeek(productionWeek)
+    productionWeek = getThisWeeksParsedNotedProductionSchedule(productionSpreadsheet, str(latestProductionDay)[-2:])
 
     context = {
         'production_day': ProductionDay.objects.latest('date'),
-        'production_week' : notedProductionWeek,
+        'production_week' : productionWeek,
     }
     return render(request, 'kettles/list/list_active.html', context)
 
 def list_daily(request):
+    productionSpreadsheet = readSpreadsheet()
     todaysProductionDay = checkAndCreateProductionDay(date.today())
-    parsedCalendar = getTaggedCalendar(productionSpreadsheet)
-    thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, str(todaysProductionDay)[-2:])
-    productionWeek = getThisWeeksScheduleDays(thisWeeksSchedule)
-    notedProductionWeek = applyNotesToProductionWeek(productionWeek)
+    productionWeek = getThisWeeksParsedNotedProductionSchedule(productionSpreadsheet, str(todaysProductionDay)[-2:])
 
     context = {
         'production_day': todaysProductionDay,
-        'production_week' : notedProductionWeek,
+        'production_week' : productionWeek,
     }
     return render(request, 'kettles/list/list_daily.html', context)
 
@@ -155,6 +149,7 @@ def update_list_day(request, list_date):
     return render_to_response('kettles/updates/update_list_day.html', {'production_day': pd})
 
 def update_list_active(request):
+    productionSpreadsheet = readSpreadsheet()
     activeDate=request.GET['date']
     parsedCalendar = getTaggedCalendar(productionSpreadsheet)
     thisWeeksSchedule = getThisWeeksProductionSchedule(parsedCalendar, activeDate[-2:])

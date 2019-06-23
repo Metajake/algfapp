@@ -1,9 +1,18 @@
+assignableBackgroundHover = #cce
+
 .can-assign
   background-color: #eef
   border-color : #55a
   &:hover
-    background-color: #cce
+    background-color: assignableBackgroundHover
   &.fc-past
-    background-color: #fee
+    background-color: #efe
     &:hover
-      background-color: #ecc
+      background-color: #cec
+  &.fc-today
+    background-color: #ddf !important
+    &:hover
+      background-color: assignableBackgroundHover !important
+.fc-today
+  .fc-day-number
+    font-weight: bold
