@@ -46,7 +46,7 @@ def checkAndCreateProductionDay(the_date):
     return todaysProductionDay
 
 def checkAndCreateKettles(productionDayToKettle):
-    kettle_numbers = ['K-1', 'K-2', 'K-3', 'K-4', 'K-5', 'K-6', 'TK-1', 'TK-2']
+    kettle_numbers = ['K-1', 'K-2', 'K-3', 'K-4', 'K-6', 'K-7', 'TK-1', 'TK-2']
 
     if productionDayToKettle.has_kettle() == False:
         for i in kettle_numbers:
