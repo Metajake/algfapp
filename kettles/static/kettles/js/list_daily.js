@@ -31,11 +31,8 @@ function startWebsocket(websocketServerLocation){
               },
               dataType:'html',
               success: function(data){
-                html = $.parseHTML(data)
                 $('#slide-day').html('');
-                $('#slide-day').append(html[3]);
-                $('#slide-week').html('');
-                $('#slide-week').append(html[5]);
+                $('#slide-day').html(data);
               },
             });
           }

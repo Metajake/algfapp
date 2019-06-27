@@ -20,7 +20,7 @@ function showProductionWeek(duration){
 if(window.location.hostname !== "10.0.1.164"){
   // $('#slide-day').css('display', 'none')
   // $('#slide-week').css('display', 'block')
-  showProductionWeek(10000)
+  // showProductionWeek(10000)
 }else{
   //TODO before re-implementing, determine if Kettle List Daily is loading the Production Week properly
   // showProductionWeek(300000) //five minutes

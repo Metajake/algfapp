@@ -6,6 +6,16 @@
 {% block content %}
 <div id="wrapper">
   <div id="slide-day">{% load custom_tags %}
+<aside>
+  <div class="production-day-list">
+    {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
+    {% if product.assigned != True %}
+    <div class="production-day-item">
+      <p class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}">{{ product.schedule_number }} {% if product.multiple > 0%}({{product.multiple}}){% endif %}</p>
+    </div>{% endif %}
+    {% endfor %}
+  </div>
+</aside>
 <main id="production-list">{% for kettle in production_day.kettles.all %}
   <div class="kettle-container {% if is_detail %}is-detail{% endif %}">
     <h2 class="kettle-header text-center">{{kettle}}</h2>
