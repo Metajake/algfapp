@@ -101,7 +101,7 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
             elif colIndex % 2 == 0:
                 for rowIndex in range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]):
                     cellValue = spreadsheet[ spreadsheet.columns[colIndex] ][rowIndex]
-                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'].append( {'scheduleNumber': str(replaceNaN(cellValue)) } )
+                    calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'].append({'scheduleNumber': parseScheduleNumberCell(cellValue)})
             else:
                 calendar['week '+ str(weekIndex)]['day '+str(dayCount)]['date'] = str(spreadsheet[ spreadsheet.columns[colIndex] ][weekRanges[weekIndex-1][0]-2])
                 for rowEnumerationIndex, rowIndex in enumerate( range(weekRanges[weekIndex-1][0], weekRanges[weekIndex-1][1]) ):
@@ -109,6 +109,11 @@ def parseCalendarFromSpreadsheet(spreadsheet, weekRanges):
                     calendar['week '+ str(weekIndex)]['day '+ str(dayCount)]['products'][rowEnumerationIndex]['customer'] = replaceNaN(cellValue)
                 dayCount += 1
     return calendar
+
+
+def parseScheduleNumberCell(cellValue):
+    return str(replaceNaN(cellValue))
+
 
 def checkIfDateKettled(selectedKettleDate):
     toReturn = False
