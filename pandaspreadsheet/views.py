@@ -207,18 +207,11 @@ def multiplyScheduleDay(scheduleDay):
     multiples = []
     for index, product in enumerate(toReturn['products']):
         toReturn['products'][index]['multiple'] = 0
-        scheduleNumber = product['scheduleNumber']
 
-        toSearchFor = re.compile('x|X')
-        productHasMultiple = toSearchFor.search(scheduleNumber)
-
-        if productHasMultiple:
-            multiplierPosition = productHasMultiple.start()
-            multiplyAmount = float( scheduleNumber[multiplierPosition+1:])
-            productStringSansMultiplyAmount = scheduleNumber[0:multiplierPosition].strip()
-            toReturn['products'][index]['scheduleNumber'] = productStringSansMultiplyAmount
-
-            multiples.append({'index': index, 'multiplyAmount': multiplyAmount})
+        (scheduleNumber, multiplier) = getScheduleNumberWithMultiplier(product['scheduleNumber'])
+        if multiplier > 1:
+            toReturn['products'][index]['scheduleNumber'] = scheduleNumber
+            multiples.append({'index': index, 'multiplyAmount': multiplier})
 
     for i, m in enumerate( multiples[::-1] ):
         originalMultiplyAmount = int( math.ceil(m['multiplyAmount']) )
@@ -237,6 +230,19 @@ def multiplyScheduleDay(scheduleDay):
         del toReturn['products'][m['index'] + originalMultiplyAmount]
 
     return toReturn
+
+def findIndexOfMultiplierOrFalse(scheduleNumberToSearch):
+    toSearchFor = re.compile('[xX]\s*([0-9\.]+)')
+    productHasMultiple = toSearchFor.search(scheduleNumberToSearch)
+    return productHasMultiple
+
+def getScheduleNumberWithMultiplier(scheduleNumberToCheck):
+    productHasMultiple = findIndexOfMultiplierOrFalse(scheduleNumberToCheck)
+    if productHasMultiple:
+        multiplyAmount = float( scheduleNumberToCheck[productHasMultiple.start(1):productHasMultiple.end(1)] )
+        productStringSansMultiplyAmount = scheduleNumberToCheck[0:productHasMultiple.start()].strip()
+        return (productStringSansMultiplyAmount, multiplyAmount)
+    return (scheduleNumberToCheck, 1)
 
 def applyNotesToProducts(scheduleDay):
     # print(scheduleDay)

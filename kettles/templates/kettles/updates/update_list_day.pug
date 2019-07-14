@@ -5,7 +5,7 @@ aside
     | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
     | {% if product.assigned != True %}
     .production-day-item
-      p(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}") {{ product.schedule_number }} {% if product.multiple > 0%}({{product.multiple}}){% endif %}
+      p(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}") {{ product.schedule_number }} {% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}
     | {% endif %}
     | {% endfor %}
 

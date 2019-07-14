@@ -14,5 +14,5 @@ html
       .item.align-center(class="{%for tag in product.tags %}{{tag}} {%endfor%}")
         h3 {{product.scheduleNumber|safe}} {% if product.multiple > 0 %}({{product.multiple}}){% endif %}
       .item.align-center
-        h3 {{product.customer|safe}}
+        h3 {{product.note|safe}}
       | {% endfor %}
