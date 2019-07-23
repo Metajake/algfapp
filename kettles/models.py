@@ -29,7 +29,7 @@ class Kettle(models.Model):
 class Product(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True)
     item_number = models.CharField(max_length=20)
-    schedule_number = models.CharField(max_length=20)
+    schedule_number = models.CharField(max_length=100)
     product_name = models.CharField(blank=True, max_length = 100)
     assigned = models.BooleanField(blank=True, default=False)
     gluten_free = models.BooleanField(blank=True, default = False)
