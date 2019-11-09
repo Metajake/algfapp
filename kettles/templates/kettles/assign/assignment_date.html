@@ -43,7 +43,7 @@
     <div class="kettle-container" id="{{kettle.kettle_number}}">
       <div class="kettle-container-header">
         <h5 class="text-center">{{kettle}}</h5>
-        <h6 class="kettle-add-delay" id="{{kettle.kettle_number}}-add-delay">Add Start Time</h6>
+        <h6 class="kettle-add-delay button is-success" id="{{kettle.kettle_number}}-add-delay">+ Start Time</h6>
       </div>
       <div class="kettle-container-content">
         <div class="kettle-delay text-center">Delay</div>
@@ -76,7 +76,7 @@
 <div id="dialogue-add-delay-form">
   <h5>Start Time:</h5>
   <form>
-    <input id="add-delay-time-picker"/>
+    <input id="add-delay-time-picker" required="required"/>
   </form>
 </div>{% endblock %}
 {% block extraScripts %}

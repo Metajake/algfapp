@@ -1,4 +1,4 @@
-var ws, dialogueAddDelay;
+var ws, dialogAddStartTime, kettleToAddStartTime;
 
 function startWebsocket(websocketServerLocation){
     ws = new WebSocket(websocketServerLocation);
@@ -30,38 +30,51 @@ $( "#days-product-list, [id^=sortable_]" ).sortable({
   stop: handleFromListSortStop,
 }).disableSelection();
 
-dialogueAddDelay = $('#dialogue-add-delay-form').dialog({
+dialogAddStartTime = $('#dialogue-add-delay-form').dialog({
   autoOpen: false,
   height: 150,
   width: 400,
   modal: true,
+  dialogClass: "start-time-dialog",
   buttons: {
-    "Create Delay": createDelay,
+    "Add Start Time": createStartTime,
     Cancel: function() {
-      dialogueAddDelay.dialog( "close" );
+      dialogAddStartTime.dialog( "close" );
     }
   },
   close: function() {
     console.log("closing");
-    addDelayForm[ 0 ].reset();
-    allFields.removeClass( "ui-state-error" );
+    addStartTimeForm[ 0 ].reset();
   },
 });
-function createDelay(){
+
+function createStartTime(){
+  console.log('create start time');
+  console.log(kettleToAddStartTime);
+  if(addDelayTimePicker.val()){
+    console.log(addDelayTimePicker.val());
+    ws.send(JSON.stringify({
+      'message': 'addKettleStartTime',
+      'kettle' : kettleToAddStartTime,
+      'startTime' : addDelayTimePicker.val()
+    }));
+    dialogAddStartTime.dialog('close');
+  }else{
+    console.log("Error: Please Select Time");
+    addDelayTimePicker.trigger("select");
+  }
   return null;
 }
 
-addDelayTimePicker = $('#add-delay-time-picker');
+addDelayTimePicker = $('#add-delay-time-picker')
 addDelayTimePicker.timepicker({
   interval:30,
 });
 
-allFields = $( [] ).add( addDelayTimePicker );
-
-addDelayForm = dialogueAddDelay.find( "form" );
-addDelayForm.on( "submit", function( event ) {
+addStartTimeForm = dialogAddStartTime.find( "form" );
+addStartTimeForm.on( "submit", function( event ) {
   event.preventDefault();
-  // addUser();
+  createStartTime();
 });
 
 function handleToListSortReceive(event, ui){
@@ -128,10 +141,10 @@ $('div [id$="-add-delay"]').click(function(event){
   thisId = $(this).attr('id');
   thisKettleNumber = thisId.slice( 0, thisId.indexOf('-add-delay') );
   thisKettleContent = $(this).parent().next()
-  thisDelayElement = thisKettleContent.find('.kettle-delay')
+  thisKettleDelayElement = thisKettleContent.find('.kettle-delay')
 
-  // console.log( dialogueAddDelay )
-  dialogueAddDelay.dialog("open");
+  kettleToAddStartTime = thisKettleNumber;
+  dialogAddStartTime.dialog("open");
 
-  thisDelayElement.addClass('is-visible')
+  thisKettleDelayElement.addClass('is-visible')
 })

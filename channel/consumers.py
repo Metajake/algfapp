@@ -72,6 +72,10 @@ class KettleConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        elif message == 'addKettleStartTime':
+            print('------ Adding Kettle Start Time -------')
+            self.kettleReceive = await database_sync_to_async(self.kettleAddStartTime)()
+
     def receiveAndSortProductList(self):
         # print('-------Receive and Sorting Product List-------')
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
@@ -123,6 +127,11 @@ class KettleConsumer(AsyncWebsocketConsumer):
         )
         p.is_complete = self.text_data_json['isComplete']
         p.save(update_fields=['is_complete'])
+
+    def kettleAddStartTime(self):
+        print( self.text_data_json['kettle'] )
+        print( self.text_data_json['startTime'] )
+
     # Receive message from room group
     async def update_products(self, event):
         print('---------Updating Products Message---------')
@@ -138,7 +147,7 @@ class KettleConsumer(AsyncWebsocketConsumer):
     async def update_list_day(self, event):
         print('-----Update List Day-------')
         message = event['message']
-        
+
         await self.send(text_data=json.dumps({
             'message': message,
             'date': date.today().strftime('%Y-%m-%d'),

@@ -28,6 +28,8 @@
     .kettle-container-header
       flex:1
       display:flex
+      justify-content:space-between
+      padding:0 10px
     .kettle-container-content
       flex:20
       outline: 3px dashed #88e
@@ -112,7 +114,9 @@ div[id^="sortable_"]
   text-align:center
   background-color:#ccc
 
-.ui-dialog
+.start-time-dialog
+  border:2px solid #666
+  border-radius:4px
   .ui-dialog-titlebar
     padding:6px
     background-color:#eee
@@ -124,3 +128,8 @@ div[id^="sortable_"]
     text-align:center
   .ui-dialog-titlebar-close
     float:right
+  button
+    font-size:1rem
+  form
+    input
+      font-size:1rem
