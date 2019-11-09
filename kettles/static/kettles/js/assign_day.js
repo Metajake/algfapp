@@ -59,6 +59,7 @@ function createStartTime(){
       'startTime' : addDelayTimePicker.val()
     }));
     dialogAddStartTime.dialog('close');
+    $('#'+kettleToAddStartTime).find('.kettle-delay').addClass('is-visible')
   }else{
     console.log("Error: Please Select Time");
     addDelayTimePicker.trigger("select");
@@ -140,11 +141,7 @@ $('.product-complete').click(function(event){
 $('div [id$="-add-delay"]').click(function(event){
   thisId = $(this).attr('id');
   thisKettleNumber = thisId.slice( 0, thisId.indexOf('-add-delay') );
-  thisKettleContent = $(this).parent().next()
-  thisKettleDelayElement = thisKettleContent.find('.kettle-delay')
 
   kettleToAddStartTime = thisKettleNumber;
   dialogAddStartTime.dialog("open");
-
-  thisKettleDelayElement.addClass('is-visible')
 })

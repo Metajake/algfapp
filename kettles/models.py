@@ -13,12 +13,13 @@ class ProductionDay(models.Model):
         return False if self.days_products.count() == 0 else True
 
     def __str__(self):
-        return str(self.date)#.strftime('%m/%d/%Y')
+        return str(self.date)
 
 class Kettle(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True)
     kettle_number = models.CharField(max_length=20)
     production_date = models.ForeignKey(ProductionDay, related_name="kettles", on_delete=models.CASCADE, null=True, blank=True)
+    start_time = models.CharField(max_length = 100, blank=True, default='', null=True)
 
     def __str__(self):
         return self.kettle_number
@@ -44,6 +45,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.schedule_number + ' ' + self.product_name
-
-    # class Meta:
-    #     ordering = ['creation_date', 'next_property']
