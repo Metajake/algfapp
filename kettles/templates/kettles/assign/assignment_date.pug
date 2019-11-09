@@ -4,6 +4,7 @@
 | {% load custom_tags %}
 
 | {% block extraStyle%}
+link(rel="stylesheet" href="{% static 'css/jquery_timepicker.css' %}" type="text/css" media="screen,projection")
 link(rel="stylesheet" href="{% static 'kettles/assign/assign_day.css' %}" type="text/css" media="screen, projection")
 link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="text/css" media="screen,projection")
 | {% endblock %}
@@ -47,8 +48,10 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
     | {% for kettle in production_day.kettles.all %}
     div(id='{{kettle.kettle_number}}').kettle-container
       .kettle-container-header
-        h6.text-center {{kettle}}
+        h5.text-center {{kettle}}
+        h6(id="{{kettle.kettle_number}}-add-delay").kettle-add-delay Add Start Time
       .kettle-container-content
+        div.kettle-delay.text-center Delay
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
           .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
@@ -75,9 +78,15 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
                 span.checkmark
           | {% endfor %}
     | {% endfor %}
+
+#dialogue-add-delay-form
+  h5 Start Time:
+  form
+    input#add-delay-time-picker
       
 | {% endblock %}
 
 | {% block extraScripts %}
+script(type="text/javascript" src="{% static 'js/jquery_timepicker.js'%}")
 script(type="text/javascript" src="{% static 'kettles/js/assign_day.js'%}")
 | {% endblock %}

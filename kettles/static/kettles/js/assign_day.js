@@ -1,4 +1,5 @@
-var ws;
+var ws, dialogueAddDelay;
+
 function startWebsocket(websocketServerLocation){
     ws = new WebSocket(websocketServerLocation);
     ws.onclose = function(){
@@ -29,6 +30,39 @@ $( "#days-product-list, [id^=sortable_]" ).sortable({
   stop: handleFromListSortStop,
 }).disableSelection();
 
+dialogueAddDelay = $('#dialogue-add-delay-form').dialog({
+  autoOpen: false,
+  height: 150,
+  width: 400,
+  modal: true,
+  buttons: {
+    "Create Delay": createDelay,
+    Cancel: function() {
+      dialogueAddDelay.dialog( "close" );
+    }
+  },
+  close: function() {
+    console.log("closing");
+    addDelayForm[ 0 ].reset();
+    allFields.removeClass( "ui-state-error" );
+  },
+});
+function createDelay(){
+  return null;
+}
+
+addDelayTimePicker = $('#add-delay-time-picker');
+addDelayTimePicker.timepicker({
+  interval:30,
+});
+
+allFields = $( [] ).add( addDelayTimePicker );
+
+addDelayForm = dialogueAddDelay.find( "form" );
+addDelayForm.on( "submit", function( event ) {
+  event.preventDefault();
+  // addUser();
+});
 
 function handleToListSortReceive(event, ui){
   console.log("Handling list sort receive.")
@@ -88,4 +122,16 @@ $('.product-complete').click(function(event){
     'isComplete' : isComplete,
     'date' : $('#todays-production-day').text(),
   }));
+})
+
+$('div [id$="-add-delay"]').click(function(event){
+  thisId = $(this).attr('id');
+  thisKettleNumber = thisId.slice( 0, thisId.indexOf('-add-delay') );
+  thisKettleContent = $(this).parent().next()
+  thisDelayElement = thisKettleContent.find('.kettle-delay')
+
+  // console.log( dialogueAddDelay )
+  dialogueAddDelay.dialog("open");
+
+  thisDelayElement.addClass('is-visible')
 })

@@ -27,6 +27,7 @@
     flex-direction: column
     .kettle-container-header
       flex:1
+      display:flex
     .kettle-container-content
       flex:20
       outline: 3px dashed #88e
@@ -95,3 +96,31 @@ div[id^="sortable_"]
 .product-sort-placeholder
   height:25px
   background-color: #cceebb
+
+.kettle-add-delay
+  color:green
+  cursor:pointer
+
+.kettle-delay
+  padding:4px
+  background-color:#66cc66
+  display:none
+  &.is-visible
+    display:block
+
+#dialogue-add-delay-form
+  text-align:center
+  background-color:#ccc
+
+.ui-dialog
+  .ui-dialog-titlebar
+    padding:6px
+    background-color:#eee
+  .ui-dialog-content
+    padding:6px
+  .ui-dialog-buttonpane
+    padding:6px
+    background-color:#eee
+    text-align:center
+  .ui-dialog-titlebar-close
+    float:right
