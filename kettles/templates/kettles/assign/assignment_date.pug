@@ -51,7 +51,10 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
         h5.text-center {{kettle}}
         h6(id="{{kettle.kettle_number}}-add-delay").kettle-add-delay.button.is-success + Start Time
       .kettle-container-content
-        div.kettle-delay.text-center Delay
+        |{% if kettle.start_time %}
+        div.kettle-delay.text-center
+          p Start: {{ kettle.start_time }}
+        |{% endif %}
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
           .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")

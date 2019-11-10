@@ -43,25 +43,22 @@ dialogAddStartTime = $('#dialogue-add-delay-form').dialog({
     }
   },
   close: function() {
-    console.log("closing");
     addStartTimeForm[ 0 ].reset();
   },
 });
 
 function createStartTime(){
-  console.log('create start time');
-  console.log(kettleToAddStartTime);
-  if(addDelayTimePicker.val()){
-    console.log(addDelayTimePicker.val());
+  startTime = addDelayTimePicker.val()
+  if(startTime){
     ws.send(JSON.stringify({
       'message': 'addKettleStartTime',
+      'date' : $('#todays-production-day').text(),
       'kettle' : kettleToAddStartTime,
-      'startTime' : addDelayTimePicker.val()
+      'startTime' : startTime
     }));
     dialogAddStartTime.dialog('close');
-    $('#'+kettleToAddStartTime).find('.kettle-delay').addClass('is-visible')
+    $('#'+kettleToAddStartTime).find('.kettle-container-content').prepend('<div class="kettle-delay text-center"><p>Start: ' + startTime + '</p></div>')
   }else{
-    console.log("Error: Please Select Time");
     addDelayTimePicker.trigger("select");
   }
   return null;

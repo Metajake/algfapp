@@ -45,8 +45,10 @@
         <h5 class="text-center">{{kettle}}</h5>
         <h6 class="kettle-add-delay button is-success" id="{{kettle.kettle_number}}-add-delay">+ Start Time</h6>
       </div>
-      <div class="kettle-container-content">
-        <div class="kettle-delay text-center">Delay</div>
+      <div class="kettle-container-content">{% if kettle.start_time %}
+        <div class="kettle-delay text-center">
+          <p>Start: {{ kettle.start_time }}</p>
+        </div>{% endif %}
         <div class="sortable-products-list" id="sortable_{{kettle}}">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}
           <div class="product-item {% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}" id="{{product.schedule_number}}">
             <div class="product-sort-handle {% if product.is_complete %}is-complete{% endif %}">

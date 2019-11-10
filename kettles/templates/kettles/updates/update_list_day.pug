@@ -14,6 +14,11 @@ main#production-list
   .kettle-container(class="{% if is_detail %}is-detail{% endif %}")
     h2.kettle-header.text-center {{kettle}}
     .product-list
+      |{% if kettle.start_time %}
+      p {{ kettle.start_time }}
+      |{% else %}
+      p No Start Time Yet
+      |{% endif %}
       | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
       .product-item.text-center(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}")
         p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
