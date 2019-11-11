@@ -54,7 +54,7 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
         |{% if kettle.start_time %}
         div.kettle-delay
           p.is-inline.kettle-start-time.text-center Start: {{ kettle.start_time }}
-          button.button.remove-kettle-delay X
+          button.button.remove-kettle-start-time X
         |{% endif %}
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
@@ -83,7 +83,7 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
           | {% endfor %}
     | {% endfor %}
 
-#dialogue-add-delay-form
+#dialogue-add-start-time-form
   h5 Start Time:
   form
     input#add-delay-time-picker(required)
