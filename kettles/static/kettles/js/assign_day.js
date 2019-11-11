@@ -66,6 +66,7 @@ function createStartTime(){
 
 addDelayTimePicker = $('#add-delay-time-picker')
 addDelayTimePicker.timepicker({
+  timeFormat: 'h:mm p',
   interval:30,
 });
 
