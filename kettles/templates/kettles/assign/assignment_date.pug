@@ -49,12 +49,12 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
     div(id='{{kettle.kettle_number}}').kettle-container
       .kettle-container-header
         h5.text-center {{kettle}}
-        h6(id="{{kettle.kettle_number}}-add-delay").kettle-add-delay.button.is-success + Start Time
+        h6(id="{{kettle.kettle_number}}-add-delay").kettle-add-delay.button.is-success.has-drop-shadow + Start Time
       .kettle-container-content
         |{% if kettle.start_time %}
         div.kettle-delay
           p.is-inline.kettle-start-time.text-center Start: {{ kettle.start_time }}
-          button.button.remove-kettle-start-time X
+          button.button.remove-kettle-start-time.has-drop-shadow X
         |{% endif %}
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
