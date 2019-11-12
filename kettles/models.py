@@ -15,6 +15,9 @@ class ProductionDay(models.Model):
     def __str__(self):
         return str(self.date)#.strftime('%m/%d/%Y')
 
+    class Meta:
+        ordering = ['-date']
+
 class Kettle(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True)
     kettle_number = models.CharField(max_length=20)
