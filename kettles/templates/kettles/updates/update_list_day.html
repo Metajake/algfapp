@@ -14,7 +14,7 @@
     <h2 class="kettle-header text-center">{{kettle}}</h2>
     <div class="product-list">{% if kettle.start_time %}
       <div class="kettle-start-time">
-        <h4>Start Kettle: {{ kettle.start_time }}</h4>
+        <h4>Start Cooking: {{ kettle.start_time }}</h4>
       </div>{% endif %}
       {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
       <div class="product-item text-center {% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}" id="{{product.schedule_number}}">

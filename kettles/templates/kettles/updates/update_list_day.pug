@@ -16,7 +16,7 @@ main#production-list
     .product-list
       |{% if kettle.start_time %}
       .kettle-start-time
-        h4 Start Kettle: {{ kettle.start_time }}
+        h4 Start Cooking: {{ kettle.start_time }}
       |{% endif %}
       | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
       .product-item.text-center(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}")
