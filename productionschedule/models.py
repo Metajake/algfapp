@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 class Product(models.Model):
     product_code = models.CharField(max_length=50, blank=True)
@@ -14,3 +15,6 @@ class CalendarDay(models.Model):
     item_order = models.TextField(blank=True)
     def __str__(self):
         return str(self.production_date)
+
+class CalendarWeek(models.Model):
+    week = ArrayField(ArrayField(models.CharField(max_length=100)))
