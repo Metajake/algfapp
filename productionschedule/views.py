@@ -7,6 +7,10 @@ from datetime import date, timedelta, datetime
 from .models import Product, CalendarDay
 from .forms import ProductForm
 
+def excel(request):
+    context = {}
+    return render(request, 'productionschedule/excel.html', context)
+
 def index(request):
     return render(request, 'productionschedule/index.html')
 

@@ -11,4 +11,5 @@ urlpatterns = [
     path('updateScheduleDay/<str:production_date>/<str:order>', views.updateScheduleDay, name='update-schedule-day'),
     path('updateNote/<str:id>/<str:note>', views.updateNote, name='update-note'),
     path('today/', views.today, name="today"),
+    path('excel/', views.excel, name="excel"),
 ]

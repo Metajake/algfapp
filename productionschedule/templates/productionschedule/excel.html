@@ -1,0 +1,11 @@
+
+{% extends 'kettles/base.html' %}
+{% load static %}
+{% block extraStyle %}
+<link rel="stylesheet" href="{% static 'productionschedule/handsontable.css' %}" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="{% static 'productionschedule/excel.css' %}" type="text/css" media="screen, projection"/>{% endblock %}
+{% block content %}
+<div id="example"></div>{% endblock %}
+{% block extraScripts %}
+<script type="text/javascript" src="{% static 'js/handsontable.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/excel.js' %}"></script>{% endblock %}
