@@ -36,23 +36,28 @@ var hotOptions = {
 function afterCellChange(changes, source){
   var changedRow = changes[0][0],
   changedCol = changes[0][1],
+  thisHot = this,
   cellValue;
 
   if(changedCol === 0){
-    cellValue = this.getDataAtCell(changedRow, changedCol);
+    cellValue = thisHot.getDataAtCell(changedRow, changedCol);
+    $.ajax({
+      url: 'ajax/check_product_name/',
+      type: "POST",
+      data:{
+        "data": cellValue,
+      },
+      success: function(data){
+        console.log("Success Ajax Call");
+        if(data === ''){
+          console.log("Product Does Not Exist in Database yet.");
+        }else{
+          console.log(data)
+          thisHot.setDataAtCell(changedRow, 1, data)
+        }
+      }
+    });
   }
-
-  $.ajax({
-    url: 'ajax/check_product_name/',
-    type: "POST",
-    data:{
-      "data": cellValue,
-    },
-    success: function(data){
-      console.log("Success Ajax Call");
-      console.log(data);
-    }
-  });
 }
 
 $.ajax({

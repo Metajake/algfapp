@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
+import re
 from datetime import date, timedelta, datetime
 
 from .models import Product, CalendarDay, CalendarWeek, CalendarDay2
@@ -209,5 +210,21 @@ def ajaxGetCalendars2(request):
 
 @csrf_exempt
 def ajaxCheckProductName(request):
-    print(request.POST['data'])
-    return HttpResponse(request.POST['data'])
+    itemNumberRegex = re.findall('\d+', request.POST['data'] )
+    print(itemNumberRegex)
+
+    if itemNumberRegex:
+        itemNumber = itemNumberRegex[0]
+        try:
+            bp = BaseProduct.objects.get(item_number = itemNumber)
+        except BaseProduct.DoesNotExist:
+            print("This Item Does Not Exists in the DB")
+            toReturn = "This Item Does Not Exists in the DB";
+        else:
+            print(" This Item Exists in the DB")
+            toReturn = bp.product_name
+    else:
+        toReturn = ""
+
+
+    return HttpResponse(toReturn)
