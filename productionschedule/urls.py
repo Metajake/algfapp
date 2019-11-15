@@ -12,10 +12,8 @@ urlpatterns = [
     path('updateNote/<str:id>/<str:note>', views.updateNote, name='update-note'),
     path('today/', views.today, name="today"),
     path('excel/', views.excel, name="excel"),
-    path('excel2/', views.excel2, name="excel2"),
     #ajax views
     path('excel/ajax/get_calendars/', views.ajaxGetCalendars, name="ajax-get-calendars"),
-    path('excel2/ajax/get_calendars/', views.ajaxGetCalendars2, name="ajax-get-calendars2"),
-    path('excel2/ajax/check_product_name/', views.ajaxCheckProductName, name="ajax-check-product-name"),
-    path('excel2/ajax/update_day_schedule/', views.ajaxUpdateDaySchedule, name="ajax-update-day-schedule"),
+    path('excel/ajax/check_product_name/', views.ajaxCheckProductName, name="ajax-check-product-name"),
+    path('excel/ajax/update_day_schedule/', views.ajaxUpdateDaySchedule, name="ajax-update-day-schedule"),
 ]

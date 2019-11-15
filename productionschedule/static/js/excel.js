@@ -1,5 +1,3 @@
-console.log('yo');
-
 var data = [
   [10, 11, 12, 13]
 ];
@@ -11,13 +9,9 @@ var hotOptions = {
   dropdownMenu: true,
   contextMenu: true,
   allowInsertRow: true,
-  // width: '100%',
-  // height: '100%',
   colWidths: 200,
   manualColumnResize: true,
-  manualRowResize: true,
-  afterChange: afterCellChange,
-  afterPaste: afterCellChange,
+  beforeChangeRender: afterCellChange,
   contextMenu: {
     items:{
       'Add Note': {
@@ -33,69 +27,93 @@ var hotOptions = {
       'redo': {},
     },
   },
-  minRows: 2,
+  minRows: 5,
+  colHeaders: false,
+  rowHeaders: false,
   licenseKey: 'non-commercial-and-evaluation'
 }
 
-// var hot = new Handsontable(container, {
-//   data: data,
-//   colHeaders: true,
-//   rowHeaders: true,
-//   dropdownMenu: true,
-//   contextMenu: true,
-//   allowInsertRow: true,
-//   // width: '100%',
-//   // height: '100%',
-//   colWidths: 200,
-//   manualColumnResize: true,
-//   manualRowResize: true,
-//   afterChange: afterCellChange,
-//   afterPaste: afterCellChange,
-//   contextMenu: {
-//     items:{
-//       'Add Note': {
-//         name: "Add Note",
-//       },
-//       "col_left": {},
-//       "col_right": {},
-//       "row_below": {},
-//       "row_above": {},
-//       'copy':{},
-//       'cut': {},
-//       'undo': {},
-//       'redo': {},
-//     },
-//   },
-//   licenseKey: 'non-commercial-and-evaluation'
-// });
+function afterCellChange(changes, source){
+  var changedRow = changes[0][0],
+  changedCol = changes[0][1],
+  thisHot = this,
+  cellValue;
 
-function afterCellChange(){
-  console.log("cell change");
+  // IF CHANGE IS MADE TO FIRST COLUMN
+  if(changedCol === 0){
+    cellValue = thisHot.getDataAtCell(changedRow, changedCol);
+    $.ajax({
+      url: 'ajax/check_product_name/',
+      type: "POST",
+      data:{
+        "data": cellValue,
+      },
+      success: function(data){
+        console.log("Success Ajax Call");
+        if(data === ''){
+          // console.log("Product Does Not Exist in Database yet.");
+        }else{
+          thisHot.setDataAtCell(changedRow, 1, data)
+        }
+      }
+    });
+  }
+
+  var dayData = {
+    data: thisHot.getData(),
+  };
+  console.log()
+  $.ajax({
+    url: 'ajax/update_day_schedule/',
+    type: "POST",
+    data:{
+      "date": thisHot.getInstance().rootElement.getAttribute('id').slice(5),
+      "data": JSON.stringify(dayData),
+    },
+    success: function(data){
+      console.log("Success Ajax Call: Update Schedule Day");
+    }
+  });
 }
 
 $.ajax({
   url: 'ajax/get_calendars/',
   dataType:'html',
   success: function(data){
-    // $('#calendar-data').html('');
-    // $('#calendar-data').html(data);
     createCalendars(JSON.parse(data))
   },
 });
 
 function createCalendars(calendarData){
-  for (i=0;i<calendarData.length;i++){
-    createCalendar(calendarData[i]);
+  for (var key in calendarData){
+    if (calendarData.hasOwnProperty(key)){
+      createWeeklyCalendar(key, calendarData[key])
+    }
   }
 }
 
-function createCalendar(calendarData){
-  var thisContainer = document.createElement('div');
-  thisContainer.setAttribute('id', "week-"+calendarData[0]);
-  document.getElementById("calendars").appendChild(thisContainer)
+function createWeeklyCalendar(calendarWeekDate, calendarWeekData){
+  var thisWeekContainer = document.createElement('div');
+  thisWeekContainer.setAttribute('id', "week-"+calendarWeekDate);
+  thisWeekContainer.classList.add('is-flex')
+  document.getElementById("calendars").appendChild(thisWeekContainer)
 
-  var thisHotOptions = hotOptions
-  thisHotOptions['colHeaders'] = calendarData[0];
-  // thisHotOptions['data'] = calendarData;
-  var thisHot = new Handsontable(thisContainer, thisHotOptions)
+  for (var i = 0;i < calendarWeekData.length; i++){
+    var thisDaysContainer = document.createElement('div');
+    thisDaysContainer.setAttribute('id', "date-"+calendarWeekData[i].date);
+    thisDaysContainer.classList.add('day-container');
+    var thisDaysContainerHeader = document.createElement('div')
+    thisWeekContainer.appendChild(thisDaysContainer)
+
+    var thisHotOptions = hotOptions
+    console.log(calendarWeekData[i].data)
+    thisHotOptions['data'] = calendarWeekData[i].data;
+    var thisHot = new Handsontable(thisDaysContainer, thisHotOptions)
+
+    var thisHeadline = document.createElement('h6');
+    thisHeadline.classList.add('text-center')
+    thisHeadline.innerHTML = calendarWeekData[i].date
+    thisDaysContainerHeader.appendChild(thisHeadline)
+    $(thisDaysContainer).prepend(thisDaysContainerHeader)
+  }
 }
