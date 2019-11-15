@@ -1,5 +1,3 @@
-console.log('yo');
-
 var data = [
   [10, 11, 12, 13]
 ];
@@ -33,7 +31,9 @@ var hotOptions = {
       'redo': {},
     },
   },
-  minRows: 2,
+  minRows: 5,
+  colHeaders: false,
+  rowHeaders: false,
   licenseKey: 'non-commercial-and-evaluation'
 }
 
@@ -70,32 +70,54 @@ var hotOptions = {
 // });
 
 function afterCellChange(){
-  console.log("cell change");
+  var cellValue = this.getValue();
+  console.log(cellValue);
+  // console.log(this.getData());
+  url: 'ajax/check_product_name/',
+  data:{
+    "date": cellValue,
+  },
+  success: function(data){
+    console.log("Success Ajax Call");
+  }
 }
 
 $.ajax({
   url: 'ajax/get_calendars/',
   dataType:'html',
   success: function(data){
-    // $('#calendar-data').html('');
-    // $('#calendar-data').html(data);
     createCalendars(JSON.parse(data))
   },
 });
 
 function createCalendars(calendarData){
-  for (i=0;i<calendarData.length;i++){
-    createCalendar(calendarData[i]);
+  for (var key in calendarData){
+    if (calendarData.hasOwnProperty(key)){
+      createWeeklyCalendar(key, calendarData[key])
+    }
   }
 }
 
-function createCalendar(calendarData){
-  var thisContainer = document.createElement('div');
-  thisContainer.setAttribute('id', "week-"+calendarData[0]);
-  document.getElementById("calendars").appendChild(thisContainer)
+function createWeeklyCalendar(calendarWeekDate, calendarWeekData){
+  var thisWeekContainer = document.createElement('div');
+  thisWeekContainer.setAttribute('id', "week-"+calendarWeekDate);
+  thisWeekContainer.classList.add('is-flex')
+  document.getElementById("calendars").appendChild(thisWeekContainer)
 
-  var thisHotOptions = hotOptions
-  thisHotOptions['colHeaders'] = calendarData[0];
-  // thisHotOptions['data'] = calendarData;
-  var thisHot = new Handsontable(thisContainer, thisHotOptions)
+  for (var i = 0;i < calendarWeekData.length; i++){
+    var thisDaysContainer = document.createElement('div');
+    thisDaysContainer.setAttribute('id', "date-"+calendarWeekData[i].date);
+    var thisDaysContainerHeader = document.createElement('div')
+    thisWeekContainer.appendChild(thisDaysContainer)
+
+    var thisHotOptions = hotOptions
+    thisHotOptions['data'] = calendarWeekData[i].data;
+    var thisHot = new Handsontable(thisDaysContainer, thisHotOptions)
+
+    var thisHeadline = document.createElement('h6');
+    thisHeadline.classList.add('text-center')
+    thisHeadline.innerHTML = calendarWeekData[i].date
+    thisDaysContainerHeader.appendChild(thisHeadline)
+    $(thisDaysContainer).prepend(thisDaysContainerHeader)
+  }
 }

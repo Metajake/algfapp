@@ -17,4 +17,14 @@ class CalendarDay(models.Model):
         return str(self.production_date)
 
 class CalendarWeek(models.Model):
-    week = ArrayField(ArrayField(models.CharField(max_length=100)))
+    date = models.DateField(null=True)
+    def __str__(self):
+        return str(self.date)
+
+class CalendarDay2(models.Model):
+    date = models.DateField(null=True)
+    data = ArrayField(ArrayField(models.CharField(max_length=100)), blank=True, null=True)
+    calendarWeek = models.ForeignKey(CalendarWeek, related_name="weekdays", on_delete=True, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.date)
