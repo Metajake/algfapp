@@ -16,5 +16,5 @@ urlpatterns = [
     #ajax views
     path('excel/ajax/get_calendars/', views.ajaxGetCalendars, name="ajax-get-calendars"),
     path('excel2/ajax/get_calendars/', views.ajaxGetCalendars2, name="ajax-get-calendars2"),
-    path('excel2/ajax/check_product_name/', views.ajaxGetCalendars2, name="ajax-get-calendars2"),
+    path('excel2/ajax/check_product_name/', views.ajaxCheckProductName, name="ajax-check-product-name"),
 ]

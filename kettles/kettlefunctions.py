@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+
 from pandaspreadsheet.views import *
 
 from products.models import Product as BaseProduct

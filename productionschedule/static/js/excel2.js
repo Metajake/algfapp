@@ -9,13 +9,9 @@ var hotOptions = {
   dropdownMenu: true,
   contextMenu: true,
   allowInsertRow: true,
-  // width: '100%',
-  // height: '100%',
   colWidths: 200,
   manualColumnResize: true,
-  manualRowResize: true,
-  afterChange: afterCellChange,
-  afterPaste: afterCellChange,
+  beforeChangeRender: afterCellChange,
   contextMenu: {
     items:{
       'Add Note': {
@@ -37,49 +33,26 @@ var hotOptions = {
   licenseKey: 'non-commercial-and-evaluation'
 }
 
-// var hot = new Handsontable(container, {
-//   data: data,
-//   colHeaders: true,
-//   rowHeaders: true,
-//   dropdownMenu: true,
-//   contextMenu: true,
-//   allowInsertRow: true,
-//   // width: '100%',
-//   // height: '100%',
-//   colWidths: 200,
-//   manualColumnResize: true,
-//   manualRowResize: true,
-//   afterChange: afterCellChange,
-//   afterPaste: afterCellChange,
-//   contextMenu: {
-//     items:{
-//       'Add Note': {
-//         name: "Add Note",
-//       },
-//       "col_left": {},
-//       "col_right": {},
-//       "row_below": {},
-//       "row_above": {},
-//       'copy':{},
-//       'cut': {},
-//       'undo': {},
-//       'redo': {},
-//     },
-//   },
-//   licenseKey: 'non-commercial-and-evaluation'
-// });
+function afterCellChange(changes, source){
+  var changedRow = changes[0][0],
+  changedCol = changes[0][1],
+  cellValue;
 
-function afterCellChange(){
-  var cellValue = this.getValue();
-  console.log(cellValue);
-  // console.log(this.getData());
-  url: 'ajax/check_product_name/',
-  data:{
-    "date": cellValue,
-  },
-  success: function(data){
-    console.log("Success Ajax Call");
+  if(changedCol === 0){
+    cellValue = this.getDataAtCell(changedRow, changedCol);
   }
+
+  $.ajax({
+    url: 'ajax/check_product_name/',
+    type: "POST",
+    data:{
+      "data": cellValue,
+    },
+    success: function(data){
+      console.log("Success Ajax Call");
+      console.log(data);
+    }
+  });
 }
 
 $.ajax({
@@ -107,6 +80,7 @@ function createWeeklyCalendar(calendarWeekDate, calendarWeekData){
   for (var i = 0;i < calendarWeekData.length; i++){
     var thisDaysContainer = document.createElement('div');
     thisDaysContainer.setAttribute('id', "date-"+calendarWeekData[i].date);
+    thisDaysContainer.classList.add('day-container');
     var thisDaysContainerHeader = document.createElement('div')
     thisWeekContainer.appendChild(thisDaysContainer)
 

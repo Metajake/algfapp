@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from datetime import date, timedelta, datetime
 
 from .models import Product, CalendarDay, CalendarWeek, CalendarDay2
 from .forms import ProductForm
+from products.models import Product as BaseProduct
 
 def index(request):
     return render(request, 'productionschedule/index.html')
@@ -204,3 +206,8 @@ def ajaxGetCalendars2(request):
             })
     print(toReturn)
     return JsonResponse(toReturn)
+
+@csrf_exempt
+def ajaxCheckProductName(request):
+    print(request.POST['data'])
+    return HttpResponse(request.POST['data'])
