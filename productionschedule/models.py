@@ -28,3 +28,6 @@ class CalendarDay2(models.Model):
 
     def __str__(self):
         return str(self.date)
+
+    class Meta:
+        ordering = ['date']

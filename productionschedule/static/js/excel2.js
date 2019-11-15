@@ -39,6 +39,7 @@ function afterCellChange(changes, source){
   thisHot = this,
   cellValue;
 
+  // IF CHANGE IS MADE TO FIRST COLUMN
   if(changedCol === 0){
     cellValue = thisHot.getDataAtCell(changedRow, changedCol);
     $.ajax({
@@ -50,14 +51,29 @@ function afterCellChange(changes, source){
       success: function(data){
         console.log("Success Ajax Call");
         if(data === ''){
-          console.log("Product Does Not Exist in Database yet.");
+          // console.log("Product Does Not Exist in Database yet.");
         }else{
-          console.log(data)
           thisHot.setDataAtCell(changedRow, 1, data)
         }
       }
     });
   }
+
+  var dayData = {
+    data: thisHot.getData(),
+  };
+  console.log()
+  $.ajax({
+    url: 'ajax/update_day_schedule/',
+    type: "POST",
+    data:{
+      "date": thisHot.getInstance().rootElement.getAttribute('id').slice(5),
+      "data": JSON.stringify(dayData),
+    },
+    success: function(data){
+      console.log("Success Ajax Call: Update Schedule Day");
+    }
+  });
 }
 
 $.ajax({
@@ -90,6 +106,7 @@ function createWeeklyCalendar(calendarWeekDate, calendarWeekData){
     thisWeekContainer.appendChild(thisDaysContainer)
 
     var thisHotOptions = hotOptions
+    console.log(calendarWeekData[i].data)
     thisHotOptions['data'] = calendarWeekData[i].data;
     var thisHot = new Handsontable(thisDaysContainer, thisHotOptions)
 

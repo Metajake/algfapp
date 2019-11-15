@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-import re
+import re, json
 from datetime import date, timedelta, datetime
 
 from .models import Product, CalendarDay, CalendarWeek, CalendarDay2
@@ -191,7 +191,7 @@ def ajaxGetCalendars2(request):
                 cd = CalendarDay2.objects.get(date = day['date'])
             except CalendarDay2.DoesNotExist:
                 cd = CalendarDay2(date=day['date'], calendarWeek = cw )
-                cd.data = [['','','','']]
+                cd.data = [[None,None,None,None]]
                 cd.save()
 
     calendarWeeks = CalendarWeek.objects.all()
@@ -205,7 +205,7 @@ def ajaxGetCalendars2(request):
                 'date' : day.date.strftime('%m-%d-%y'),
                 'data' : day.data,
             })
-    print(toReturn)
+
     return JsonResponse(toReturn)
 
 @csrf_exempt
@@ -228,3 +228,13 @@ def ajaxCheckProductName(request):
 
 
     return HttpResponse(toReturn)
+
+@csrf_exempt
+def ajaxUpdateDaySchedule(request):
+    scheduleData = json.loads(request.POST['data'])
+    scheduleDate = datetime.strptime(request.POST['date'], "%m-%d-%y")
+    sd = CalendarDay2.objects.get(date=scheduleDate)
+    sd.data = scheduleData['data']
+    sd.save(update_fields=['data'])
+    # print()
+    return HttpResponse("Success")
