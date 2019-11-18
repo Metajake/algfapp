@@ -20,45 +20,8 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
         | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
         | {% if product.assigned == False %}
         .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-          .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
-            .schedule-number-container
-              p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
-            .product-name-container
-              | {% if product.product_name == '' %}
-              p.product-name Product Name
-              | {% else %}
-              p.product-name {{ product.product_name|truncatechars:26 }}
-              | {% endif %}
-            .note-container
-              | {% if product.note %}
-              p.note {{product.note}}
-              | {% endif %}
-          .product-complete-container
-            label.checkbox-container
-              | {% if product.is_complete %}
-              input.product-complete(type="checkbox" checked)
-              | {% else %}
-              input.product-complete(type="checkbox")
-              | {% endif %}
-              span.checkmark
-            
-        | {% endif %}
-        | {% endfor %}
-    
-    | {% for kettle in production_day.kettles.all %}
-    div(id='{{kettle.kettle_number}}').kettle-container
-      .kettle-container-header
-        h5.text-center {{kettle}}
-        h6(id="{{kettle.kettle_number}}-add-delay").kettle-add-delay.button.is-success.has-drop-shadow + Start Time
-      .kettle-container-content
-        |{% if kettle.start_time %}
-        div.kettle-delay
-          p.is-inline.kettle-start-time.text-center Start: {{ kettle.start_time }}
-          button.button.remove-kettle-start-time.has-drop-shadow X
-        |{% endif %}
-        div(id="sortable_{{kettle}}").sortable-products-list
-          | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
-          .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
+          .start-time
+          .product-ui-container.is-flex
             .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
               .schedule-number-container
                 p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
@@ -80,6 +43,48 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
                 input.product-complete(type="checkbox")
                 | {% endif %}
                 span.checkmark
+            
+        | {% endif %}
+        | {% endfor %}
+    
+    | {% for kettle in production_day.kettles.all %}
+    div(id='{{kettle.kettle_number}}').kettle-container
+      .kettle-container-header
+        h5.text-center {{kettle}}
+      .kettle-container-content
+        |{% if kettle.start_time %}
+        div.kettle-delay
+          p.is-inline.kettle-start-time.text-center Start: {{ kettle.start_time }}
+          button.button.remove-kettle-start-time.has-drop-shadow X
+        |{% endif %}
+        div(id="sortable_{{kettle}}").sortable-products-list
+          | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
+          .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
+            .start-time.is-success.text-center
+              p Start Cooking: <span class="time-to-start">3:00pm</span>
+            .product-ui-container.is-flex
+              .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
+                .schedule-number-container
+                  p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
+                .product-name-container
+                  | {% if product.product_name == '' %}
+                  p.product-name Product Name
+                  | {% else %}
+                  p.product-name {{ product.product_name|truncatechars:26 }}
+                  | {% endif %}
+                .note-container
+                  | {% if product.note %}
+                  p.note {{product.note}}
+                  | {% endif %}
+              button(id="{{kettle.kettle_number}}-add-delay").product-add-delay.button.is-success.is-paddingless.has-drop-shadow + Start<br/>Time
+              .product-complete-container
+                label.checkbox-container
+                  | {% if product.is_complete %}
+                  input.product-complete(type="checkbox" checked)
+                  | {% else %}
+                  input.product-complete(type="checkbox")
+                  | {% endif %}
+                  span.checkmark
           | {% endfor %}
     | {% endfor %}
 
