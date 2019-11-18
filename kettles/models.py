@@ -42,6 +42,7 @@ class Product(models.Model):
     multiple = models.FloatField(blank=True, null=True)
     note = models.CharField(max_length=300, blank =True, null=True)
     is_complete = models.BooleanField(blank=True, default=False)
+    start_time = models.CharField(max_length=50, default='', blank=True, null=True)
     #MAYBE GET RID OF THIS
     tags = ArrayField(models.CharField(max_length = 20, blank=True), blank=True)
 
