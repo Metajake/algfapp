@@ -7,6 +7,7 @@
 link(rel="stylesheet" href="{% static 'css/jquery_timepicker.css' %}" type="text/css" media="screen,projection")
 link(rel="stylesheet" href="{% static 'kettles/assign/assign_day.css' %}" type="text/css" media="screen, projection")
 link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="text/css" media="screen,projection")
+link(rel="stylesheet" href="{% static 'css/fontawesome_all.css' %}" type="text/css" media="screen,projection")
 | {% endblock %}
 
 | {% block content %}
@@ -53,11 +54,11 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
       .kettle-container-content.is-flex
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
-          .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
+          .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}")
             |{% if product.start_time %}
             .product-start-time.is-success.is-flex
               p Start Cooking: <span class="time-to-start">{{product.start_time}}</span>
-              button.button.remove-product-start-time.has-drop-shadow X
+              i.remove-product-start-time.fas.fa-times.text-center
             |{% endif %}
             .product-ui-container.is-flex
               .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
@@ -73,7 +74,7 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
                   | {% if product.note %}
                   p.note {{product.note}}
                   | {% endif %}
-              button(id="{{product.schedule_number}}-add-start-time").product-add-start-time.button.is-success.is-paddingless.has-drop-shadow + Start<br/>Time
+              i(id="{{product.schedule_number}}-add-start-time").product-add-start-time.far.fa-clock.text-center
               .product-complete-container
                 label.checkbox-container
                   | {% if product.is_complete %}

@@ -126,7 +126,7 @@ function addStartTimeElement(productToAddTo, timeToAdd){
   .prepend(
     '<div class="product-start-time is-success is-flex"><p>Start Cooking: <span class="time-to-start">'
     +timeToAdd
-    +'</span></p><button class="button remove-product-start-time has-drop-shadow">X</button></div>'
+    +'</span></p><i class="remove-product-start-time fas fa-times text-center"></i></div>'
   )
 }
 
@@ -141,7 +141,12 @@ function socketSendStartTime(startTime){
 
 $('.product-complete').click(function(event){
   var isComplete = $(event.target).is(':checked')
-  $(event.currentTarget).closest('.product-item').find('.product-sort-handle').disableSelection().toggleClass('is-complete')
+  var thisProductItem = $(event.currentTarget).closest('.product-item')
+  var thisSortHandle = $(event.currentTarget).closest('.product-item').find('.product-sort-handle')
+  isComplete ? thisSortHandle.disableSelection().addClass('is-complete') : thisSortHandle.disableSelection().removeClass('is-complete')
+  isComplete ? thisProductItem.disableSelection().addClass('is-complete') : thisProductItem.removeClass('is-complete')
+  // $(event.currentTarget).closest('.product-item').find('.product-sort-handle').disableSelection().toggleClass('is-complete')
+  // $(event.currentTarget).closest('.product-item').toggleClass('is-complete')
   var product = {
     'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
     'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),

@@ -40,6 +40,7 @@ div[id^="sortable_"]
 .product-item
   background-color: #eee
   outline: 1px solid gray
+  margin-bottom:5px
   .multiple
     font-weight:bold
     font-size: 1.1rem
@@ -56,10 +57,6 @@ div[id^="sortable_"]
     flex:4
     display:flex
     flex-direction: column
-    &.is-complete
-      opacity:0.5
-      p
-        text-decoration: line-through
     .schedule-number-container
       flex:1 1 auto
       p
@@ -80,21 +77,33 @@ div[id^="sortable_"]
         font-size:.9rem
   .product-complete-container
     overflow:hidden
-    flex:.7
+    flex:.8
   .product-start-time
-    padding:3px 10px
+    padding:5px 10px
     font-weight:bold
     margin:0 0 5px
     background-color:lightgreen
     justify-content:space-between
     align-items:center
-    button.remove-product-start-time
-      font-weight:bold
-      font-size:.8rem
-      background-color:#9f9
-      border:1px solid #070
+    box-shadow:0px 2px 3px rgba(0,0,0,0.4)
+    .remove-product-start-time
+      // font-weight:bold
+      font-size:1.2rem
+      // background-color:#9f9
+      // border:1px solid #070
   .product-ui-container
     padding:5px
+  &.is-complete
+    .product-start-time
+      opacity:0.5
+    .product-sort-handle
+      opacity:0.5
+      p
+        text-decoration: line-through
+    .product-add-start-time
+      opacity:0.5
+      pointer-events:none
+      cursor:default
 
 #days-product-list
   .product-sort-handle
@@ -107,12 +116,10 @@ div[id^="sortable_"]
   background-color: #cceebb
 
 .product-add-start-time
-  flex:.7
+  flex:.5
   color:green
-  font-size:.8rem
-  line-height:.8rem
-  font-weight:bold
-  height:33px
+  font-size:2.2rem
+  cursor:pointer
 
 #dialogue-add-start-time-form
   text-align:center
