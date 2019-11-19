@@ -1,4 +1,4 @@
-var ws, dialogAddStartTime, kettleToAddStartTime;
+var ws, dialogAddStartTime, productToAddStartTime, elementToAddStartTime;
 
 startWebsocket('ws://' + window.location.host + '/ws/kettles/')
 
@@ -18,9 +18,6 @@ dialogAddStartTime = $('#dialogue-add-start-time-form').dialog({
   dialogClass: "start-time-dialog",
   buttons: {
     "Add Start Time": createStartTime,
-    Cancel: function() {
-      dialogAddStartTime.dialog( "close" );
-    }
   },
   close: function() {
     addStartTimeForm[ 0 ].reset();
@@ -109,31 +106,35 @@ function createStartTime(){
   if(startTimePickerFormValue){
     dialogAddStartTime.dialog('close');
     socketSendStartTime(startTimePickerFormValue);
-    checkAndRemoveExistingStartTime(kettleToAddStartTime);
-    addStartTimeElement(kettleToAddStartTime, startTimePickerFormValue);
+    checkAndRemoveExistingStartTime(productToAddStartTime);
+    addStartTimeElement(productToAddStartTime, startTimePickerFormValue);
   }else{
     addStartTimePicker.trigger("select");
   }
   return null;
 }
 
-function checkAndRemoveExistingStartTime(kettleToRemoveFrom){
-  if( $('#'+kettleToRemoveFrom).find('.kettle-delay') ){
-    $('#'+kettleToRemoveFrom).find('.kettle-delay').remove();
+function checkAndRemoveExistingStartTime(productToRemoveFrom){
+  var parentProduct = $('div[id="'+productToRemoveFrom.schedule_number+'"]').find('span[id="'+productToRemoveFrom.multiple+'"]').closest('.product-item');
+  if( parentProduct.find('.product-start-time') ){
+    parentProduct.find('.product-start-time').remove();
   }
 }
 
-function addStartTimeElement(kettleToAddTo, timeToAdd){
-  $('#'+kettleToAddTo).find('.kettle-container-content').prepend(
-    '<div class="kettle-delay"><p class="is-inline kettle-start-time text-center">Start: ' + timeToAdd + '</p><button class="button remove-kettle-start-time">X</button></div>'
+function addStartTimeElement(productToAddTo, timeToAdd){
+  $('div[id="'+productToAddTo.schedule_number+'"]').find('span[id="'+productToAddTo.multiple+'"]').closest('.product-item')
+  .prepend(
+    '<div class="product-start-time is-success is-flex"><p>Start Cooking: <span class="time-to-start">'
+    +timeToAdd
+    +'</span></p><button class="button remove-product-start-time has-drop-shadow">X</button></div>'
   )
 }
 
 function socketSendStartTime(startTime){
   ws.send(JSON.stringify({
-    'message': 'addKettleStartTime',
+    'message': 'addProductStartTime',
     'date' : $('#todays-production-day').text(),
-    'kettle' : kettleToAddStartTime,
+    'product' : productToAddStartTime,
     'startTime' : startTime
   }));
 }
@@ -153,22 +154,27 @@ $('.product-complete').click(function(event){
   }));
 })
 
-$('div [id$="-add-delay"]').click(function(event){
-  thisId = $(this).attr('id');
-  thisKettleNumber = thisId.slice( 0, thisId.indexOf('-add-delay') );
-
-  kettleToAddStartTime = thisKettleNumber;
+$('div [id$="-add-start-time"]').click(function(event){
+  elementToAddStartTime = $(event.target).closest('.product-item')
+  var product = {
+    'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
+    'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
+  }
+  productToAddStartTime = product;
   dialogAddStartTime.dialog("open");
 })
 
-$(document).on('click', '.remove-kettle-start-time', function(event){
-  thisKettleId = $(this).closest(".kettle-container").attr('id');
+$(document).on('click', '.remove-product-start-time', function(event){
+  console.log("removing product start time")
+  var product = {
+    'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
+    'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
+  }
   ws.send(JSON.stringify({
-    'message': 'removeKettleStartTime',
+    'message': 'removeProductStartTime',
     'date' : $('#todays-production-day').text(),
-    'kettle' : thisKettleId
+    'product' : product
   }));
-  thisKettleDelay = $(this).parent()
-  thisKettleDelay.remove()
-  console.log(thisKettleId)
+  thisProductStartTime = $(this).parent()
+  thisProductStartTime.remove()
 })

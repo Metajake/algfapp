@@ -72,9 +72,9 @@ class KettleConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        elif message == 'addKettleStartTime':
-            print('------ Adding Kettle Start Time -------')
-            self.kettleReceive = await database_sync_to_async(self.kettleAddStartTime)()
+        elif message == 'addProductStartTime':
+            print('------ Adding Product Start Time -------')
+            self.kettleReceive = await database_sync_to_async(self.productAddStartTime)()
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -84,9 +84,9 @@ class KettleConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        elif message == 'removeKettleStartTime':
+        elif message == 'removeProductStartTime':
             print('------ Removing Kettle Start Time -------')
-            self.kettleReceive = await database_sync_to_async(self.kettleRemoveStartTime)()
+            self.kettleReceive = await database_sync_to_async(self.productRemoveStartTime)()
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -148,19 +148,27 @@ class KettleConsumer(AsyncWebsocketConsumer):
         p.is_complete = self.text_data_json['isComplete']
         p.save(update_fields=['is_complete'])
 
-    def kettleAddStartTime(self):
+    def productAddStartTime(self):
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
         pd = ProductionDay.objects.get(date = dateFormatted)
-        k = Kettle.objects.get(production_date=pd, kettle_number=self.text_data_json['kettle'])
-        k.start_time = self.text_data_json['startTime']
-        k.save(update_fields=['start_time'])
+        p = Product.objects.get(
+            schedule_number = self.text_data_json['product']['schedule_number'],
+            multiple = self.text_data_json['product']['multiple'],
+            production_date = pd,
+        )
+        p.start_time = self.text_data_json['startTime']
+        p.save(update_fields=['start_time'])
 
-    def kettleRemoveStartTime(self):
+    def productRemoveStartTime(self):
         dateFormatted = parser.parse(self.text_data_json['date']).strftime('%Y-%m-%d')
         pd = ProductionDay.objects.get(date = dateFormatted)
-        k = Kettle.objects.get(production_date=pd, kettle_number=self.text_data_json['kettle'])
-        k.start_time = ''
-        k.save(update_fields=['start_time'])
+        p = Product.objects.get(
+            schedule_number = self.text_data_json['product']['schedule_number'],
+            multiple = self.text_data_json['product']['multiple'],
+            production_date = pd,
+        )
+        p.start_time = ''
+        p.save(update_fields=['start_time'])
 
     # Receive message from room group
     async def update_products(self, event):

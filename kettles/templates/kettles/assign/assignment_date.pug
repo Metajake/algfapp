@@ -20,7 +20,6 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
         | {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
         | {% if product.assigned == False %}
         .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-          .start-time
           .product-ui-container.is-flex
             .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
               .schedule-number-container
@@ -48,20 +47,18 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
         | {% endfor %}
     
     | {% for kettle in production_day.kettles.all %}
-    div(id='{{kettle.kettle_number}}').kettle-container
-      .kettle-container-header
+    div(id='{{kettle.kettle_number}}').kettle-container.is-flex
+      .kettle-container-header.is-flex
         h5.text-center {{kettle}}
-      .kettle-container-content
-        |{% if kettle.start_time %}
-        div.kettle-delay
-          p.is-inline.kettle-start-time.text-center Start: {{ kettle.start_time }}
-          button.button.remove-kettle-start-time.has-drop-shadow X
-        |{% endif %}
+      .kettle-container-content.is-flex
         div(id="sortable_{{kettle}}").sortable-products-list
           | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
           .product-item(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}")
-            .start-time.is-success.text-center
-              p Start Cooking: <span class="time-to-start">3:00pm</span>
+            |{% if product.start_time %}
+            .product-start-time.is-success.is-flex
+              p Start Cooking: <span class="time-to-start">{{product.start_time}}</span>
+              button.button.remove-product-start-time.has-drop-shadow X
+            |{% endif %}
             .product-ui-container.is-flex
               .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
                 .schedule-number-container
@@ -76,7 +73,7 @@ link(rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="te
                   | {% if product.note %}
                   p.note {{product.note}}
                   | {% endif %}
-              button(id="{{kettle.kettle_number}}-add-delay").product-add-delay.button.is-success.is-paddingless.has-drop-shadow + Start<br/>Time
+              button(id="{{product.schedule_number}}-add-start-time").product-add-start-time.button.is-success.is-paddingless.has-drop-shadow + Start<br/>Time
               .product-complete-container
                 label.checkbox-container
                   | {% if product.is_complete %}

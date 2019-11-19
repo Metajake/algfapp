@@ -21,16 +21,13 @@
     overflow-y: scroll
   .kettle-container
     padding: 5px 0 8px 0
-    display:flex
     flex-direction: column
     .kettle-container-header
-      display:flex
       justify-content:space-between
       padding:0 10px
     .kettle-container-content
       flex:20
       outline: 3px dashed #88e
-      display:flex
       flex-direction:column
 
 #days-product-list
@@ -43,7 +40,6 @@ div[id^="sortable_"]
 .product-item
   background-color: #eee
   outline: 1px solid gray
-  padding:5px
   .multiple
     font-weight:bold
     font-size: 1.1rem
@@ -85,10 +81,20 @@ div[id^="sortable_"]
   .product-complete-container
     overflow:hidden
     flex:.7
-  .start-time
-    padding:3px
-    margin-bottom:3px
+  .product-start-time
+    padding:3px 10px
     font-weight:bold
+    margin:0 0 5px
+    background-color:lightgreen
+    justify-content:space-between
+    align-items:center
+    button.remove-product-start-time
+      font-weight:bold
+      font-size:.8rem
+      background-color:#9f9
+      border:1px solid #070
+  .product-ui-container
+    padding:5px
 
 #days-product-list
   .product-sort-handle
@@ -100,35 +106,13 @@ div[id^="sortable_"]
   height:25px
   background-color: #cceebb
 
-.kettle-add-delay
-  color:green
-  padding:3px 3px 1px
-  font-size:1rem
-
-.product-add-delay
+.product-add-start-time
   flex:.7
   color:green
   font-size:.8rem
   line-height:.8rem
   font-weight:bold
   height:33px
-
-.kettle-delay
-  margin:5px 0
-  padding:5px 10px
-  background-color:lightgreen
-  display:flex
-  justify-content:flex-end
-  align-items:center
-
-.kettle-start-time
-  flex-grow:1
-
-button.remove-kettle-start-time
-  font-weight:bold
-  font-size:.8rem
-  background-color:#7d7
-  border:1px solid #070
 
 #dialogue-add-start-time-form
   text-align:center
