@@ -1,7 +1,5 @@
 var ws, dialogAddStartTime, productToAddStartTime, elementToAddStartTime;
 
-startWebsocket('ws://' + window.location.host + '/ws/kettles/')
-
 $( "#days-product-list, [id^=sortable_]" ).sortable({
   handle: ".product-sort-handle.is-sortable",
   placeholder: "product-sort-placeholder",
@@ -35,6 +33,8 @@ addStartTimeForm.on( "submit", function( event ) {
   event.preventDefault();
   createStartTime();
 });
+
+startWebsocket('ws://' + window.location.host + '/ws/kettles/')
 
 function startWebsocket(websocketServerLocation){
     ws = new WebSocket(websocketServerLocation);

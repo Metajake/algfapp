@@ -20,7 +20,7 @@
         {% if product.assigned == False %}
         <div class="product-item {% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}" id="{{product.schedule_number}}">
           <div class="product-ui-container is-flex">
-            <div class="product-sort-handle {% if product.is_complete %}is-complete{% endif %}">
+            <div class="product-sort-handle {% if not product.is_complete %}is-sortable{% endif %}">
               <div class="schedule-number-container">
                 <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span></p>
               </div>
@@ -31,7 +31,7 @@
               <div class="note-container">{% if product.note %}
                 <p class="note">{{product.note}}</p>{% endif %}
               </div>
-            </div>
+            </div><i class="product-add-start-time far fa-clock text-center" id="{{product.schedule_number}}-add-start-time"></i>
             <div class="product-complete-container">
               <label class="checkbox-container">{% if product.is_complete %}
                 <input class="product-complete" type="checkbox" checked="checked"/>{% else %}
