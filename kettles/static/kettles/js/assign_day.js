@@ -3,7 +3,7 @@ var ws, dialogAddStartTime, productToAddStartTime, elementToAddStartTime;
 startWebsocket('ws://' + window.location.host + '/ws/kettles/')
 
 $( "#days-product-list, [id^=sortable_]" ).sortable({
-  handle: ".product-sort-handle:not(.is-complete)",
+  handle: ".product-sort-handle.is-sortable",
   placeholder: "product-sort-placeholder",
   connectWith: ".sortable-products-list",
   receive: handleToListSortReceive,
@@ -143,10 +143,8 @@ $('.product-complete').click(function(event){
   var isComplete = $(event.target).is(':checked')
   var thisProductItem = $(event.currentTarget).closest('.product-item')
   var thisSortHandle = $(event.currentTarget).closest('.product-item').find('.product-sort-handle')
-  isComplete ? thisSortHandle.disableSelection().addClass('is-complete') : thisSortHandle.disableSelection().removeClass('is-complete')
-  isComplete ? thisProductItem.disableSelection().addClass('is-complete') : thisProductItem.removeClass('is-complete')
-  // $(event.currentTarget).closest('.product-item').find('.product-sort-handle').disableSelection().toggleClass('is-complete')
-  // $(event.currentTarget).closest('.product-item').toggleClass('is-complete')
+  isComplete ? thisSortHandle.removeClass('is-sortable') : thisSortHandle.addClass('is-sortable')
+  isComplete ? thisProductItem.addClass('is-complete') : thisProductItem.removeClass('is-complete')
   var product = {
     'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
     'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),

@@ -61,7 +61,7 @@ link(rel="stylesheet" href="{% static 'css/fontawesome_all.css' %}" type="text/c
               i.remove-product-start-time.fas.fa-times.text-center
             |{% endif %}
             .product-ui-container.is-flex
-              .product-sort-handle(class="{% if product.is_complete %}is-complete{% endif %}")
+              .product-sort-handle(class="{% if not product.is_complete %}is-sortable{% endif %}")
                 .schedule-number-container
                   p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
                 .product-name-container

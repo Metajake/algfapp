@@ -54,7 +54,7 @@
               <p>Start Cooking: <span class="time-to-start">{{product.start_time}}</span></p><i class="remove-product-start-time fas fa-times text-center"></i>
             </div>{% endif %}
             <div class="product-ui-container is-flex">
-              <div class="product-sort-handle {% if product.is_complete %}is-complete{% endif %}">
+              <div class="product-sort-handle {% if not product.is_complete %}is-sortable{% endif %}">
                 <div class="schedule-number-container">
                   <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span></p>
                 </div>
