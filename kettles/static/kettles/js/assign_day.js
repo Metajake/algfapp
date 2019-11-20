@@ -1,4 +1,41 @@
-var ws;
+var ws, dialogAddStartTime, productToAddStartTime, elementToAddStartTime;
+
+$( "#days-product-list, [id^=sortable_]" ).sortable({
+  handle: ".product-sort-handle.is-sortable",
+  placeholder: "product-sort-placeholder",
+  connectWith: ".sortable-products-list",
+  receive: handleToListSortReceive,
+  stop: handleFromListSortStop,
+}).disableSelection();
+
+dialogAddStartTime = $('#dialogue-add-start-time-form').dialog({
+  autoOpen: false,
+  height: 150,
+  width: 400,
+  modal: true,
+  dialogClass: "start-time-dialog",
+  buttons: {
+    "Add Start Time": createStartTime,
+  },
+  close: function() {
+    addStartTimeForm[ 0 ].reset();
+  },
+});
+
+addStartTimePicker = $('#add-delay-time-picker')
+addStartTimePicker.timepicker({
+  timeFormat: 'h:mm p',
+  interval:30,
+});
+
+addStartTimeForm = dialogAddStartTime.find( "form" );
+addStartTimeForm.on( "submit", function( event ) {
+  event.preventDefault();
+  createStartTime();
+});
+
+startWebsocket('ws://' + window.location.host + '/ws/kettles/')
+
 function startWebsocket(websocketServerLocation){
     ws = new WebSocket(websocketServerLocation);
     ws.onclose = function(){
@@ -18,17 +55,6 @@ function startWebsocket(websocketServerLocation){
         console.log("GOT MESSAqge");
     };
 }
-
-startWebsocket('ws://' + window.location.host + '/ws/kettles/')
-
-$( "#days-product-list, [id^=sortable_]" ).sortable({
-  handle: ".product-sort-handle:not(.is-complete)",
-  placeholder: "product-sort-placeholder",
-  connectWith: ".sortable-products-list",
-  receive: handleToListSortReceive,
-  stop: handleFromListSortStop,
-}).disableSelection();
-
 
 function handleToListSortReceive(event, ui){
   console.log("Handling list sort receive.")
@@ -75,12 +101,53 @@ function returnProductKettleOrderArray(productsToOrder){
   return products;
 }
 
+function createStartTime(){
+  startTimePickerFormValue = addStartTimePicker.val()
+  if(startTimePickerFormValue){
+    dialogAddStartTime.dialog('close');
+    socketSendStartTime(startTimePickerFormValue);
+    checkAndRemoveExistingStartTime(productToAddStartTime);
+    addStartTimeElement(productToAddStartTime, startTimePickerFormValue);
+  }else{
+    addStartTimePicker.trigger("select");
+  }
+  return null;
+}
+
+function checkAndRemoveExistingStartTime(productToRemoveFrom){
+  var parentProduct = $('div[id="'+productToRemoveFrom.schedule_number+'"]').find('span[id="'+productToRemoveFrom.multiple+'"]').closest('.product-item');
+  if( parentProduct.find('.product-start-time') ){
+    parentProduct.find('.product-start-time').remove();
+  }
+}
+
+function addStartTimeElement(productToAddTo, timeToAdd){
+  $('div[id="'+productToAddTo.schedule_number+'"]').find('span[id="'+productToAddTo.multiple+'"]').closest('.product-item')
+  .prepend(
+    '<div class="product-start-time is-success is-flex"><p>Start Cooking: <span class="time-to-start">'
+    +timeToAdd
+    +'</span></p><i class="remove-product-start-time fas fa-times text-center"></i></div>'
+  )
+}
+
+function socketSendStartTime(startTime){
+  ws.send(JSON.stringify({
+    'message': 'addProductStartTime',
+    'date' : $('#todays-production-day').text(),
+    'product' : productToAddStartTime,
+    'startTime' : startTime
+  }));
+}
+
 $('.product-complete').click(function(event){
   var isComplete = $(event.target).is(':checked')
-  $(event.currentTarget).closest('.product-item').find('.product-sort-handle').disableSelection().toggleClass('is-complete')
+  var thisProductItem = $(event.currentTarget).closest('.product-item')
+  var thisSortHandle = $(event.currentTarget).closest('.product-item').find('.product-sort-handle')
+  isComplete ? thisSortHandle.removeClass('is-sortable') : thisSortHandle.addClass('is-sortable')
+  isComplete ? thisProductItem.addClass('is-complete') : thisProductItem.removeClass('is-complete')
   var product = {
-      'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
-      'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
+    'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
+    'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
   }
   ws.send(JSON.stringify({
     'message': 'toggleProductComplete',
@@ -88,4 +155,29 @@ $('.product-complete').click(function(event){
     'isComplete' : isComplete,
     'date' : $('#todays-production-day').text(),
   }));
+})
+
+$('div [id$="-add-start-time"]').click(function(event){
+  elementToAddStartTime = $(event.target).closest('.product-item')
+  var product = {
+    'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
+    'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
+  }
+  productToAddStartTime = product;
+  dialogAddStartTime.dialog("open");
+})
+
+$(document).on('click', '.remove-product-start-time', function(event){
+  console.log("removing product start time")
+  var product = {
+    'schedule_number' : $(event.currentTarget).closest('.product-item').attr('id'),
+    'multiple' : $(event.currentTarget).closest('.product-item').find('.multiple').attr('id'),
+  }
+  ws.send(JSON.stringify({
+    'message': 'removeProductStartTime',
+    'date' : $('#todays-production-day').text(),
+    'product' : product
+  }));
+  thisProductStartTime = $(this).parent()
+  thisProductStartTime.remove()
 })

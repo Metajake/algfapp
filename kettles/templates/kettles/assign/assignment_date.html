@@ -3,8 +3,10 @@
 {% load static %}
 {% load custom_tags %}
 {% block extraStyle%}
+<link rel="stylesheet" href="{% static 'css/jquery_timepicker.css' %}" type="text/css" media="screen,projection"/>
 <link rel="stylesheet" href="{% static 'kettles/assign/assign_day.css' %}" type="text/css" media="screen, projection"/>
-<link rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="text/css" media="screen,projection"/>{% endblock %}
+<link rel="stylesheet" href="{% static 'kettles/assign/checkbox.css' %}" type="text/css" media="screen,projection"/>
+<link rel="stylesheet" href="{% static 'css/fontawesome_all.css' %}" type="text/css" media="screen,projection"/>{% endblock %}
 {% block content %}
 <div id="wrapper">
   <div id="container">
@@ -17,36 +19,8 @@
         {% for product in production_day.days_products.all|sort_by:'kettle_order' %}
         {% if product.assigned == False %}
         <div class="product-item {% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}" id="{{product.schedule_number}}">
-          <div class="product-sort-handle {% if product.is_complete %}is-complete{% endif %}">
-            <div class="schedule-number-container">
-              <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span></p>
-            </div>
-            <div class="product-name-container">{% if product.product_name == '' %}
-              <p class="product-name">Product Name</p>{% else %}
-              <p class="product-name">{{ product.product_name|truncatechars:26 }}</p>{% endif %}
-            </div>
-            <div class="note-container">{% if product.note %}
-              <p class="note">{{product.note}}</p>{% endif %}
-            </div>
-          </div>
-          <div class="product-complete-container">
-            <label class="checkbox-container">{% if product.is_complete %}
-              <input class="product-complete" type="checkbox" checked="checked"/>{% else %}
-              <input class="product-complete" type="checkbox"/>{% endif %}<span class="checkmark"></span>
-            </label>
-          </div>
-        </div>{% endif %}
-        {% endfor %}
-      </div>
-    </aside>{% for kettle in production_day.kettles.all %}
-    <div class="kettle-container" id="{{kettle.kettle_number}}">
-      <div class="kettle-container-header">
-        <h6 class="text-center">{{kettle}}</h6>
-      </div>
-      <div class="kettle-container-content">
-        <div class="sortable-products-list" id="sortable_{{kettle}}">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}
-          <div class="product-item {% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%}" id="{{product.schedule_number}}">
-            <div class="product-sort-handle {% if product.is_complete %}is-complete{% endif %}">
+          <div class="product-ui-container is-flex">
+            <div class="product-sort-handle {% if not product.is_complete %}is-sortable{% endif %}">
               <div class="schedule-number-container">
                 <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span></p>
               </div>
@@ -57,18 +31,60 @@
               <div class="note-container">{% if product.note %}
                 <p class="note">{{product.note}}</p>{% endif %}
               </div>
-            </div>
+            </div><i class="product-add-start-time far fa-clock text-center" id="{{product.schedule_number}}-add-start-time"></i>
             <div class="product-complete-container">
               <label class="checkbox-container">{% if product.is_complete %}
                 <input class="product-complete" type="checkbox" checked="checked"/>{% else %}
                 <input class="product-complete" type="checkbox"/>{% endif %}<span class="checkmark"></span>
               </label>
             </div>
+          </div>
+        </div>{% endif %}
+        {% endfor %}
+      </div>
+    </aside>{% for kettle in production_day.kettles.all %}
+    <div class="kettle-container is-flex" id="{{kettle.kettle_number}}">
+      <div class="kettle-container-header is-flex">
+        <h5 class="text-center">{{kettle}}</h5>
+      </div>
+      <div class="kettle-container-content is-flex">
+        <div class="sortable-products-list" id="sortable_{{kettle}}">{% for product in kettle.days_products.all|sort_by:'kettle_order' %}
+          <div class="product-item {% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}" id="{{product.schedule_number}}">{% if product.start_time %}
+            <div class="product-start-time is-success is-flex">
+              <p>Start Cooking: <span class="time-to-start">{{product.start_time}}</span></p><i class="remove-product-start-time fas fa-times text-center"></i>
+            </div>{% endif %}
+            <div class="product-ui-container is-flex">
+              <div class="product-sort-handle {% if not product.is_complete %}is-sortable{% endif %}">
+                <div class="schedule-number-container">
+                  <p class="product-schedule-number">{{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span></p>
+                </div>
+                <div class="product-name-container">{% if product.product_name == '' %}
+                  <p class="product-name">Product Name</p>{% else %}
+                  <p class="product-name">{{ product.product_name|truncatechars:26 }}</p>{% endif %}
+                </div>
+                <div class="note-container">{% if product.note %}
+                  <p class="note">{{product.note}}</p>{% endif %}
+                </div>
+              </div><i class="product-add-start-time far fa-clock text-center" id="{{product.schedule_number}}-add-start-time"></i>
+              <div class="product-complete-container">
+                <label class="checkbox-container">{% if product.is_complete %}
+                  <input class="product-complete" type="checkbox" checked="checked"/>{% else %}
+                  <input class="product-complete" type="checkbox"/>{% endif %}<span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
           </div>{% endfor %}
         </div>
       </div>
     </div>{% endfor %}
   </div>
+</div>
+<div id="dialogue-add-start-time-form">
+  <h5>Start Time:</h5>
+  <form>
+    <input id="add-delay-time-picker" required="required"/>
+  </form>
 </div>{% endblock %}
 {% block extraScripts %}
+<script type="text/javascript" src="{% static 'js/jquery_timepicker.js'%}"></script>
 <script type="text/javascript" src="{% static 'kettles/js/assign_day.js'%}"></script>{% endblock %}

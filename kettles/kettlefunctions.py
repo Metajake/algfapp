@@ -57,6 +57,7 @@ def checkAndCreateKettles(productionDayToKettle):
                 k = Kettle(kettle_number = i, production_date = productionDayToKettle)
                 k.save()
 
+
 def getDatesWithProductCounts(calendarToParse):
     daysWithProducts = []
     for week in calendarToParse:

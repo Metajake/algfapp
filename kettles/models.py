@@ -13,7 +13,7 @@ class ProductionDay(models.Model):
         return False if self.days_products.count() == 0 else True
 
     def __str__(self):
-        return str(self.date)#.strftime('%m/%d/%Y')
+        return str(self.date)
 
     class Meta:
         ordering = ['-date']
@@ -42,11 +42,9 @@ class Product(models.Model):
     multiple = models.FloatField(blank=True, null=True)
     note = models.CharField(max_length=300, blank =True, null=True)
     is_complete = models.BooleanField(blank=True, default=False)
+    start_time = models.CharField(max_length=50, default='', blank=True, null=True)
     #MAYBE GET RID OF THIS
     tags = ArrayField(models.CharField(max_length = 20, blank=True), blank=True)
 
     def __str__(self):
         return self.schedule_number + ' ' + self.product_name
-
-    # class Meta:
-    #     ordering = ['creation_date', 'next_property']

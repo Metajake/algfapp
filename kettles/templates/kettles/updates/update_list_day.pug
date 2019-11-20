@@ -16,7 +16,15 @@ main#production-list
     .product-list
       | {% for product in kettle.days_products.all|sort_by:'kettle_order' %}
       .product-item.text-center(id='{{product.schedule_number}}')(class="{% if product.note %}note{% endif%} {% if product.gluten_free %}gluten-free{% endif%} {% if product.is_complete %}is-complete{% endif %}")
-        p.product-schedule-number {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
+        |{% if product.start_time and not product.is_complete %}
+        .product-start-time
+          h4 Start Cooking: {{ product.start_time }}
+        |{% endif %}
+        .product-schedule-number
+          |{% if product.is_complete %}
+          span.strikethrough
+          |{% endif %} 
+          h2 {{product.schedule_number}} <span id="{{product.multiple}}" class="multiple">{% if product.multiple > 0%}({{product.multiple|whole_float_to_int}}){% endif %}</span>
         
         | {% if product.note != '' %}
         p.note.detail {{product.note|truncatechars:11}}

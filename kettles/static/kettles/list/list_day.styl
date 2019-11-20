@@ -68,17 +68,8 @@ aside
   .detail
     display:none
   .product-item
-    p
-      font-size: calc(1rem + 1.4vw)
     .product-schedule-number
       float:none
-
-.kettle-container
-  .product-item
-    &.is-complete
-      p
-        font-size: calc(1rem + .8vw)
-
 
 .product-list
   border-right: 2px solid blue
@@ -92,24 +83,31 @@ aside
 
 .product-item
   background-color:white
-  border-bottom:2px solid darkgreen
   padding:3px 0 5px 0
-  margin:3px 0
-  p
-    font-size:calc(1rem + .2vw)
   &.is-complete
-    p
-      text-decoration: line-through
-      opacity: 0.35
+    opacity: 0.35
   .product-schedule-number
-    float:left
-    font-weight:bold
+    position:relative
+    h2
+      margin-bottom:2px
+    .strikethrough
+      position:absolute
+      left:15%
+      top:45%
+      width:70%
+      height:2px
+      background: black
   .note
     float:right
     font-weight: bold
   .product-name
     clear:both
     text-align:left
+  .product-start-time
+    background-image:linear-gradient(lightgreen 40%, rgba(255,255,255,0))
+    padding:3px 0
+    height:55px
+    margin-bottom:-20px
 
 .production-week
   display:flex
