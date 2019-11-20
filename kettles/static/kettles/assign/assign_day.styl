@@ -40,7 +40,7 @@ div[id^="sortable_"]
 .product-item
   background-color: #eee
   outline: 1px solid gray
-  margin-bottom:5px
+  margin-bottom:3px
   cursor:default
   .multiple
     font-weight:bold
@@ -91,6 +91,13 @@ div[id^="sortable_"]
       font-size:1.2rem
   .product-ui-container
     padding:5px
+  .product-add-start-time
+    flex:.7
+    color:green
+    font-size:1.6rem
+    cursor:pointer
+    &::before
+      vertical-align:sub
   &.is-complete
     .product-start-time
       opacity:0.5
@@ -114,12 +121,6 @@ div[id^="sortable_"]
 .product-sort-placeholder
   height:25px
   background-color: #cceebb
-
-.product-add-start-time
-  flex:.5
-  color:green
-  font-size:2.2rem
-  cursor:pointer
 
 #dialogue-add-start-time-form
   text-align:center
