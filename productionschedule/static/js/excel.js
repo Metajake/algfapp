@@ -1,10 +1,7 @@
 var hotOptions = {
-  colHeaders: true,
-  rowHeaders: true,
-  dropdownMenu: true,
   contextMenu: true,
   allowInsertRow: true,
-  colWidths: 200,
+  colWidths: [100,200,200,200],
   manualColumnResize: true,
   beforeChangeRender: afterCellChange,
   contextMenu: {
@@ -14,8 +11,10 @@ var hotOptions = {
       },
       "col_left": {},
       "col_right": {},
+      "remove_col": {},
       "row_below": {},
       "row_above": {},
+      "remove_row": {},
       'copy':{},
       'cut': {},
       'undo': {},
@@ -24,12 +23,11 @@ var hotOptions = {
   },
   minRows: 5,
   maxCols:4,
-  colHeaders: false,
+  colHeaders: ['Schedule #', 'Product Name', 'Distributor/Note', 'Filling Equipment'],
+  dropdownMenu: false,
   rowHeaders: false,
   licenseKey: 'non-commercial-and-evaluation'
 }
-
-ajaxLoadCalendars();
 
 function afterCellChange(changes, source){
   var changedRow = changes[0][0], changedCol = changes[0][1], thisHot = this, cellValue;
@@ -74,12 +72,16 @@ function createDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   thisDaysContainer.setAttribute('id', "date-"+calendarWeekData[dayInWeek].date);
   thisDaysContainer.classList.add('day-container');
   var thisDaysContainerHeader = document.createElement('div')
+  thisDaysContainerHeader.classList.add('day-header')
+  var thisDaysContainerContent = document.createElement('div')
+  thisDaysContainerContent.classList.add('day-content')
   thisWeekContainer.appendChild(thisDaysContainer)
+  $(thisDaysContainer).append(thisDaysContainerContent)
 
   var thisHotOptions = hotOptions
   // console.log(calendarWeekData[i].data)
   thisHotOptions['data'] = calendarWeekData[dayInWeek].data;
-  var thisHot = new Handsontable(thisDaysContainer, thisHotOptions)
+  var thisHot = new Handsontable(thisDaysContainerContent, thisHotOptions)
 
   var thisHeadline = document.createElement('h6');
   thisHeadline.classList.add('text-center')
@@ -111,7 +113,7 @@ function ajaxUpdateCalendarDayData(dataToUpdate, calendarToUpdate){
     url: 'ajax/update_day_schedule/',
     type: "POST",
     data:{
-      "date": calendarToUpdate.getInstance().rootElement.getAttribute('id').slice(5),
+      "date": calendarToUpdate.getInstance().rootElement.parentNode.id.slice(5),
       "data": JSON.stringify(dataToUpdate),
     },
     success: function(data){
@@ -129,3 +131,5 @@ function ajaxLoadCalendars(){
     },
   });
 }
+
+ajaxLoadCalendars();
