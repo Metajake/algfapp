@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 import re, json
 from datetime import date, timedelta, datetime
 
-from .models import Product, CalendarDay, CalendarWeek, CalendarDay2
+from .models import Product, CalendarDay, CalendarWeek, ExcelCalendarDay
 from .forms import ProductForm
 from products.models import Product as BaseProduct
 
@@ -155,9 +155,9 @@ def ajaxGetCalendars(request):
             cw.save()
         for day in week['range']:
             try:
-                cd = CalendarDay2.objects.get(date = day['date'])
-            except CalendarDay2.DoesNotExist:
-                cd = CalendarDay2(date=day['date'], calendarWeek = cw )
+                cd = ExcelCalendarDay.objects.get(date = day['date'])
+            except ExcelCalendarDay.DoesNotExist:
+                cd = ExcelCalendarDay(date=day['date'], calendarWeek = cw )
                 cd.data = [[None,None,None,None]]
                 cd.save()
 
@@ -200,7 +200,7 @@ def ajaxCheckProductName(request):
 def ajaxUpdateDaySchedule(request):
     scheduleData = json.loads(request.POST['data'])
     scheduleDate = datetime.strptime(request.POST['date'], "%m-%d-%y")
-    sd = CalendarDay2.objects.get(date=scheduleDate)
+    sd = ExcelCalendarDay.objects.get(date=scheduleDate)
     sd.data = scheduleData['data']
     sd.save(update_fields=['data'])
     # print()

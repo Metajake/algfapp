@@ -1,8 +1,3 @@
-var data = [
-  [10, 11, 12, 13]
-];
-var container = document.getElementById('example');
-
 var hotOptions = {
   colHeaders: true,
   rowHeaders: true,
@@ -28,61 +23,32 @@ var hotOptions = {
     },
   },
   minRows: 5,
+  maxCols:4,
   colHeaders: false,
   rowHeaders: false,
   licenseKey: 'non-commercial-and-evaluation'
 }
 
-function afterCellChange(changes, source){
-  var changedRow = changes[0][0],
-  changedCol = changes[0][1],
-  thisHot = this,
-  cellValue;
+ajaxLoadCalendars();
 
-  // IF CHANGE IS MADE TO FIRST COLUMN
-  if(changedCol === 0){
-    cellValue = thisHot.getDataAtCell(changedRow, changedCol);
-    $.ajax({
-      url: 'ajax/check_product_name/',
-      type: "POST",
-      data:{
-        "data": cellValue,
-      },
-      success: function(data){
-        console.log("Success Ajax Call");
-        if(data === ''){
-          // console.log("Product Does Not Exist in Database yet.");
-        }else{
-          thisHot.setDataAtCell(changedRow, 1, data)
-        }
-      }
-    });
-  }
+function afterCellChange(changes, source){
+  var changedRow = changes[0][0], changedCol = changes[0][1], thisHot = this, cellValue;
+
+  checkIfColOneChangeAndUpdateColTwo(changedCol, changedRow, cellValue, thisHot)
 
   var dayData = {
     data: thisHot.getData(),
   };
-  console.log()
-  $.ajax({
-    url: 'ajax/update_day_schedule/',
-    type: "POST",
-    data:{
-      "date": thisHot.getInstance().rootElement.getAttribute('id').slice(5),
-      "data": JSON.stringify(dayData),
-    },
-    success: function(data){
-      console.log("Success Ajax Call: Update Schedule Day");
-    }
-  });
+
+  ajaxUpdateCalendarDayData(dayData, thisHot);
 }
 
-$.ajax({
-  url: 'ajax/get_calendars/',
-  dataType:'html',
-  success: function(data){
-    createCalendars(JSON.parse(data))
-  },
-});
+function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, scheduleNumberValueToCheck, thisHotInstance){
+  if(changedColumn === 0){
+    scheduleNumberValueToCheck = thisHotInstance.getDataAtCell(changedRow, changedColumn);
+    ajaxUpdateProductNameFromScheduleNumber(scheduleNumberValueToCheck, thisHotInstance, changedRow);
+  }
+}
 
 function createCalendars(calendarData){
   for (var key in calendarData){
@@ -98,22 +64,68 @@ function createWeeklyCalendar(calendarWeekDate, calendarWeekData){
   thisWeekContainer.classList.add('is-flex')
   document.getElementById("calendars").appendChild(thisWeekContainer)
 
-  for (var i = 0;i < calendarWeekData.length; i++){
-    var thisDaysContainer = document.createElement('div');
-    thisDaysContainer.setAttribute('id', "date-"+calendarWeekData[i].date);
-    thisDaysContainer.classList.add('day-container');
-    var thisDaysContainerHeader = document.createElement('div')
-    thisWeekContainer.appendChild(thisDaysContainer)
-
-    var thisHotOptions = hotOptions
-    console.log(calendarWeekData[i].data)
-    thisHotOptions['data'] = calendarWeekData[i].data;
-    var thisHot = new Handsontable(thisDaysContainer, thisHotOptions)
-
-    var thisHeadline = document.createElement('h6');
-    thisHeadline.classList.add('text-center')
-    thisHeadline.innerHTML = calendarWeekData[i].date
-    thisDaysContainerHeader.appendChild(thisHeadline)
-    $(thisDaysContainer).prepend(thisDaysContainerHeader)
+  for (var weekDayIteration = 0;weekDayIteration < calendarWeekData.length; weekDayIteration++){
+    createDayCalendar(calendarWeekData, thisWeekContainer, weekDayIteration)
   }
+}
+
+function createDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
+  var thisDaysContainer = document.createElement('div');
+  thisDaysContainer.setAttribute('id', "date-"+calendarWeekData[dayInWeek].date);
+  thisDaysContainer.classList.add('day-container');
+  var thisDaysContainerHeader = document.createElement('div')
+  thisWeekContainer.appendChild(thisDaysContainer)
+
+  var thisHotOptions = hotOptions
+  // console.log(calendarWeekData[i].data)
+  thisHotOptions['data'] = calendarWeekData[dayInWeek].data;
+  var thisHot = new Handsontable(thisDaysContainer, thisHotOptions)
+
+  var thisHeadline = document.createElement('h6');
+  thisHeadline.classList.add('text-center')
+  thisHeadline.innerHTML = calendarWeekData[dayInWeek].date
+  thisDaysContainerHeader.appendChild(thisHeadline)
+  $(thisDaysContainer).prepend(thisDaysContainerHeader)
+}
+
+function ajaxUpdateProductNameFromScheduleNumber(scheduleNumber, tableToUpdate, rowToUpdate){
+  $.ajax({
+    url: 'ajax/check_product_name/',
+    type: "POST",
+    data:{
+      "data": scheduleNumber,
+    },
+    success: function(data){
+      // console.log("Success Ajax Call");
+      if(data === ''){
+        // console.log("Product Does Not Exist in Database yet.");
+      }else{
+        tableToUpdate.setDataAtCell(rowToUpdate, 1, data)
+      }
+    }
+  });
+}
+
+function ajaxUpdateCalendarDayData(dataToUpdate, calendarToUpdate){
+  $.ajax({
+    url: 'ajax/update_day_schedule/',
+    type: "POST",
+    data:{
+      "date": calendarToUpdate.getInstance().rootElement.getAttribute('id').slice(5),
+      "data": JSON.stringify(dataToUpdate),
+    },
+    success: function(data){
+      // console.log("Success Ajax Call: Update Schedule Day");
+    }
+  });
+}
+
+function ajaxLoadCalendars(){
+  $.ajax({
+    url: 'ajax/get_calendars/',
+    dataType:'html',
+    success: function(data){
+      createCalendars(JSON.parse(data))
+    },
+  });
 }
