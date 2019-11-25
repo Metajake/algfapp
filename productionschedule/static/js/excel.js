@@ -139,20 +139,23 @@ function ajaxLoadCalendars(){
 }
 
 $('#btn-print').on('click', function(e){
+  var originalCalendarWidths = [];
 
   togglePrintDisplay()
-
-  // console.log(col1Width+col2Width)
   $('.day-container').each(function(){
     col1Width = $('.htCore thead tr:nth-child(1) th:nth-child(1)', this).width()
     col2Width = $('.htCore thead tr:nth-child(1) th:nth-child(2)', this).width()
     originalWidth = $(this).width()
+    originalCalendarWidths.push(originalWidth)
     $(this).width(col1Width+col2Width)
   })
 
   window.print()
 
-  // togglePrintDispla  y()
+  $('.day-container').each(function(index){
+    $(this).width(originalCalendarWidths[index])
+  });
+  togglePrintDisplay()
 
 })
 
@@ -173,6 +176,7 @@ function toggleNonPrintingColumns(tableToToggle){
   thisCalendarsRows = $(tableToToggle).find('tr')
   $(thisCalendarsRows).find('*:nth-child(3)').toggle();
   $(thisCalendarsRows).find('*:nth-child(4)').toggle();
+  $(thisCalendarsRows).find('*:nth-child(5)').toggle();
 }
 
 ajaxLoadCalendars();
