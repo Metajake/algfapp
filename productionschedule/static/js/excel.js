@@ -1,3 +1,16 @@
+var hots = {};
+
+var turnCounts = {
+  '1/3': 0.3,
+  '1/2': 0.5,
+  '2/3': 0.6,
+  'x2': 2,
+  'x3': 3,
+  'x4': 4,
+  'x5': 5,
+  'x6': 6,
+}
+
 var hotOptions = {
   contextMenu: true,
   allowInsertRow: true,
@@ -6,9 +19,6 @@ var hotOptions = {
   beforeChangeRender: afterCellChange,
   contextMenu: {
     items:{
-      'Add Multiple': {
-        name: "Add Multiple",
-      },
       "row_below": {},
       "row_above": {},
       "remove_row": {},
@@ -46,6 +56,8 @@ function afterCellChange(changes, source){
   };
 
   ajaxUpdateCalendarDayData(dayData, thisHot);
+
+  updateTurnCounts();
 }
 
 function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, scheduleNumberValueToCheck, thisHotInstance){
@@ -89,10 +101,16 @@ function createDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   // console.log(calendarWeekData[i].data)
   thisHotOptions['data'] = calendarWeekData[dayInWeek].data;
   var thisHot = new Handsontable(thisDaysContainerContent, thisHotOptions)
+  hots[calendarWeekData[dayInWeek].date] = thisHot;
 
   var thisHeadline = document.createElement('h6');
   thisHeadline.innerHTML = calendarWeekData[dayInWeek].date
   thisDaysContainerHeader.appendChild(thisHeadline)
+
+  var thisTurnCount = document.createElement('h6');
+  thisTurnCount.innerHTML = "Turns: <span class=\"turn-count\"></span>"
+  thisDaysContainerHeader.appendChild(thisTurnCount)
+
   $(thisDaysContainer).prepend(thisDaysContainerHeader)
 }
 
@@ -134,30 +152,31 @@ function ajaxLoadCalendars(){
     dataType:'html',
     success: function(data){
       createCalendars(JSON.parse(data))
+      updateTurnCounts();
     },
   });
 }
 
-$('#btn-print').on('click', function(e){
-  var originalCalendarWidths = [];
+function updateTurnCounts(){
+  for (var [date, hot] of Object.entries(hots)){
+    updateTurnCount(hot);
+  }
+}
 
-  togglePrintDisplay()
-  $('.day-container').each(function(){
-    col1Width = $('.htCore thead tr:nth-child(1) th:nth-child(1)', this).width()
-    col2Width = $('.htCore thead tr:nth-child(1) th:nth-child(2)', this).width()
-    originalWidth = $(this).width()
-    originalCalendarWidths.push(originalWidth)
-    $(this).width(col1Width+col2Width)
-  })
-
-  window.print()
-
-  $('.day-container').each(function(index){
-    $(this).width(originalCalendarWidths[index])
-  });
-  togglePrintDisplay()
-
-})
+function updateTurnCount(hotToUpdate){
+  turnCount = 0;
+  for(var i = 0; i < hotToUpdate.countRows(); i++){
+    rowData = hotToUpdate.getDataAtRow(i);
+    if ( rowData[0] ){
+      if (rowData[4] ){
+        turnCount += turnCounts[rowData[4]]
+      }else{
+        turnCount += 1
+      }
+    }
+  }
+  $(hotToUpdate.rootElement).siblings('.day-header').find('.turn-count').html(turnCount)
+}
 
 function togglePrintDisplay(){
   calendarTableHeaders = $('.htCore thead')
@@ -179,4 +198,36 @@ function toggleNonPrintingColumns(tableToToggle){
   $(thisCalendarsRows).find('*:nth-child(5)').toggle();
 }
 
+function printSchedule(){
+  var originalCalendarWidths = [];
+
+  togglePrintDisplay()
+
+  for (var [date, hot] of Object.entries(hots)){
+    //TODO Manually Resize 2nd Column for printing
+    // hot.manualColumnResize(1,50);
+  }
+
+  $('.day-container').each(function(){
+    col1Width = $('.htCore thead tr:nth-child(1) th:nth-child(1)', this).width()
+    col2Width = $('.htCore thead tr:nth-child(1) th:nth-child(2)', this).width()
+    originalWidth = $(this).width()
+    originalCalendarWidths.push(originalWidth)
+    $(this).width(col1Width+col2Width)
+  })
+
+  window.print()
+
+  $('.day-container').each(function(index){
+    $(this).width(originalCalendarWidths[index])
+  });
+  togglePrintDisplay()
+}
+
+$('#btn-print').on('click', function(e){
+  printSchedule()
+})
+
 ajaxLoadCalendars();
+
+console.log(hots)
