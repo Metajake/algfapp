@@ -125,7 +125,7 @@ def constructExcelCalendar():
     weeks = [
         constructExcelWeek(today),
         constructExcelWeek(today + timedelta(days=7)),
-        # constructExcelWeek(today + timedelta(days=14)),
+        constructExcelWeek(today + timedelta(days=14)),
     ]
     return weeks
 
@@ -203,5 +203,4 @@ def ajaxUpdateDaySchedule(request):
     sd = ExcelCalendarDay.objects.get(date=scheduleDate)
     sd.data = scheduleData['data']
     sd.save(update_fields=['data'])
-    # print()
     return HttpResponse("Success")

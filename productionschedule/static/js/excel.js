@@ -1,17 +1,14 @@
 var hotOptions = {
   contextMenu: true,
   allowInsertRow: true,
-  colWidths: [100,200,200,200],
+  colWidths: [80,140,140,140],
   manualColumnResize: true,
   beforeChangeRender: afterCellChange,
   contextMenu: {
     items:{
-      'Add Note': {
-        name: "Add Note",
+      'Add Multiple': {
+        name: "Add Multiple",
       },
-      "col_left": {},
-      "col_right": {},
-      "remove_col": {},
       "row_below": {},
       "row_above": {},
       "remove_row": {},
@@ -21,11 +18,12 @@ var hotOptions = {
       'redo': {},
     },
   },
-  minRows: 5,
+  minRows: 10,
   maxCols:4,
   colHeaders: ['Schedule #', 'Product Name', 'Distributor/Note', 'Filling Equipment'],
   dropdownMenu: false,
   rowHeaders: false,
+  hiddenColumns: true,
   licenseKey: 'non-commercial-and-evaluation'
 }
 
@@ -130,6 +128,36 @@ function ajaxLoadCalendars(){
       createCalendars(JSON.parse(data))
     },
   });
+}
+
+$('#btn-print').on('click', function(e){
+
+  calendarTableHeaders = $('.htCore thead')
+  calendarTableBodies = $('.day-content .htCore tbody').not('.ht_clone_top .htCore tbody').not('.ht_clone_bottom .htCore tbody').not('.ht_clone_left .htCore tbody')
+
+  calendarTableHeaders.each(function(){
+    toggleNonPrintingColumns(this)
+  })
+
+  calendarTableBodies.each(function(){
+    toggleNonPrintingColumns(this)
+  })
+
+  window.print()
+
+  calendarTableHeaders.each(function(){
+    toggleNonPrintingColumns(this)
+  })
+
+  calendarTableBodies.each(function(){
+    toggleNonPrintingColumns(this)
+  })
+})
+
+function toggleNonPrintingColumns(tableToToggle){
+  thisCalendarsRows = $(tableToToggle).find('tr')
+  $(thisCalendarsRows).find('*:nth-child(3)').toggle();
+  $(thisCalendarsRows).find('*:nth-child(4)').toggle();
 }
 
 ajaxLoadCalendars();
