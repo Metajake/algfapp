@@ -29,7 +29,7 @@ var hotOptions = {
     },
   },
   minRows: 10,
-  colHeaders: ['Schedule #', 'Product Name', 'Distributor', 'Note', 'Amount'],
+  colHeaders: ['Schedule #', 'Product Name', 'Distributor', 'Note', '+/- Turn'],
   dropdownMenu: false,
   rowHeaders: false,
   wordWrap: false,
@@ -103,6 +103,7 @@ function createDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   var thisHot = new Handsontable(thisDaysContainerContent, thisHotOptions)
   hots[calendarWeekData[dayInWeek].date] = thisHot;
 
+  console.log(Date.parse(calendarWeekData[dayInWeek].date))
   var thisHeadline = document.createElement('h6');
   thisHeadline.innerHTML = calendarWeekData[dayInWeek].date
   thisDaysContainerHeader.appendChild(thisHeadline)
@@ -175,7 +176,7 @@ function updateTurnCount(hotToUpdate){
       }
     }
   }
-  $(hotToUpdate.rootElement).siblings('.day-header').find('.turn-count').html(turnCount)
+  $(hotToUpdate.rootElement).siblings('.day-header').find('.turn-count').html(turnCount.toFixed(2))
 }
 
 function togglePrintDisplay(){

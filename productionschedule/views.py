@@ -161,7 +161,8 @@ def ajaxGetCalendars(request):
                 cd.data = [[None,None,None,None]]
                 cd.save()
 
-    calendarWeeks = CalendarWeek.objects.all()
+    # Return This Week's Monday and Greater (Up to 3 weeks)
+    calendarWeeks = CalendarWeek.objects.filter( date__gte=date.today() - timedelta( days=date.today().weekday() ) )
 
     toReturn = {}
 
