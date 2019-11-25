@@ -1,7 +1,7 @@
 var hotOptions = {
   contextMenu: true,
   allowInsertRow: true,
-  colWidths: [80,140,140,140],
+  colWidths: [80,140,140,140,60],
   manualColumnResize: true,
   beforeChangeRender: afterCellChange,
   contextMenu: {
@@ -19,11 +19,20 @@ var hotOptions = {
     },
   },
   minRows: 10,
-  maxCols:4,
-  colHeaders: ['Schedule #', 'Product Name', 'Distributor/Note', 'Filling Equipment'],
+  colHeaders: ['Schedule #', 'Product Name', 'Distributor', 'Note', 'Amount'],
   dropdownMenu: false,
   rowHeaders: false,
-  hiddenColumns: true,
+  wordWrap: false,
+  columns:[
+    {},
+    {},
+    {},
+    {},
+    {
+      editor: 'select',
+      selectOptions: ['1/3', '1/2', '2/3', 'x2', 'x3', 'x4', 'x5', 'x6'],
+    },
+  ],
   licenseKey: 'non-commercial-and-evaluation'
 }
 
@@ -70,7 +79,7 @@ function createDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   thisDaysContainer.setAttribute('id', "date-"+calendarWeekData[dayInWeek].date);
   thisDaysContainer.classList.add('day-container');
   var thisDaysContainerHeader = document.createElement('div')
-  thisDaysContainerHeader.classList.add('day-header')
+  thisDaysContainerHeader.classList.add('day-header', 'is-flex')
   var thisDaysContainerContent = document.createElement('div')
   thisDaysContainerContent.classList.add('day-content')
   thisWeekContainer.appendChild(thisDaysContainer)
@@ -82,7 +91,6 @@ function createDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   var thisHot = new Handsontable(thisDaysContainerContent, thisHotOptions)
 
   var thisHeadline = document.createElement('h6');
-  thisHeadline.classList.add('text-center')
   thisHeadline.innerHTML = calendarWeekData[dayInWeek].date
   thisDaysContainerHeader.appendChild(thisHeadline)
   $(thisDaysContainer).prepend(thisDaysContainerHeader)
@@ -132,6 +140,23 @@ function ajaxLoadCalendars(){
 
 $('#btn-print').on('click', function(e){
 
+  togglePrintDisplay()
+
+  // console.log(col1Width+col2Width)
+  $('.day-container').each(function(){
+    col1Width = $('.htCore thead tr:nth-child(1) th:nth-child(1)', this).width()
+    col2Width = $('.htCore thead tr:nth-child(1) th:nth-child(2)', this).width()
+    originalWidth = $(this).width()
+    $(this).width(col1Width+col2Width)
+  })
+
+  window.print()
+
+  // togglePrintDispla  y()
+
+})
+
+function togglePrintDisplay(){
   calendarTableHeaders = $('.htCore thead')
   calendarTableBodies = $('.day-content .htCore tbody').not('.ht_clone_top .htCore tbody').not('.ht_clone_bottom .htCore tbody').not('.ht_clone_left .htCore tbody')
 
@@ -142,17 +167,7 @@ $('#btn-print').on('click', function(e){
   calendarTableBodies.each(function(){
     toggleNonPrintingColumns(this)
   })
-
-  window.print()
-
-  calendarTableHeaders.each(function(){
-    toggleNonPrintingColumns(this)
-  })
-
-  calendarTableBodies.each(function(){
-    toggleNonPrintingColumns(this)
-  })
-})
+}
 
 function toggleNonPrintingColumns(tableToToggle){
   thisCalendarsRows = $(tableToToggle).find('tr')
