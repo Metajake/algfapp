@@ -11,6 +11,16 @@ var turnCounts = {
   'x6': 6,
 }
 
+var weekdays = {
+  0 : "Sunday",
+  1 : "Monday",
+  2 : "Tuesday",
+  3 : "Wednesday",
+  4 : "Thursday",
+  5 : "Friday",
+  6 :"Saturday",
+}
+
 var hotOptions = {
   contextMenu: true,
   allowInsertRow: true,
@@ -103,9 +113,10 @@ function createDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   var thisHot = new Handsontable(thisDaysContainerContent, thisHotOptions)
   hots[calendarWeekData[dayInWeek].date] = thisHot;
 
-  console.log(Date.parse(calendarWeekData[dayInWeek].date))
+
+  calendarDateObject = new Date( Date.parse(calendarWeekData[dayInWeek].date) )
   var thisHeadline = document.createElement('h6');
-  thisHeadline.innerHTML = calendarWeekData[dayInWeek].date
+  thisHeadline.innerHTML = weekdays[calendarDateObject.getDay()] + ' - ' + calendarWeekData[dayInWeek].date.slice(3,5);
   thisDaysContainerHeader.appendChild(thisHeadline)
 
   var thisTurnCount = document.createElement('h6');
