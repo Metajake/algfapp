@@ -1,3 +1,6 @@
+*
+  box-sizing: border-box;
+
 body, html
   margin:0
   padding:0
@@ -8,35 +11,50 @@ body
   color: red
   font-size:.1rem
 
-.handsontable
-  table.htCore
-    td
-      border-right:.5px solid #aaa
-      border-bottom:.5px solid #aaa
-  th
-    display:none
+#controls
+  display:none
 
 .day-container
   display:inline-block
-  margin-right:10px
+  margin:10px 10px 10px 0
+  border-right:1px solid #333
+  border-bottom:1px solid #333
+  border-left:1px solid #333
 
 .day-header
   text-align:center
   display:flex
   justify-content:space-around
+  border-bottom:1px solid #999
+  padding-bottom:4px
+  margin-bottom:4px
   h6
     font-size:9pt
     margin:0
 
-.ht_master
-  & tbody tr td:nth-child(1)
-    text-align:center
-  & tbody tr td:nth-child(2)
-    width:50px
-  td
-    font-size:8pt
-    white-space:nowrap
-    overflow:hidden
+.handsontable th
+  display:none !important
 
-.ht_clone_top
-  display:none
+.ht_master
+  table.htCore
+    width:100%
+    table-layout:fixed
+    colgroup
+      display:none
+    thead
+      display:none
+    & tbody tr td:nth-child(1)
+      text-align:center
+    tr
+      height:1.5em
+    td
+      border-right:.5px solid #aaa
+      border-bottom:.5px solid #aaa
+      font-size:8pt
+      white-space:nowrap
+      overflow:hidden
+    td:nth-child(1)
+      width:22% !important
+    td:nth-child(5)
+      border-right:none
+      width:8% !important
