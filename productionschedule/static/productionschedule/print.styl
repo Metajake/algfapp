@@ -1,6 +1,9 @@
 *
   box-sizing: border-box;
 
+@page
+  size: letter portrait
+
 body, html
   margin:0
   padding:0
@@ -8,11 +11,17 @@ body, html
   font-weight:bold
 
 body
-  color: red
   font-size:.1rem
+
+h6
+  font-size:9pt
+  margin:0
 
 #controls
   display:none
+
+.week-container
+  padding:0 5px
 
 .day-container
   display:inline-block
@@ -22,15 +31,13 @@ body
   border-left:1px solid #333
 
 .day-header
+  color: red
   text-align:center
   display:flex
   justify-content:space-around
   border-bottom:1px solid #999
   padding-bottom:4px
   margin-bottom:4px
-  h6
-    font-size:9pt
-    margin:0
 
 .handsontable th
   display:none !important
@@ -54,7 +61,13 @@ body
       white-space:nowrap
       overflow:hidden
     td:nth-child(1)
-      width:22% !important
+      width:28% !important
     td:nth-child(5)
       border-right:none
-      width:8% !important
+      width:7% !important
+      font-size:7pt
+    tr:last-child
+      td
+        border-bottom:none
+.wtHider
+  height:auto !important

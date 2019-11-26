@@ -99,6 +99,7 @@ function ajaxLoadCalendars(){
     success: function(data){
       writeCalendarsFromServerData(JSON.parse(data))
       updateTurnCounts();
+      updateWeekTurnCounts();
     },
   });
 }
@@ -115,6 +116,7 @@ function afterCellChange(changes, source){
   ajaxUpdateCalendarDayData(dayData, thisHot);
 
   updateTurnCount(thisHot);
+  updateWeekTurnCounts();
 }
 
 function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, scheduleNumberValueToCheck, thisHotInstance){
@@ -135,11 +137,24 @@ function writeCalendarsFromServerData(calendarData){
 function writeWeeklyCalendar(calendarWeekDate, calendarWeekData){
   var thisWeekContainer = document.createElement('div');
   thisWeekContainer.setAttribute('id', "week-"+calendarWeekDate);
-  thisWeekContainer.classList.add('is-flex', 'week-container')
+  thisWeekContainer.classList.add('week-container')
+
+  var thisWeekHeaderContainer = document.createElement('div');
+  thisWeekHeaderContainer.classList.add('week-header', 'is-flex')
+  var thisWeekHeadline = document.createElement('h6');
+  thisWeekHeadline.innerHTML = "Week Turns: <span class=\"week-turn-count\"></span>"
+
+  var thisWeekContentContainer = document.createElement('div');
+  thisWeekContentContainer.classList.add('week-content-container', 'is-flex');
+
+
+  thisWeekHeaderContainer.appendChild(thisWeekHeadline)
+  thisWeekContainer.appendChild(thisWeekHeaderContainer)
+  thisWeekContainer.appendChild(thisWeekContentContainer)
   document.getElementById("calendars").appendChild(thisWeekContainer)
 
   for (var weekDayIteration = 0;weekDayIteration < calendarWeekData.length; weekDayIteration++){
-    writeDayCalendar(calendarWeekData, thisWeekContainer, weekDayIteration)
+    writeDayCalendar(calendarWeekData, thisWeekContentContainer, weekDayIteration)
   }
 }
 
@@ -155,7 +170,6 @@ function writeDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   $(thisDaysContainer).append(thisDaysContainerContent)
 
   var thisHotOptions = hotOptions
-  // console.log(calendarWeekData[i].data)
   thisHotOptions['data'] = calendarWeekData[dayInWeek].data;
   var thisHot = new Handsontable(thisDaysContainerContent, thisHotOptions)
   hots[calendarWeekData[dayInWeek].date] = thisHot;
@@ -194,6 +208,18 @@ function updateTurnCount(hotToUpdate){
   $(hotToUpdate.rootElement).siblings('.day-header').find('.turn-count').html(turnCount.toFixed(1))
 }
 
+function updateWeekTurnCounts(){
+  var weeks = $('.week-container')
+  weeks.each(function(){
+    var weekDaysTurns = $('.day-header .turn-count', this);
+    weekDaysTurnsCount = 0.0
+    weekDaysTurns.each(function(){
+      weekDaysTurnsCount += parseFloat($(this).html());
+    })
+    $(this).find('.week-turn-count').html(weekDaysTurnsCount)
+  })
+}
+
 function togglePrintDisplay(){
   calendarTableHeaders = $('.htCore thead')
   calendarTableBodies = $('.day-content .htCore tbody').not('.ht_clone_top .htCore tbody').not('.ht_clone_bottom .htCore tbody').not('.ht_clone_left .htCore tbody')
@@ -211,27 +237,32 @@ function toggleNonPrintingColumns(tableToToggle){
   thisCalendarsRows = $(tableToToggle).find('tr')
   $(thisCalendarsRows).find('*:nth-child(3)').toggle();
   $(thisCalendarsRows).find('*:nth-child(4)').toggle();
-  // $(thisCalendarsRows).find('*:nth-child(5)').toggle();
 }
 
-function printSchedule(){
-
-  togglePrintDisplay()
-
+function resizeColumnsForPrint(){
   $('.day-container').each(function(){
     originalWidth = $(this).width()
     originalCalendarWidths.push(originalWidth)
     $(this).width(172);
     $(this).find('.ht_master table.htCore').width(172);
   })
+}
 
-  window.print()
-
+function resizeColumnsForWeb(){
   $('.day-container').each(function(index){
     $(this).width(originalCalendarWidths[index])
     $(this).find('.ht_master table.htCore').width('100%');
   });
+}
 
+function printSchedule(){
+
+  togglePrintDisplay()
+  resizeColumnsForPrint()
+
+  window.print()
+
+  resizeColumnsForWeb()
   togglePrintDisplay()
 }
 
@@ -240,5 +271,3 @@ $('#btn-print').on('click', function(e){
 })
 
 ajaxLoadCalendars();
-
-console.log(hots)
