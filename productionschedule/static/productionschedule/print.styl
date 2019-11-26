@@ -22,13 +22,18 @@ h6
 
 .week-container
   padding:0 5px
-
-.day-container
-  display:inline-block
-  margin:10px 10px 10px 0
-  border-right:1px solid #333
-  border-bottom:1px solid #333
-  border-left:1px solid #333
+  .week-header
+    margin:4px 0
+  .week-content-container
+    display:flex
+    border 1px solid gray
+    .day-container
+      margin:10px 10px 10px 0
+      border-right:1px solid #333
+      border-bottom:1px solid #333
+      border-left:1px solid #333
+    .day-container:last-child
+      margin-right:0
 
 .day-header
   color: red
@@ -38,6 +43,8 @@ h6
   border-bottom:1px solid #999
   padding-bottom:4px
   margin-bottom:4px
+  h6
+    font-size:10pt
 
 .handsontable th
   display:none !important
@@ -65,7 +72,6 @@ h6
     td:nth-child(5)
       border-right:none
       width:7% !important
-      font-size:7pt
     tr:last-child
       td
         border-bottom:none

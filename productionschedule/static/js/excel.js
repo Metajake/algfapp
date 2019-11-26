@@ -16,13 +16,13 @@ var turnCounts = {
 }
 
 var weekdays = {
-  0 : "Sunday",
-  1 : "Monday",
-  2 : "Tuesday",
-  3 : "Wednesday",
-  4 : "Thursday",
-  5 : "Friday",
-  6 :"Saturday",
+  0 : "SUN",
+  1 : "MON",
+  2 : "TUES",
+  3 : "WED",
+  4 : "THURS",
+  5 : "FRI",
+  6 :"SAT",
 }
 
 var hotOptions = {
@@ -142,7 +142,7 @@ function writeWeeklyCalendar(calendarWeekDate, calendarWeekData){
   var thisWeekHeaderContainer = document.createElement('div');
   thisWeekHeaderContainer.classList.add('week-header', 'is-flex')
   var thisWeekHeadline = document.createElement('h6');
-  thisWeekHeadline.innerHTML = "Week Turns: <span class=\"week-turn-count\"></span>"
+  thisWeekHeadline.innerHTML = "Week Total Turns: <span class=\"week-turn-count\"></span>"
 
   var thisWeekContentContainer = document.createElement('div');
   thisWeekContentContainer.classList.add('week-content-container', 'is-flex');
@@ -243,8 +243,8 @@ function resizeColumnsForPrint(){
   $('.day-container').each(function(){
     originalWidth = $(this).width()
     originalCalendarWidths.push(originalWidth)
-    $(this).width(172);
-    $(this).find('.ht_master table.htCore').width(172);
+    $(this).width(184);
+    $(this).find('.ht_master table.htCore').width(184);
   })
 }
 
@@ -256,7 +256,6 @@ function resizeColumnsForWeb(){
 }
 
 function printSchedule(){
-
   togglePrintDisplay()
   resizeColumnsForPrint()
 
