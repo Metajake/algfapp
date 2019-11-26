@@ -30,7 +30,10 @@ var hotOptions = {
   allowInsertRow: true,
   colWidths: [80,140,140,140,60],
   manualColumnResize: true,
+  manualMoveRow: true,
   beforeChangeRender: afterCellChange,
+  afterCreateRow: afterCreateRemoveRow,
+  afterRemoveRow: afterCreateRemoveRow,
   contextMenu: {
     items:{
       "row_below": {},
@@ -117,6 +120,18 @@ function afterCellChange(changes, source){
 
   updateTurnCount(thisHot);
   updateWeekTurnCounts();
+}
+
+function afterCreateRemoveRow(index, amount, source){
+  thisId = $(this.rootElement).parent().attr('id').slice(5)
+  thisHot = hots[thisId]
+
+  if(thisHot){
+    var dayData = {
+      data: thisHot.getData(),
+    };
+    ajaxUpdateCalendarDayData(dayData, thisHot);
+  }
 }
 
 function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, scheduleNumberValueToCheck, thisHotInstance){
@@ -255,7 +270,22 @@ function resizeColumnsForWeb(){
   });
 }
 
+function checkSaturdayHasTurns(weekToCheck){
+  thisSaturdaysTurns = parseFloat($('.day-container:last-child .turn-count', weekToCheck).html())
+  return thisSaturdaysTurns > 0.0
+}
+
+function toggleSaturdayIfProduct(){
+  var weeks = $('.week-container')
+  weeks.each(function(){
+    if (!checkSaturdayHasTurns(this)){
+      $('.day-container:last-child', this).toggle();
+    }
+  })
+}
+
 function printSchedule(){
+  toggleSaturdayIfProduct()
   togglePrintDisplay()
   resizeColumnsForPrint()
 
