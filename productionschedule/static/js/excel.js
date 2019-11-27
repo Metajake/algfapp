@@ -1,11 +1,12 @@
 var hots = {},
-originalCalendarWidths = [];
+originalCalendarWidths = [],
+notedHots = {};
 
 var turnCounts = {
   '1/3': 0.3,
   '1/2': 0.5,
   '2/3': 0.6,
-  ' ': 0,
+  ' ': 1,
   'x2': 2,
   'x3': 3,
   'x4': 4,
@@ -49,7 +50,7 @@ var hotOptions = {
     },
   },
   minRows: 10,
-  colHeaders: ['Schedule #', 'Product Name', 'Distributor', 'Note/Fill Equipment', '+/- Turn'],
+  colHeaders: ['#', 'Product Name', 'Distributor', 'Note/Fill Equipment', '+/- Turn'],
   dropdownMenu: false,
   rowHeaders: function(){return'&#9868;'},
   wordWrap: false,
@@ -63,85 +64,11 @@ var hotOptions = {
       selectOptions: ['1/3', '1/2', '2/3', ' ', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9'],
     },
   ],
+  mergeCells: true,
   licenseKey: 'non-commercial-and-evaluation'
 }
 
-function ajaxUpdateProductNameFromScheduleNumber(scheduleNumber, tableToUpdate, rowToUpdate){
-  $.ajax({
-    url: 'ajax/check_product_name/',
-    type: "POST",
-    data:{
-      "data": scheduleNumber,
-    },
-    success: function(data){
-      // console.log("Success Ajax Call");
-      if(data === ''){
-        // console.log("Product Does Not Exist in Database yet.");
-      }else{
-        tableToUpdate.setDataAtCell(rowToUpdate, 1, data)
-      }
-    }
-  });
-}
-
-function ajaxUpdateCalendarDayData(dataToUpdate, calendarToUpdate){
-  $.ajax({
-    url: 'ajax/update_day_schedule/',
-    type: "POST",
-    data:{
-      "date": calendarToUpdate.getInstance().rootElement.parentNode.id.slice(5),
-      "data": JSON.stringify(dataToUpdate),
-    },
-    success: function(data){
-      // console.log("Success Ajax Call: Update Schedule Day");
-    }
-  });
-}
-
-function ajaxLoadCalendars(){
-  $.ajax({
-    url: 'ajax/get_calendars/',
-    dataType:'html',
-    success: function(data){
-      writeCalendarsFromServerData(JSON.parse(data))
-      updateTurnCounts();
-      updateWeekTurnCounts();
-    },
-  });
-}
-
-function afterCellChange(changes, source){
-  var changedRow = changes[0][0], changedCol = changes[0][1], thisHot = this, cellValue;
-
-  checkIfColOneChangeAndUpdateColTwo(changedCol, changedRow, cellValue, thisHot)
-
-  var dayData = {
-    data: thisHot.getData(),
-  };
-
-  ajaxUpdateCalendarDayData(dayData, thisHot);
-
-  updateTurnCount(thisHot);
-  updateWeekTurnCounts();
-}
-
-function afterCreateRemoveRow(index, amount, source){
-  thisHot = hots[$(this.rootElement).parent().attr('id').slice(5)]
-  if(thisHot){
-    var dayData = {
-      data: thisHot.getData(),
-    };
-    ajaxUpdateCalendarDayData(dayData, thisHot);
-  }
-}
-
-function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, scheduleNumberValueToCheck, thisHotInstance){
-  if(changedColumn === 0){
-    scheduleNumberValueToCheck = thisHotInstance.getDataAtCell(changedRow, changedColumn);
-    ajaxUpdateProductNameFromScheduleNumber(scheduleNumberValueToCheck, thisHotInstance, changedRow);
-  }
-}
-
+//---------------WRITING TO WEB PAGE-------------//
 function writeCalendarsFromServerData(calendarData){
   for (var key in calendarData){
     if (calendarData.hasOwnProperty(key)){
@@ -203,6 +130,39 @@ function writeDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
   $(thisDaysContainer).prepend(thisDaysContainerHeader)
 }
 
+//---------SPREADSHEET FUNCTIONS---------//
+function afterCellChange(changes, source){
+  var changedRow = changes[0][0], changedCol = changes[0][1], thisHot = this, cellValue;
+
+  checkIfColOneChangeAndUpdateColTwo(changedCol, changedRow, cellValue, thisHot)
+
+  var dayData = {
+    data: thisHot.getData(),
+  };
+
+  ajaxUpdateCalendarDayData(dayData, thisHot);
+
+  updateTurnCount(thisHot);
+  updateWeekTurnCounts();
+}
+
+function afterCreateRemoveRow(index, amount, source){
+  thisHot = hots[$(this.rootElement).parent().attr('id').slice(5)]
+  if(thisHot){
+    var dayData = {
+      data: thisHot.getData(),
+    };
+    ajaxUpdateCalendarDayData(dayData, thisHot);
+  }
+}
+
+function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, scheduleNumberValueToCheck, thisHotInstance){
+  if(changedColumn === 0){
+    scheduleNumberValueToCheck = thisHotInstance.getDataAtCell(changedRow, changedColumn);
+    ajaxUpdateProductNameFromScheduleNumber(scheduleNumberValueToCheck, thisHotInstance, changedRow);
+  }
+}
+
 function updateTurnCounts(){
   for (var [date, hot] of Object.entries(hots)){
     updateTurnCount(hot);
@@ -236,7 +196,8 @@ function updateWeekTurnCounts(){
   })
 }
 
-function togglePrintDisplay(){
+//---------------PRINTING-----------------//
+function toggleColumnAndHeaderDisplay(){
   calendarTableHeaders = $('.htCore thead')
   calendarTableBodies = $('.day-content .htCore tbody').not('.ht_clone_top .htCore tbody').not('.ht_clone_bottom .htCore tbody').not('.ht_clone_left .htCore tbody')
 
@@ -263,8 +224,8 @@ function resizeColumnsForPrint(weekElement){
     })
   }else{
     $('.day-container', weekElement).each(function(){
-      $(this).width(184);
-      $(this).find('.ht_master table.htCore').width(184);
+      $(this).width(190);
+      $(this).find('.ht_master table.htCore').width(190);
     })
   }
 }
@@ -308,7 +269,8 @@ function showAllSaturdays(){
 
 function printSchedule(){
   toggleSaturdayIfProduct()
-  togglePrintDisplay()
+  insertDisplayNotes()
+  toggleColumnAndHeaderDisplay()
 
   $('.week-container').each(function(){
     resizeColumnsForPrint(this)
@@ -316,13 +278,49 @@ function printSchedule(){
 
   window.print()
 
+  removeDisplayNotes()
   showAllSaturdays()
   resizeColumnsForWeb()
-  togglePrintDisplay()
+  toggleColumnAndHeaderDisplay()
 }
 
+function insertDisplayNotes(){
+  for (var [key, hot] of Object.entries(hots)){
+    notedHots[key] = [];
+    thisHot = hot;
+    hotData = hot.getData()
+    insertNumber = 1
+    for(var i = 0; i < hotData.length; i++){
+      thisRow = hotData[i]
+      if (thisRow[3]){
+        noteContent = thisRow[3];
+        rowNumber = i;
+        notedHots[key].push(rowNumber+insertNumber)
+        thisHot.alter('insert_row', rowNumber+insertNumber);
+        thisHot.getPlugin('mergeCells').merge(rowNumber+insertNumber, 0, rowNumber+insertNumber, 1)
+        thisHot.setDataAtCell(rowNumber+insertNumber, 0, noteContent)
+        $(thisHot.getCell(rowNumber+insertNumber, 0)).addClass('is-note');
+        insertNumber += 1;
+      }
+    }
+  }
+}
+
+function removeDisplayNotes(){
+  for( var [key, rows] of Object.entries(notedHots)){
+    if(rows.length){
+      rows.reverse();
+      for (var i = 0; i < rows.length; i++){
+        hots[key].alter('remove_row', rows[i]);
+      }
+    }
+  }
+}
+
+//----------------EVENTS-------------------//
 $('#btn-print').on('click', function(e){
   printSchedule()
 })
 
+//------------INIT---------------//
 ajaxLoadCalendars();
