@@ -5,6 +5,7 @@ var turnCounts = {
   '1/3': 0.3,
   '1/2': 0.5,
   '2/3': 0.6,
+  ' ': 0,
   'x2': 2,
   'x3': 3,
   'x4': 4,
@@ -26,14 +27,16 @@ var weekdays = {
 }
 
 var hotOptions = {
-  contextMenu: true,
   allowInsertRow: true,
-  colWidths: [80,140,140,140,60],
+  colWidths: [80,140,140,180,60],
+  rowHeaderWidth: 20,
   manualColumnResize: true,
-  manualMoveRow: true,
+  manualRowMove: true,
   beforeChangeRender: afterCellChange,
   afterCreateRow: afterCreateRemoveRow,
   afterRemoveRow: afterCreateRemoveRow,
+  afterRowMove: afterCreateRemoveRow,
+  contextMenu: true,
   contextMenu: {
     items:{
       "row_below": {},
@@ -48,7 +51,7 @@ var hotOptions = {
   minRows: 10,
   colHeaders: ['Schedule #', 'Product Name', 'Distributor', 'Note/Fill Equipment', '+/- Turn'],
   dropdownMenu: false,
-  rowHeaders: false,
+  rowHeaders: function(){return'&#9868;'},
   wordWrap: false,
   columns:[
     {},
@@ -57,7 +60,7 @@ var hotOptions = {
     {},
     {
       editor: 'select',
-      selectOptions: ['1/3', '1/2', '2/3', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9'],
+      selectOptions: ['1/3', '1/2', '2/3', ' ', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9'],
     },
   ],
   licenseKey: 'non-commercial-and-evaluation'
@@ -123,9 +126,7 @@ function afterCellChange(changes, source){
 }
 
 function afterCreateRemoveRow(index, amount, source){
-  thisId = $(this.rootElement).parent().attr('id').slice(5)
-  thisHot = hots[thisId]
-
+  thisHot = hots[$(this.rootElement).parent().attr('id').slice(5)]
   if(thisHot){
     var dayData = {
       data: thisHot.getData(),
@@ -250,24 +251,38 @@ function togglePrintDisplay(){
 
 function toggleNonPrintingColumns(tableToToggle){
   thisCalendarsRows = $(tableToToggle).find('tr')
-  $(thisCalendarsRows).find('*:nth-child(3)').toggle();
   $(thisCalendarsRows).find('*:nth-child(4)').toggle();
+  $(thisCalendarsRows).find('*:nth-child(5)').toggle();
 }
 
-function resizeColumnsForPrint(){
-  $('.day-container').each(function(){
-    originalWidth = $(this).width()
-    originalCalendarWidths.push(originalWidth)
-    $(this).width(184);
-    $(this).find('.ht_master table.htCore').width(184);
-  })
+function resizeColumnsForPrint(weekElement){
+  if (!checkSaturdayHasTurns(weekElement)){
+    $('.day-container', weekElement).each(function(){
+      $(this).width(224);
+      $(this).find('.ht_master table.htCore').width(224);
+    })
+  }else{
+    $('.day-container', weekElement).each(function(){
+      $(this).width(184);
+      $(this).find('.ht_master table.htCore').width(184);
+    })
+  }
 }
 
 function resizeColumnsForWeb(){
   $('.day-container').each(function(index){
-    $(this).width(originalCalendarWidths[index])
+    $(this).width(getOriginalTableWidth())
     $(this).find('.ht_master table.htCore').width('100%');
   });
+}
+
+function getOriginalTableWidth(){
+  sum = 0
+  for (var i = 0; i < hotOptions.colWidths.length;i++){
+    sum += hotOptions.colWidths[i]
+  }
+  sum += hotOptions.rowHeaderWidth
+  return sum
 }
 
 function checkSaturdayHasTurns(weekToCheck){
@@ -284,13 +299,24 @@ function toggleSaturdayIfProduct(){
   })
 }
 
+function showAllSaturdays(){
+  var weeks = $('.week-container')
+  weeks.each(function(){
+    $('.day-container:last-child', this).show();
+  })
+}
+
 function printSchedule(){
   toggleSaturdayIfProduct()
   togglePrintDisplay()
-  resizeColumnsForPrint()
+
+  $('.week-container').each(function(){
+    resizeColumnsForPrint(this)
+  })
 
   window.print()
 
+  showAllSaturdays()
   resizeColumnsForWeb()
   togglePrintDisplay()
 }
