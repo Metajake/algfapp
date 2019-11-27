@@ -219,13 +219,13 @@ function toggleNonPrintingColumns(tableToToggle){
 function resizeColumnsForPrint(weekElement){
   if (!checkSaturdayHasTurns(weekElement)){
     $('.day-container', weekElement).each(function(){
-      $(this).width(224);
-      $(this).find('.ht_master table.htCore').width(224);
+      $(this).width(230);
+      $(this).find('.ht_master table.htCore').width(230);
     })
   }else{
     $('.day-container', weekElement).each(function(){
-      $(this).width(190);
-      $(this).find('.ht_master table.htCore').width(190);
+      $(this).width(191);
+      $(this).find('.ht_master table.htCore').width(191);
     })
   }
 }
@@ -299,8 +299,19 @@ function insertDisplayNotes(){
         thisHot.alter('insert_row', rowNumber+insertNumber);
         thisHot.getPlugin('mergeCells').merge(rowNumber+insertNumber, 0, rowNumber+insertNumber, 1)
         thisHot.setDataAtCell(rowNumber+insertNumber, 0, noteContent)
-        $(thisHot.getCell(rowNumber+insertNumber, 0)).addClass('is-note');
         insertNumber += 1;
+      }
+    }
+  }
+
+  styleNotes()
+}
+
+function styleNotes(){
+  for( var [key, rows] of Object.entries(notedHots)){
+    if(rows.length){
+      for (var i = 0; i < rows.length; i++){
+        hots[key].getCell(rows[i], 0).classList.add('is-note');
       }
     }
   }
