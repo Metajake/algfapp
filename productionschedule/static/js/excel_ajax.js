@@ -17,6 +17,26 @@ function ajaxUpdateProductNameFromScheduleNumber(scheduleNumber, tableToUpdate, 
   });
 }
 
+function ajaxCheckProductGluten(scheduleNumber, tableToUpdate, rowToUpdate){
+  $.ajax({
+    url: 'ajax/check_gluten/',
+    type: "POST",
+    data:{
+      "data": scheduleNumber,
+    },
+    success: function(data){
+      // console.log("Success Ajax Call");
+      if(data === ''){
+        $(tableToUpdate.getCell(rowToUpdate, 0)).parent().removeClass('is-gluten');
+      }else{
+        console.log(data)
+        $(tableToUpdate.getCell(rowToUpdate, 0)).parent().addClass('is-gluten');
+        console.log($(tableToUpdate.getCell(rowToUpdate, 0)).parent())
+      }
+    }
+  });
+}
+
 function ajaxUpdateCalendarDayData(dataToUpdate, calendarToUpdate){
   $.ajax({
     url: 'ajax/update_day_schedule/',
@@ -39,6 +59,7 @@ function ajaxLoadCalendars(){
       writeCalendarsFromServerData(JSON.parse(data))
       updateTurnCounts();
       updateWeekTurnCounts();
+      updateProductsGluten();
     },
   });
 }

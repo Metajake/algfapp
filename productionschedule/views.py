@@ -186,12 +186,32 @@ def ajaxCheckProductName(request):
         try:
             bp = BaseProduct.objects.get(item_number = itemNumber)
         except BaseProduct.DoesNotExist:
-            print("This Item Does Not Exists in the DB")
+            # Item isn't in Database Yet
             toReturn = "This Item Does Not Exists in the DB";
         else:
-            print(" This Item Exists in the DB")
             toReturn = bp.product_name
     else:
+        # Doesn't Appear to be an item number
+        toReturn = ""
+
+
+    return HttpResponse(toReturn)
+
+@csrf_exempt
+def ajaxCheckGluten(request):
+    itemNumberRegex = re.findall('\d+', request.POST['data'] )
+
+    if itemNumberRegex:
+        itemNumber = itemNumberRegex[0]
+        try:
+            bp = BaseProduct.objects.get(item_number = itemNumber)
+        except BaseProduct.DoesNotExist:
+            # Item isn't in Database Yet
+            toReturn = "";
+        else:
+            toReturn = bp.gluten_free
+    else:
+        # Doesn't Appear to be an item number
         toReturn = ""
 
 

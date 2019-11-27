@@ -132,9 +132,13 @@ function writeDayCalendar(calendarWeekData, thisWeekContainer, dayInWeek){
 
 //---------SPREADSHEET FUNCTIONS---------//
 function afterCellChange(changes, source){
-  var changedRow = changes[0][0], changedCol = changes[0][1], thisHot = this, cellValue;
+  var changedRow = changes[0][0],
+  changedCol = changes[0][1],
+  thisHot = this,
+  cellValue;
 
-  checkIfColOneChangeAndUpdateColTwo(changedCol, changedRow, cellValue, thisHot)
+  checkIfColOneChangeAndUpdateColTwo(changedCol, changedRow, thisHot)
+  checkIfProductGluten(thisHot.getDataAtCell(changedRow, changedCol), thisHot, changedRow)
 
   var dayData = {
     data: thisHot.getData(),
@@ -154,12 +158,32 @@ function afterCreateRemoveRow(index, amount, source){
     };
     ajaxUpdateCalendarDayData(dayData, thisHot);
   }
+  updateProductsGlutenWeek(thisHot)
 }
 
-function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, scheduleNumberValueToCheck, thisHotInstance){
+function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, thisHotInstance){
   if(changedColumn === 0){
     scheduleNumberValueToCheck = thisHotInstance.getDataAtCell(changedRow, changedColumn);
     ajaxUpdateProductNameFromScheduleNumber(scheduleNumberValueToCheck, thisHotInstance, changedRow);
+  }
+}
+
+function checkIfProductGluten(scheduleNumberValueToCheck, thisHotInstance, itemRow){
+  ajaxCheckProductGluten(scheduleNumberValueToCheck, thisHotInstance, itemRow)
+}
+
+function updateProductsGlutenWeek(hotToUpdate){
+  hotData = hotToUpdate.getData()
+  for(var i = 0; i< hotData.length; i++){
+    if(hotData[i][0]){
+      checkIfProductGluten(hotData[i][0], hotToUpdate, i)
+    }
+  }
+}
+
+function updateProductsGluten(){
+  for(var[key,hot] of Object.entries(hots)){
+    updateProductsGlutenWeek(hot);
   }
 }
 
@@ -303,7 +327,6 @@ function insertDisplayNotes(){
       }
     }
   }
-
   styleNotes()
 }
 

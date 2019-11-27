@@ -14,6 +14,7 @@ urlpatterns = [
     #Excel (Hands On Calendar) Production Schedule
     path('excel/', views.excel, name="excel"),
     #ajax views
+    path('excel/ajax/check_gluten/', views.ajaxCheckGluten, name="ajax-check-gluten"),
     path('excel/ajax/get_calendars/', views.ajaxGetCalendars, name="ajax-get-calendars"),
     path('excel/ajax/check_product_name/', views.ajaxCheckProductName, name="ajax-check-product-name"),
     path('excel/ajax/update_day_schedule/', views.ajaxUpdateDaySchedule, name="ajax-update-day-schedule"),
