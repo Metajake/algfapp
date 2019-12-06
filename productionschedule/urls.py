@@ -3,7 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
     path('calendar/', views.calendar, name="calendar"),
     path('delete/<int:product_id>/<str:production_date>/<str:order>', views.deleteObject, name='delete-object'),
     path('save/<str:production_date>/<str:product_code>/<str:company>/', views.saveObject, name='save-object'),
@@ -12,10 +11,11 @@ urlpatterns = [
     path('updateNote/<str:id>/<str:note>', views.updateNote, name='update-note'),
     path('today/', views.today, name="today"),
     #Excel (Hands On Calendar) Production Schedule
-    path('excel/', views.excel, name="excel"),
+    path('', views.excel, name='excel'),
+    # path('excel/', views.excel, name="excel"),
     #ajax views
-    path('excel/ajax/check_gluten/', views.ajaxCheckGluten, name="ajax-check-gluten"),
-    path('excel/ajax/get_calendars/', views.ajaxGetCalendars, name="ajax-get-calendars"),
-    path('excel/ajax/check_product_name/', views.ajaxCheckProductName, name="ajax-check-product-name"),
-    path('excel/ajax/update_day_schedule/', views.ajaxUpdateDaySchedule, name="ajax-update-day-schedule"),
+    path('ajax/check_gluten/', views.ajaxCheckGluten, name="ajax-check-gluten"),
+    path('ajax/get_calendars/', views.ajaxGetCalendars, name="ajax-get-calendars"),
+    path('ajax/check_product_name/', views.ajaxCheckProductName, name="ajax-check-product-name"),
+    path('ajax/update_day_schedule/', views.ajaxUpdateDaySchedule, name="ajax-update-day-schedule"),
 ]
