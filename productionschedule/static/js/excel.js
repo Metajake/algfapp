@@ -157,8 +157,8 @@ function afterCreateRemoveRow(index, amount, source){
       data: thisHot.getData(),
     };
     ajaxUpdateCalendarDayData(dayData, thisHot);
+    updateProductsGlutenWeek(thisHot)
   }
-  updateProductsGlutenWeek(thisHot)
 }
 
 function checkIfColOneChangeAndUpdateColTwo(changedColumn, changedRow, thisHotInstance){
