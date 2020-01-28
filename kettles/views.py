@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from django.http import Http404
 from django.core import serializers
 
@@ -146,7 +146,7 @@ def stats_day(request, stats_date):
 
 def update_list_day(request, list_date):
     pd = ProductionDay.objects.get(date=request.GET['date'])
-    return render_to_response('kettles/updates/update_list_day.html', {'production_day': pd})
+    return render(request, 'kettles/updates/update_list_day.html', {'production_day': pd})
 
 def update_list_active(request):
     productionSpreadsheet = readSpreadsheet()
@@ -159,4 +159,4 @@ def update_list_active(request):
         'production_day' : ProductionDay.objects.get(date=activeDate),
         'production_week' : notedProductionWeek,
     }
-    return render_to_response('kettles/updates/update_list_active.html', context)
+    return render(request, 'kettles/updates/update_list_active.html', context)
